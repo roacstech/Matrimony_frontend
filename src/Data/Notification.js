@@ -1,6 +1,6 @@
 import { users } from "./Users";
 
-// 🔔 Dummy notifications (mutable for dummy project)
+// 🔔 Dummy notifications
 let notifications = [
   {
     id: 1,
@@ -11,7 +11,13 @@ let notifications = [
   {
     id: 2,
     type: "CONNECTION_REQUEST",
-    fromUserId: 2,
+    fromUserId: 2, // Priya
+    isRead: false,
+  },
+  {
+    id: 3,
+    type: "CONNECTION_ACCEPTED",
+    fromUserId: 3, // Divya
     isRead: false,
   },
 ];
@@ -22,25 +28,39 @@ const getUserById = (id) => users.find((u) => u.id === id);
 // 🧠 GET notifications
 export const getUserNotifications = () => {
   return notifications.map((n) => {
-    if (n.type === "CONNECTION_REQUEST") {
-      const fromUser = getUserById(n.fromUserId);
-      return {
-        ...n,
-        message: fromUser
-          ? `${fromUser.name} sent you a connection request`
-          : "Someone sent you a connection request",
-      };
+    const fromUser = n.fromUserId
+      ? getUserById(n.fromUserId)
+      : null;
+
+    switch (n.type) {
+      case "CONNECTION_REQUEST":
+        return {
+          ...n,
+          message: fromUser?.fullName
+            ? `${fromUser.fullName} sent you a connection request`
+            : "Someone sent you a connection request",
+        };
+
+      case "CONNECTION_ACCEPTED":
+        return {
+          ...n,
+          message: fromUser?.fullName
+            ? `${fromUser.fullName} accepted your connection request`
+            : "Your connection request was accepted",
+        };
+
+      default:
+        return n;
     }
-    return n;
   });
 };
 
-// ❌ CLOSE ONE notification
+// ❌ Remove one
 export const removeNotification = (id) => {
   notifications = notifications.filter((n) => n.id !== id);
 };
 
-// 🧹 CLEAR ALL notifications
+// 🧹 Clear all
 export const clearAllNotifications = () => {
   notifications = [];
 };
