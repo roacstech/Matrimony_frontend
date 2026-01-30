@@ -3,6 +3,7 @@ import UserDashboard from "../components/user/UserDashboard";
 import ConnectionCard from "../components/user/ConnectionCard";
 import MyConnection from "../components/user/MyConnection";
 import Profile from "../components/user/Profile";
+import Notifications from "../components/user/Notifications";
 import React from "react";
 
 const UserRoutes = () => {
@@ -12,7 +13,9 @@ const UserRoutes = () => {
       <Route element={<UserDashboard />}>
         <Route path="dashboard" element={<ConnectionCard />} />
         <Route path="my-connection" element={<MyConnection />} />
-        <Route path="profile" element={<Profile />} />
+        {/* 🔥 FIX HERE */}
+        <Route path="profile/:id" element={<Profile />} />
+          <Route path="notifications" element={<Notifications />} />
       </Route>
     </Routes>
   );
