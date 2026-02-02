@@ -293,27 +293,50 @@ const MatrimonyForm = () => {
 
             {/* STEP 5 */}
             {currentStep === 5 && (
-              <div className="space-y-4">
-                <label>
-                  <input
-                    type="radio"
-                    name="privacy"
-                    value="Public"
-                    onChange={handleChange}
-                  />{" "}
-                  Public
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="privacy"
-                    value="Private"
-                    onChange={handleChange}
-                  />{" "}
-                  Private
-                </label>
-                <input type="file" name="photo" onChange={handleFileChange} />
-              </div>
+              <div className="max-w-md p-6 bg-white rounded-xl shadow-md space-y-6 border border-gray-100">
+  
+  {/* Privacy Dropdown Section */}
+  <div className="space-y-2">
+    <label htmlFor="privacy" className="block text-sm font-semibold text-gray-700">
+      Account Settings
+    </label>
+    <div className="relative">
+      <select
+        id="privacy"
+        name="privacy"
+        onChange={handleChange}
+        className="block w-full px-4 py-3 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
+      >
+                <option value="Friends">Non-n</option>
+
+        <option value="Public">🌍 Public</option>
+        <option value="Private">🔒 Private</option>
+      </select>
+      
+      {/* Custom Arrow Icon */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  {/* Photo Upload Section */}
+  <div className="space-y-2">
+    <p className="text-sm font-semibold text-gray-700">Upload Photo</p>
+    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 border-gray-300 transition-all">
+      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+        <svg className="w-8 h-8 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        </svg>
+        <p className="text-sm text-gray-500">Click to upload photo</p>
+      </div>
+      <input type="file" name="photo" className="hidden" onChange={handleFileChange} />
+    </label>
+  </div>
+
+</div>
             )}
 
             {/* STEP 6 */}
@@ -329,7 +352,7 @@ const MatrimonyForm = () => {
                   <b>Raasi:</b> {formData.raasi}
                 </p>
                 <p>
-                  <b>Privacy:</b> {formData.privacy}
+                  <b>Account:</b> {formData.privacy}
                 </p>
               </div>
             )}
@@ -337,12 +360,17 @@ const MatrimonyForm = () => {
 
           {/* BUTTONS */}
           <div className="flex justify-between mt-8 border-t pt-6">
-            <button
-              onClick={prevStep}
-              className={currentStep === 0 ? "invisible" : "font-bold"}
-            >
-              Back
-            </button>
+<button
+  onClick={prevStep}
+  className={`${
+    currentStep === 0 ? "invisible" : "flex items-center gap-2"
+  } px-5 py-2.5 bg-[#3B1E54] text-white rounded-xl font-bold`}
+>
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+  </svg>
+  Back
+</button>
           <button
   onClick={() => {
     // Normal next

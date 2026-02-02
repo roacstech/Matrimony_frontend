@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 
 import LoginRoutes from "./routes/LoginRoutes";
 import UserRoutes from "./routes/UserRoutes";
+import AdminRoutes from "./routes/AdminRoutes";
 
 function App() {
   return (
@@ -14,6 +15,10 @@ function App() {
 
         {/* USER ROUTES */}
         <Route path="/user/*" element={<UserRoutes />} />
+
+         {/* ADMIN ROUTES */}
+
+         <Route path="/admin/*" element={<AdminRoutes/>} />
       </Routes>
 
       <Toaster

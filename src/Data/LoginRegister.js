@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 export const useAuthForm = () => {
   const navigate = useNavigate();
-
-  // 🔒 Guard to prevent duplicate toast (React 18 StrictMode fix)
   const isSubmittingRef = useRef(false);
 
   const [formData, setFormData] = useState({
@@ -15,25 +13,16 @@ export const useAuthForm = () => {
     password: "",
   });
 
-  // =====================
-  // COMMON INPUT HANDLER
-  // =====================
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // =====================
-  // REGISTER LOGIC
-  // =====================
   const handleRegisterSubmit = (e, onNavigate) => {
     e.preventDefault();
 
-    // 🔒 Duplicate submit guard
     if (isSubmittingRef.current) return;
     isSubmittingRef.current = true;
-
-    toast.dismiss();
 
     const users = JSON.parse(localStorage.getItem("users")) || [];
 
@@ -58,6 +47,8 @@ export const useAuthForm = () => {
       email: formData.email,
       password: formData.password,
       role,
+      status: "APPROVED",
+      hasSubmittedForm: false,
       createdAt: new Date().toISOString(),
     };
 
@@ -69,20 +60,14 @@ export const useAuthForm = () => {
     setTimeout(() => {
       isSubmittingRef.current = false;
       if (onNavigate) onNavigate();
-    }, 1500);
+    }, 1000);
   };
 
-  // =====================
-  // LOGIN LOGIC
-  // =====================
   const handleLoginSubmit = (e) => {
     e.preventDefault();
 
-    // 🔒 Duplicate submit guard (MAIN FIX)
     if (isSubmittingRef.current) return;
     isSubmittingRef.current = true;
-
-    toast.dismiss();
 
     const users = JSON.parse(localStorage.getItem("users")) || [];
 
@@ -94,30 +79,38 @@ export const useAuthForm = () => {
     );
 
     if (!foundUser) {
-      toast.error("❌ Invalid Email/Mobile or Password");
+      toast.error("❌ Invalid credentials");
+      isSubmittingRef.current = false;
+      return;
+    }
+
+    if (foundUser.role === 2 && foundUser.status !== "APPROVED") {
+      toast.error("⏳ Admin approval pending");
       isSubmittingRef.current = false;
       return;
     }
 
     localStorage.setItem("currentUser", JSON.stringify(foundUser));
 
-    const successMsg =
-      foundUser.role === 1
-        ? "👑 Admin login successful"
-        : "✅ Login successful";
-
-    toast.success(successMsg);
+    toast.success("Login successful");
 
     setTimeout(() => {
       isSubmittingRef.current = false;
-      navigate("/form");
-    }, 1000);
+
+      if (foundUser.role === 1) {
+        navigate("/admin");
+      } else if (!foundUser.hasSubmittedForm) {
+        navigate("/form");
+      } else {
+        navigate("/user/dashboard");
+      }
+    }, 800);
   };
 
   return {
     formData,
     handleChange,
-    handleLoginSubmit,
     handleRegisterSubmit,
+    handleLoginSubmit,
   };
 };

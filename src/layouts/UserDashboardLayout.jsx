@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { performLogout } from "../Data/logout";
 import toast from "react-hot-toast";
@@ -12,6 +12,16 @@ const UserDashboardLayout = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  /* 🔐 USER ROUTE GUARD */
+  useEffect(() => {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (!currentUser || currentUser.role !== 2) {
+      navigate("/");
+    }
+  }, [navigate]);
+
 
   const handleLogout = () => {
     toast((t) => (

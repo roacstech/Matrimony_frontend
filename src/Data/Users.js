@@ -11,20 +11,21 @@ export const users = [
     education: "B.Tech",
     occupation: "Software Engineer",
     income: "12 LPA",
+    email:"karthick@gmail.com",
 
     father: "Raman",
     mother: "Lakshmi",
     grandfather: "Krishnan",
     grandmother: "Meena",
-
+    siblings:"shraya",
     raasi: "Kanni",
     star: "Uthiram",
     dosham: "No",
-
+    birthPlace:"Hospital",
     horoscope: {
       uploaded: true,
       fileName: "karthik_jadhagam.pdf",
-      fileUrl: "https://via.placeholder.com/300x400?text=Karthik+Jadhagam",
+      fileUrl: "new-KM.pdf",
     },
 
     religion: "Hindu",
@@ -51,15 +52,18 @@ export const users = [
     education: "MBA",
     occupation: "HR Manager",
     income: "8 LPA",
+     email:"Priya@gmail.com",
 
     father: "Ramesh",
     mother: "Savitri",
     grandfather: "Narayanan",
     grandmother: "Kamala",
+    siblings:"vimala",
 
     raasi: "Rishabam",
     star: "Rohini",
     dosham: "No",
+     birthPlace:"Hospital",
 
     horoscope: {
       uploaded: false,
@@ -89,20 +93,23 @@ export const users = [
     education: "MCA",
     occupation: "UI/UX Designer",
     income: "7 LPA",
+    email:"divya@gmail.com",
 
     father: "Suresh",
     mother: "Anitha",
     grandfather: "Venkatesan",
     grandmother: "Padma",
+    siblings:"sneha",
 
     raasi: "Makaram",
     star: "Thiruvonam",
     dosham: "Yes",
+     birthPlace:"Hospital",
 
     horoscope: {
       uploaded: true,
       fileName: "divya_jadhagam.jpg",
-      fileUrl: "https://via.placeholder.com/300x400?text=Divya+Jadhagam",
+      fileUrl: "new-KM.pdf",
     },
 
     religion: "Hindu",
@@ -129,15 +136,18 @@ export const users = [
     education: "B.Com",
     occupation: "Bank Manager",
     income: "10 LPA",
+    email:"arun@gmail.com",
 
     father: "Mohan",
     mother: "Geetha",
     grandfather: "Raghavan",
     grandmother: "Sumathi",
+    siblings:"arunaa",
 
     raasi: "Kadagam",
     star: "Poosam",
     dosham: "No",
+     birthPlace:"Hospital",
 
     horoscope: {
       uploaded: false,
@@ -167,20 +177,22 @@ export const users = [
     education: "BE Civil",
     occupation: "Civil Engineer",
     income: "9 LPA",
+    email:"vignesh@gmail.com",
 
     father: "Balaji",
     mother: "Radha",
     grandfather: "Srinivasan",
     grandmother: "Janaki",
+    siblings:"ilakiya",
 
     raasi: "Meenam",
     star: "Revathi",
     dosham: "No",
-
+     birthPlace:"Hospital",
     horoscope: {
       uploaded: true,
       fileName: "vignesh_jadhagam.pdf",
-      fileUrl: "https://via.placeholder.com/300x400?text=Vignesh+Jadhagam",
+      fileUrl: "new-KM.pdf",
     },
 
     religion: "Hindu",

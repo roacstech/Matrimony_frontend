@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 
 /* 🔴 LOGGED IN USER (frontend dummy – ONLY THIS IS NEW) */
 export const loggedInUser = {
-  gender: "FeMale", // change to "Female" to test
+  gender: "Male", // change to "Female" to test
 };
 
 export const dummyConnections = [
@@ -16,20 +16,22 @@ export const dummyConnections = [
 
 /* 🔥 ONLY LOGIC ADD – FILTERED CONNECTIONS */
 export const visibleConnections = dummyConnections.filter(
-  (u) => u.gender !== loggedInUser.gender
+  (u) =>
+    u.gender.toLowerCase() !== loggedInUser.gender.toLowerCase()
 );
+
 
 // Tracking sent requests
 let sentRequests = [];
 
-export const handleConnectLogic = (id, name) => {
+export const handleConnectLogic = (id) => {
   if (sentRequests.includes(id)) {
     toast.error(
-      `Request already sent to ${name}. Next request can only be sent after 24 hours!`,
+      `Request already sent to . Next request can only be sent after 24 hours!`,
       {
         duration: 4000,
         style: {
-          background: "#3B1E54",
+          background: "#FF7444",
           color: "#EEEEEE",
           borderRadius: "20px",
           fontSize: "12px",
@@ -41,7 +43,7 @@ export const handleConnectLogic = (id, name) => {
     );
   } else {
     sentRequests.push(id);
-    toast.success(`Request Sent Successfully to ${name}!`, {
+    toast.success(`Request Sent Successfully  `, {
       duration: 3000,
       style: {
         background: "#059669",

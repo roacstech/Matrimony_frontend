@@ -30,16 +30,19 @@ export const useMatrimonyForm = () => {
     photo: null,
   });
 
-  // 🔥 horoscope removed from mandatory validation
+  // 🔥 Mandatory fields per step
   const stepFields = [
     ["fullName", "gender", "dob", "birthTime", "maritalStatus"],
     ["education", "occupation", "income"],
     ["father", "mother", "grandfather", "grandmother"],
-    ["raasi", "star", "dosham"], // FIXED
+    ["raasi", "star", "dosham"],
     ["address", "city", "country"],
     ["privacy"],
   ];
 
+  // =====================
+  // INPUT HANDLERS
+  // =====================
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
@@ -50,6 +53,9 @@ export const useMatrimonyForm = () => {
     setFormData((p) => ({ ...p, [name]: files[0] }));
   };
 
+  // =====================
+  // STEP VALIDATION
+  // =====================
   const validateStep = () => {
     const fields = stepFields[currentStep];
     if (!fields) return true;
@@ -64,14 +70,69 @@ export const useMatrimonyForm = () => {
     setCurrentStep((p) => p + 1);
   };
 
-  const prevStep = () => setCurrentStep((p) => Math.max(p - 1, 0));
+  const prevStep = () => {
+    setCurrentStep((p) => Math.max(p - 1, 0));
+  };
 
-const submitForm = () => {
-  console.log("FINAL SUBMITTED DATA:", formData);
-  toast.success("Profile submitted successfully 💍");
-};
+  // =====================
+  // FINAL SUBMIT
+  // =====================
+  const submitForm = () => {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
+    if (!currentUser) {
+      toast.error("Please login again");
+      return;
+    }
 
+    // 1️⃣ SAVE TO PENDING PROFILES (ADMIN VIEW)
+    const pending =
+      JSON.parse(localStorage.getItem("pending_profiles")) || [];
+
+    pending.push({
+      id: currentUser.id,
+      email: currentUser.email,
+      status: "PENDING",
+      profile: formData,
+      submittedAt: new Date().toISOString(),
+    });
+
+    localStorage.setItem(
+      "pending_profiles",
+      JSON.stringify(pending)
+    );
+
+    // 2️⃣ UPDATE USER STATUS → PENDING
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const updatedUsers = users.map((u) =>
+      u.id === currentUser.id
+        ? {
+            ...u,
+            hasSubmittedForm: true,
+            status: "PENDING", // 🔥 BLOCK NEXT LOGIN
+          }
+        : u
+    );
+
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+
+    // 3️⃣ UPDATE CURRENT USER
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify({
+        ...currentUser,
+        hasSubmittedForm: true,
+        status: "PENDING",
+      })
+    );
+
+    toast.success("Profile submitted for admin approval ⏳");
+  };
+
+  // =====================
+  // RETURN
+  // =====================
   return {
     currentStep,
     formData,
