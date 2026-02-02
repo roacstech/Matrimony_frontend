@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 
 /* 🔴 LOGGED IN USER (frontend dummy – ONLY THIS IS NEW) */
 export const loggedInUser = {
-  gender: "Male", // change to "Female" to test
+  gender: "FeMale", // change to "Female" to test
 };
 
 export const dummyConnections = [

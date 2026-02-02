@@ -88,14 +88,14 @@ export const useMatrimonyForm = () => {
     // 1️⃣ SAVE TO PENDING PROFILES (ADMIN VIEW)
     const pending =
       JSON.parse(localStorage.getItem("pending_profiles")) || [];
+pending.push({
+  id: currentUser.id,
+  role: "USER",
+  email: currentUser.email,
+  status: "PENDING",
+  profile: formData,
+});
 
-    pending.push({
-      id: currentUser.id,
-      email: currentUser.email,
-      status: "PENDING",
-      profile: formData,
-      submittedAt: new Date().toISOString(),
-    });
 
     localStorage.setItem(
       "pending_profiles",

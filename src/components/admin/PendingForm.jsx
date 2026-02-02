@@ -4,14 +4,40 @@ import { Check, X } from "lucide-react";
 import { addNotification } from "../../Data/Notification";
 
 const PendingForms = () => {
+  JSON.parse(localStorage.getItem("pending_profiles"))
+
   const [pending, setPending] = useState([]);
 
   // LOAD PENDING
-  useEffect(() => {
-    const data =
-      JSON.parse(localStorage.getItem("pending_profiles")) || [];
-    setPending(data);
-  }, []);
+useEffect(() => {
+const loadPending = () => {
+  const data =
+    JSON.parse(localStorage.getItem("pending_profiles")) || [];
+
+  const onlyPendingUsers = data.filter(
+    (p) => p.status === "PENDING" && p.role === "USER"
+  );
+
+  setPending(onlyPendingUsers);
+};
+
+
+  loadPending();
+
+  const onFocus = () => loadPending();
+
+  window.addEventListener("focus", onFocus);
+  document.addEventListener("visibilitychange", onFocus);
+
+  return () => {
+    window.removeEventListener("focus", onFocus);
+    document.removeEventListener("visibilitychange", onFocus);
+  };
+}, []);
+
+
+
+
 
   // ✅ ACCEPT
 
