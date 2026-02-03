@@ -1,10 +1,3 @@
-// import axiosInstance from "./axiosMiddleware";
-
-// export const registerUser = (data) =>
-//   axiosInstance.post("/register", data);
-
-// export const loginUser = (data) =>
-//   axiosInstance.post("/login", data);
 
 
 import axiosInstance from "./axiosMiddleware";

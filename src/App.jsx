@@ -6,11 +6,14 @@ import LoginRoutes from "./routes/LoginRoutes";
 import UserRoutes from "./routes/UserRoutes";
 import AdminRoutes from "./routes/AdminRoutes";
 
-function App() {
+function App() 
+{
+  
   return (
     <BrowserRouter>
       <Routes>
         {/* LOGIN / PUBLIC ROUTES */}
+        
         <Route path="/*" element={<LoginRoutes />} />
 
         {/* USER ROUTES */}
