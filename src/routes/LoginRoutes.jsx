@@ -5,13 +5,15 @@ import Register from "../pages/Register";
 import MatrimonyForm from "../form/MatrimonyForm";
 
 const LoginRoutes = () => {
+  console.log("moute")
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route index element={<Home />} />
       <Route path="/register" element={<Register />} />
       <Route path="/form" element={<MatrimonyForm />} />
 
       {/* fallback only for LOGIN scope */}
+       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 };

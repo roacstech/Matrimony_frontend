@@ -6,6 +6,7 @@ import {
 } from "../../Data/UserDashboard";
 
 const ConnectionCard = () => {
+  console.log("✅ ConnectionCard rendered")
   const [activeTab, setActiveTab] = useState("Public");
   const [selectedUser, setSelectedUser] = useState(null); // 👁 view state
 

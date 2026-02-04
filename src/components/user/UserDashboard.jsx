@@ -5,6 +5,7 @@ import { connections as allConnections } from "../../Data/Connections";
 import UserDashboardLayout from "../../layouts/UserDashboardLayout";
 
 const UserDashboard = () => {
+    console.log("✅ UserDashboard rendered");
   const user = users[0]; // simulate logged in user
 
   const [showMenu, setShowMenu] = useState(false);
@@ -27,3 +28,7 @@ const UserDashboard = () => {
 };
 
 export default UserDashboard;
+
+
+
+

@@ -69,45 +69,41 @@ export const useAuthForm = () => {
         password: formData.password,
       });
 
-      const { response, roleid } = res.data;
+      const { response, roleid,status } = res.data;
       console.log("ROLEID 👉", roleid);
 console.log("NAVIGATING...");
 console.log("FULL LOGIN RESPONSE 👉", res.data);
 
 
  // 🔹 get status from localStorage (backend change இல்ல)
-      const status = localStorage.getItem("status") || "NEW";
 
       localStorage.setItem("accesstoken", response);
       localStorage.setItem("roleid", roleid);
+       localStorage.setItem("status", status);
       // localStorage.setItem("userid", userid);
 
       
 
       toast.success("✅ Login successful");
+        isSubmittingRef.current = false;
       
 
     
-        if (Number(roleid) === 1) {
-          // Admin
-          navigate("/admin");
-        } else {
-          // Normal user
-          if (status === "NEW") {
-            navigate("/form");
-          } else if (status === "PENDING") {
-            navigate("/");
-            toast("⏳ Admin approval pending. Please wait.", {
-              icon: "⏳",
-              duration: 4000,
-            });
-          } else if (status === "ACTIVE") {
-            navigate("/dashboard");
-          } else {
-            navigate("/form"); // fallback
-          }
-        }
-      
+       if (Number(roleid) === 1) {
+      navigate("/admin");
+    } else if (Number(roleid) === 2) {
+      if (status === "NEW") {
+        navigate("/form");
+        console.log("form")
+      } else if (status === "PENDING") {
+        toast("⏳ Admin approval pending. Please wait.");
+        navigate("/");
+      } else if (status === "ACTIVE") {
+        console.log("Redirecting to:", "/user/dashboard");
+        navigate("/user/dashboard");
+       
+      } 
+    }
       
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");

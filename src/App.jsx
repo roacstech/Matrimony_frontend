@@ -16,7 +16,7 @@ function App()
         {/* LOGIN / PUBLIC ROUTES */}
 
         
-        <Route path="/*" element={<LoginRoutes />} />
+        <Route path="/" element={<LoginRoutes />} />
 
     {/* ADMIN ROUTES */}
                  <Route path="/admin/*" element={<AdminRoutes/>} />
