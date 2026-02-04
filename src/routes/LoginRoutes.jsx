@@ -12,7 +12,6 @@ const LoginRoutes = () => {
       <Route path="/form" element={<MatrimonyForm />} />
 
       {/* fallback only for LOGIN scope */}
-      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 };

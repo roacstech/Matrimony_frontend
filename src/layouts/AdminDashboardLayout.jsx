@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -15,24 +15,15 @@ const AdminDashboardLayout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
-  /* 🔐 ADMIN ROUTE GUARD */
-  useEffect(() => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
-    if (!currentUser || currentUser.role !== 1) {
-      navigate("/");
-    }
-  }, [navigate]);
-
-
   const closeSidebar = () => setSidebarOpen(false);
 
-  /* ✅ LOGOUT HANDLER */
+  /* ✅ LOGOUT HANDLER - Palette Updated */
   const handleLogout = () => {
     toast(
       (t) => (
         <div className="flex flex-col gap-4 p-2">
-          <p className="text-sm font-black text-[#3B1E54] text-center">
+          {/* Text color: #5D4037 */}
+          <p className="text-sm font-black text-[#5D4037] text-center">
             Are you sure you want to logout?
           </p>
 
@@ -43,14 +34,16 @@ const AdminDashboardLayout = () => {
                 performLogout(navigate);
                 toast.success("Logged out successfully");
               }}
-              className="px-4 py-2 bg-[#3B1E54] text-white rounded-xl text-xs font-black uppercase tracking-widest"
+              /* Button color: #573D2F */
+              className="px-4 py-2 bg-[#573D2F] text-white rounded-xl text-xs font-black uppercase tracking-widest"
             >
               OK
             </button>
 
             <button
               onClick={() => toast.dismiss(t.id)}
-              className="px-4 py-2 bg-gray-200 text-gray-600 rounded-xl text-xs font-black uppercase tracking-widest"
+              /* Neutral background: #EEEEEE */
+              className="px-4 py-2 bg-[#EEEEEE] text-[#5D4037] rounded-xl text-xs font-black uppercase tracking-widest"
             >
               Cancel
             </button>
@@ -61,9 +54,9 @@ const AdminDashboardLayout = () => {
     );
   };
 
-
   return (
-    <div className="min-h-screen flex bg-[#F8F9FD] relative overflow-hidden">
+    /* Main Background: #FAF6F3 */
+    <div className="min-h-screen flex bg-[#FAF6F3] relative overflow-hidden font-serif">
       
       {/* ================= MOBILE OVERLAY ================= */}
       {isSidebarOpen && (
@@ -75,21 +68,21 @@ const AdminDashboardLayout = () => {
 
       {/* ================= SIDEBAR ================= */}
       <aside className={`
-        fixed lg:sticky top-0 left-0 z-50 h-screen bg-white border-r border-gray-100 flex flex-col transition-all duration-300
+        fixed lg:sticky top-0 left-0 z-50 h-screen bg-white border-r border-[#EEEEEE] flex flex-col transition-all duration-300
         w-[280px] ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}>
         {/* Profile Section */}
-        <div className="px-8 py-10 lg:py-12 flex flex-col items-center border-b border-gray-50 relative">
-          {/* Mobile Close Button */}
+        <div className="px-8 py-10 lg:py-12 flex flex-col items-center border-b border-[#EEEEEE] relative">
           <button onClick={closeSidebar} className="lg:hidden absolute top-4 right-4 p-2 text-gray-400">
             <X size={20} />
           </button>
 
-          <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-[20px] lg:rounded-[24px] bg-[#3B1E54] flex items-center justify-center shadow-2xl shadow-purple-100 border-4 border-white overflow-hidden mb-4">
+          {/* Icon/Avatar Frame: #5D4037 */}
+          <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-[20px] lg:rounded-[24px] bg-[#5D4037] flex items-center justify-center shadow-2xl shadow-stone-200 border-4 border-white overflow-hidden mb-4">
             <img src="https://i.pravatar.cc/150?u=admin" alt="Admin" className="w-full h-full object-cover" />
           </div>
-          <h1 className="text-xs lg:text-sm font-black text-[#3B1E54] tracking-tight uppercase">KalyanaMaalai</h1>
-          <p className="text-[9px] lg:text-[10px] font-bold text-gray-400 uppercase tracking-[2px] mt-1">Super Admin</p>
+          <h1 className="text-xs lg:text-sm font-black text-[#5D4037] tracking-tight uppercase">KalyanaMaalai</h1>
+          <p className="text-[9px] lg:text-[10px] font-bold text-[#A67C52] uppercase tracking-[2px] mt-1">Super Admin</p>
         </div>
 
         {/* Navigation Menu */}
@@ -100,48 +93,45 @@ const AdminDashboardLayout = () => {
         </nav>
 
         {/* Logout Section */}
-    <div className="p-6 lg:p-8">
-  <button
-    onClick={handleLogout}   // ✅ IMPORTANT
-    className="w-full flex items-center justify-center gap-3 px-5 py-3.5 lg:py-4
-               rounded-[16px] lg:rounded-[20px]
-               text-rose-500 bg-rose-50/50 hover:bg-rose-50 transition-all
-               text-[10px] lg:text-[11px] font-black uppercase tracking-widest
-               border border-rose-100/50"
-  >
-    <LogOut size={16} />
-    Log out
-  </button>
-</div>
-
+        <div className="p-6 lg:p-8">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-3 px-5 py-3.5 lg:py-4
+                       rounded-[16px] lg:rounded-[20px]
+                       text-rose-600 bg-rose-50 hover:bg-rose-100 transition-all
+                       text-[10px] lg:text-[11px] font-black uppercase tracking-widest
+                       border border-rose-100"
+          >
+            <LogOut size={16} />
+            Log out
+          </button>
+        </div>
       </aside>
 
       {/* ================= MAIN CONTENT AREA ================= */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         
-        {/* Header with Mobile Menu Toggle */}
+        {/* Header */}
         <header className="h-20 lg:h-24 px-6 lg:px-12 flex items-center justify-between bg-transparent">
           <div className="flex items-center gap-4">
-            {/* Mobile Toggle Button */}
             <button 
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2.5 bg-white shadow-sm border border-gray-100 rounded-xl text-[#3B1E54]"
+              className="lg:hidden p-2.5 bg-white shadow-sm border border-[#EEEEEE] rounded-xl text-[#5D4037]"
             >
               <Menu size={20} />
             </button>
             
             <div>
-              <h2 className="text-xl lg:text-3xl font-black text-[#3B1E54] tracking-tight leading-none">Overview</h2>
-              <p className="hidden xs:block text-[8px] lg:text-[10px] font-bold text-gray-400 uppercase tracking-[2px] lg:tracking-[3px] mt-1">Manage platform records</p>
+              <h2 className="text-xl lg:text-3xl font-black text-[#5D4037] tracking-tight leading-none">Overview</h2>
+              <p className="hidden xs:block text-[8px] lg:text-[10px] font-bold text-[#A67C52] uppercase tracking-[2px] lg:tracking-[3px] mt-1">Manage platform records</p>
             </div>
           </div>
         </header>
 
-        {/* Page Content */}
+        {/* Page Content Area */}
         <main className="flex-1 px-4 lg:px-12 pb-6 lg:pb-12 overflow-y-auto">
           <div className="max-w-[1400px] mx-auto">
-             {/* Content Container - Responsive Padding & Radius */}
-             <div className="bg-white rounded-[32px] lg:rounded-[48px] p-5 lg:p-10 shadow-xl shadow-gray-200/30 border border-gray-100 min-h-[calc(100vh-140px)] lg:min-h-[calc(100vh-180px)]">
+             <div className="bg-white rounded-[32px] lg:rounded-[48px] p-5 lg:p-10 shadow-xl shadow-stone-200/40 border border-[#EEEEEE] min-h-[calc(100vh-140px)] lg:min-h-[calc(100vh-180px)]">
                <Outlet />
              </div>
           </div>
@@ -151,7 +141,7 @@ const AdminDashboardLayout = () => {
   );
 };
 
-/* ================= RESPONSIVE MENU ITEM ================= */
+/* ================= RESPONSIVE MENU ITEM - Palette Updated ================= */
 
 const MenuItem = ({ to, label, icon, onClick }) => {
   return (
@@ -163,8 +153,8 @@ const MenuItem = ({ to, label, icon, onClick }) => {
         transition-all duration-300
         ${
           isActive
-            ? "bg-[#3B1E54] text-white shadow-xl shadow-purple-200 lg:-translate-y-1"
-            : "text-gray-400 hover:bg-gray-50 hover:text-[#3B1E54]"
+            ? "bg-[#5D4037] text-white shadow-xl shadow-stone-200 lg:-translate-y-1" // Active: Brown #5D4037
+            : "text-gray-400 hover:bg-[#FAF6F3] hover:text-[#5D4037]" // Inactive
         }`
       }
     >

@@ -75,20 +75,39 @@ console.log("NAVIGATING...");
 console.log("FULL LOGIN RESPONSE 👉", res.data);
 
 
+ // 🔹 get status from localStorage (backend change இல்ல)
+      const status = localStorage.getItem("status") || "NEW";
 
       localStorage.setItem("accesstoken", response);
       localStorage.setItem("roleid", roleid);
       // localStorage.setItem("userid", userid);
 
+      
+
       toast.success("✅ Login successful");
+      
 
     
         if (Number(roleid) === 1) {
+          // Admin
           navigate("/admin");
-          console.log("roleid",roleid)
         } else {
-          navigate("/form");
+          // Normal user
+          if (status === "NEW") {
+            navigate("/form");
+          } else if (status === "PENDING") {
+            navigate("/");
+            toast("⏳ Admin approval pending. Please wait.", {
+              icon: "⏳",
+              duration: 4000,
+            });
+          } else if (status === "ACTIVE") {
+            navigate("/dashboard");
+          } else {
+            navigate("/form"); // fallback
+          }
         }
+      
       
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");

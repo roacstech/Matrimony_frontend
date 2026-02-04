@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import LoginRoutes from "./routes/LoginRoutes";
 import UserRoutes from "./routes/UserRoutes";
 import AdminRoutes from "./routes/AdminRoutes";
+import AdminDashboardLayout from "./layouts/AdminDashboardLayout";
 
 function App() 
 {
@@ -13,15 +14,18 @@ function App()
     <BrowserRouter>
       <Routes>
         {/* LOGIN / PUBLIC ROUTES */}
+
         
         <Route path="/*" element={<LoginRoutes />} />
+
+    {/* ADMIN ROUTES */}
+                 <Route path="/admin/*" element={<AdminRoutes/>} />
 
         {/* USER ROUTES */}
         <Route path="/user/*" element={<UserRoutes />} />
 
-         {/* ADMIN ROUTES */}
+     
 
-         <Route path="/admin/*" element={<AdminRoutes/>} />
       </Routes>
 
       <Toaster
