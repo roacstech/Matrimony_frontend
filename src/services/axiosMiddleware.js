@@ -15,7 +15,7 @@ axiosInstance.interceptors.request.use(
     const roleid = localStorage.getItem("roleid");
     // const userid = localStorage.getItem("userid");
 
-    if (accesstoken) config.headers["auth"] = accesstoken;
+    if (accesstoken) config.headers["Authorization"] = `Bearer ${accesstoken}`;
     if (roleid) config.headers["roleid"] = Number(roleid);
     // if (userid) config.headers["userid"] = Number(userid);
 

@@ -8,7 +8,7 @@ const PendingForms = () => {
   // LOAD PENDING
   useEffect(() => {
     const loadPending = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
 
       try {
         const res = await fetch(
@@ -31,7 +31,7 @@ const PendingForms = () => {
 
   // ✅ APPROVE
   const handleAccept = async (item) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
 
     try {
       await fetch(
@@ -54,7 +54,7 @@ const PendingForms = () => {
 
   // ❌ REJECT
   const handleReject = async (item) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
 
     try {
       await fetch(

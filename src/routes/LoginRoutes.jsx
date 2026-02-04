@@ -5,7 +5,7 @@ import Register from "../pages/Register";
 import MatrimonyForm from "../form/MatrimonyForm";
 
 const LoginRoutes = () => {
-  console.log("moute")
+  console.log("✅ LoginRoutes mounted");
   return (
     <Routes>
       <Route index element={<Home />} />
