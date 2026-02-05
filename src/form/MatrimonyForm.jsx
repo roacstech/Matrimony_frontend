@@ -247,13 +247,17 @@ const MatrimonyForm = () => {
                     onChange={handleChange}
                     value={formData.star}
                   />
-                  <input
-                    className={input}
-                    name="dosham"
-                    placeholder="Dosham"
-                    onChange={handleChange}
-                    value={formData.dosham}
-                  />
+                 <select
+  className={input}
+  name="dosham"
+  onChange={handleChange}
+  value={formData.dosham}
+>
+  <option value="">Dosham</option>
+  <option value="No">No</option>
+  <option value="Yes">Yes</option>
+</select>
+
                   <input
                     className={input}
                     name="religion"

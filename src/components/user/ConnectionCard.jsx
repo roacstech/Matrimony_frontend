@@ -1,59 +1,338 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
+// import {
+//   visibleConnections,
+//   handleConnectLogic,
+//   getUserById,
+// } from "../../Data/UserDashboard";
+// import { Eye, MapPin, Briefcase, User, GraduationCap, FileText, X, Globe, Lock } from "lucide-react";
+
+// const ConnectionCard = () => {
+//   const [activeTab, setActiveTab] = useState("Public");
+//   const [selectedUser, setSelectedUser] = useState(null);
+
+//   return (
+//     <div className="p-2 sm:p-4 bg-transparent space-y-10 font-serif">
+//       {/* ================= TAB HEADER - Brown Theme ================= */}
+//       <div className="flex items-center gap-4">
+//         <button
+//           onClick={() => setActiveTab("Public")}
+//           className={`px-8 py-2.5 rounded-full text-[10px] font-black tracking-[2px] uppercase transition-all duration-300 ${
+//             activeTab === "Public"
+//               ? "bg-[#5D4037] text-white shadow-xl -translate-y-0.5"
+//               : "bg-white text-gray-400 border border-[#EEEEEE]"
+//           }`}
+//         >
+//           <span className="flex items-center gap-2"><Globe size={14}/> Public</span>
+//         </button>
+
+//         <button
+//           onClick={() => setActiveTab("Private")}
+//           className={`px-8 py-2.5 rounded-full text-[10px] font-black tracking-[2px] uppercase transition-all duration-300 ${
+//             activeTab === "Private"
+//               ? "bg-[#5D4037] text-white shadow-xl -translate-y-0.5"
+//               : "bg-white text-gray-400 border border-[#EEEEEE]"
+//           }`}
+//         >
+//           <span className="flex items-center gap-2"><Lock size={14}/> Private</span>
+//         </button>
+//       </div>
+
+//       {/* ================= CARD GRID ================= */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center max-w-7xl mx-auto">
+//         {visibleConnections
+//           .filter((u) => u.visibility === activeTab)
+//           .map((u) => (
+//             <div
+//               key={u.id}
+//               className="group relative bg-white rounded-[32px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#A67C52]/30 transition-all duration-500 flex flex-col w-full max-w-[310px] h-fit pt-12 pb-6 px-6 overflow-visible"
+//             >
+//               {/* 👁 EYE ICON */}
+//               {u.visibility === "Public" && (
+//                 <button
+//                   onClick={() => setSelectedUser(getUserById(u.id))}
+//                   className="absolute top-4 right-4 p-2.5 rounded-xl bg-[#FAF6F3] text-[#5D4037] shadow-sm 
+//                              hover:bg-[#5D4037] hover:text-white transition-all duration-300"
+//                 >
+//                   <Eye size={16} />
+//                 </button>
+//               )}
+
+//               {/* FLOATING STATUS BADGE */}
+//               <div
+//                 className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full shadow-md border border-white transition-transform group-hover:scale-105"
+//                 style={{
+//                   backgroundColor: u.visibility === "Public" ? "#FAF6F3" : "#EEEEEE",
+//                   color: "#5D4037",
+//                 }}
+//               >
+//                 <span className="text-[9px] font-black uppercase tracking-[1.5px] whitespace-nowrap leading-none">
+//                   {u.visibility === "Public" ? "📡 Public Mode" : "🔐 Private Mode"}
+//                 </span>
+//               </div>
+
+//               {/* DETAILS GRID */}
+//               <div className="grid grid-cols-2 gap-y-8 gap-x-10 mt-2">
+//                 <DetailItem icon="🌙" label="Raasi" value={u.raasi} />
+//                 <DetailItem
+//                   icon={u.gender === "Male" ? "👨" : "👩"}
+//                   label="Gender"
+//                   value={u.gender}
+//                 />
+//                 <DetailItem icon="💰" label="Salary" value={u.salary} />
+//                 <DetailItem
+//                   icon="💼"
+//                   label="Work"
+//                   value={u.work}
+//                   isAccent
+//                 />
+//                 <DetailItem icon="📍" label="Location" value={u.location} />
+//               </div>
+
+//               {/* ACTION */}
+//               <div className="mt-8 pt-5 border-t border-dashed border-[#EEEEEE]">
+//                 <button
+//                   onClick={() => handleConnectLogic(u.id, u.work)}
+//                   className="w-full bg-[#5D4037] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#4a332c] transition-all transform active:scale-[0.96] shadow-lg shadow-stone-200"
+//                 >
+//                   Connect Now
+//                 </button>
+//               </div>
+//             </div>
+//           ))}
+//       </div>
+
+//       {/* ================= VIEW USER POPUP - Premium Styled ================= */}
+//       {selectedUser && (
+//         <div className="fixed inset-0 bg-[#5D4037]/40 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+//           <div className="bg-white rounded-[40px] p-8 w-full max-w-[650px] relative max-h-[90vh] overflow-y-auto shadow-2xl border border-[#EEEEEE]">
+            
+//             <button
+//               onClick={() => setSelectedUser(null)}
+//               className="absolute top-6 right-6 p-2 bg-[#FAF6F3] rounded-full text-[#5D4037] hover:bg-[#5D4037] hover:text-white transition-all"
+//             >
+//               <X size={20} />
+//             </button>
+
+//             {/* HEADER SECTION */}
+//             <div className="flex flex-col items-center mb-8">
+//               <div className="relative mb-4">
+//                  <img
+//                   src={selectedUser.photo || "https://i.pravatar.cc/300"}
+//                   alt=""
+//                   className="w-28 h-28 rounded-[30px] shadow-xl border-4 border-[#FAF6F3] object-cover"
+//                 />
+//                 <div className="absolute -bottom-2 -right-2 bg-[#A67C52] text-white p-2 rounded-lg shadow-lg">
+//                    <User size={16} />
+//                 </div>
+//               </div>
+//               <h3 className="text-center font-black text-2xl text-[#5D4037] tracking-tight">
+//                 {selectedUser.fullName}
+//               </h3>
+//               <p className="text-center text-[10px] text-[#A67C52] font-black uppercase tracking-[3px] mt-1">
+//                 {selectedUser.occupation}
+//               </p>
+//               <p className="text-center text-[10px] text-gray-400 mt-2 uppercase tracking-widest flex items-center gap-1">
+//                 <MapPin size={12} /> {selectedUser.city}, {selectedUser.country}
+//               </p>
+//             </div>
+
+//             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+//               {/* Left Column */}
+//               <div className="space-y-3">
+//                 <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">Personal Info</h4>
+//                 <PopupDetail label="Gender" value={selectedUser.gender} />
+//                 <PopupDetail label="DOB" value={selectedUser.dob} />
+//                 <PopupDetail label="Birth Time" value={selectedUser.birthTime} />
+//                 <PopupDetail label="Marital Status" value={selectedUser.maritalStatus} />
+//                 <div className="mt-4 pt-4 border-t border-[#FAF6F3]">
+//                    <p className="text-[10px] font-black text-[#5D4037] uppercase mb-1 flex items-center gap-2">
+//                      <GraduationCap size={14} /> Education
+//                    </p>
+//                    <p className="text-xs text-gray-500 font-medium leading-relaxed">{selectedUser.education}</p>
+//                 </div>
+//               </div>
+
+//               {/* Right Column */}
+//               <div className="space-y-3">
+//                 <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">Family & Astrology</h4>
+//                 <PopupDetail label="Father" value={selectedUser.father} />
+//                 <PopupDetail label="Mother" value={selectedUser.mother} />
+//                 <PopupDetail label="Siblings" value={selectedUser.siblings} />
+                
+//                 <div className="mt-6 grid grid-cols-2 gap-3 bg-[#FAF6F3] p-4 rounded-2xl border border-[#EEEEEE]">
+//                   <div>
+//                     <p className="text-[9px] font-black text-[#A67C52] uppercase">Raasi</p>
+//                     <p className="text-xs font-bold text-[#5D4037]">{selectedUser.raasi}</p>
+//                   </div>
+//                   <div>
+//                     <p className="text-[9px] font-black text-[#A67C52] uppercase">Star</p>
+//                     <p className="text-xs font-bold text-[#5D4037]">{selectedUser.star}</p>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* JADHAGAM SECTION */}
+//             <div className="mt-10">
+//               {selectedUser.horoscope?.uploaded ? (
+//                 <div className="p-5 bg-[#FAF6F3] rounded-[24px] border border-[#EEEEEE] flex items-center justify-between group hover:border-[#A67C52] transition-all">
+//                   <div className="flex items-center gap-4">
+//                     <div className="p-3 bg-white rounded-xl text-[#A67C52] shadow-sm">
+//                       <FileText size={20} />
+//                     </div>
+//                     <div>
+//                       <p className="text-[11px] font-black text-[#5D4037] uppercase tracking-wider">📜 Horoscope / Jadhagam</p>
+//                       <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">Ready to View</p>
+//                     </div>
+//                   </div>
+//                   <a
+//                     href={`/${selectedUser.horoscope.fileUrl}`}
+//                     target="_blank"
+//                     rel="noreferrer"
+//                     className="px-6 py-2.5 text-[9px] bg-[#5D4037] text-white rounded-xl font-black uppercase tracking-widest hover:bg-[#A67C52] transition-all shadow-md"
+//                   >
+//                     Download
+//                   </a>
+//                 </div>
+//               ) : (
+//                 <div className="py-6 text-center border-2 border-dashed border-[#EEEEEE] rounded-[24px]">
+//                   <p className="text-[10px] font-black text-gray-300 uppercase tracking-[2px]">Horoscope Not Uploaded</p>
+//                 </div>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// /* Helper Component for Popup Rows */
+// const PopupDetail = ({ label, value }) => (
+//   <div className="flex justify-between items-center py-1 border-b border-[#FAF6F3]">
+//     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</span>
+//     <span className="text-[11px] font-black text-[#5D4037]">{value}</span>
+//   </div>
+// );
+
+// /* Main Card Detail Item - Styled with Admin Palette */
+// const DetailItem = ({ icon, label, value, isAccent }) => (
+//   <div className="flex flex-col min-w-0 w-full">
+//     <div className="flex items-center gap-1.5 mb-1">
+//       <span className="w-5 h-5 flex items-center justify-center bg-[#FAF6F3] rounded-md text-[12px]">
+//         {icon}
+//       </span>
+//       <span className="text-[9px] text-[#A67C52] uppercase font-black tracking-[0.15em] leading-none truncate">
+//         {label}
+//       </span>
+//     </div>
+//     <div className="ml-6">
+//       <span
+//         className={`text-[10px] font-black leading-tight block line-clamp-1 uppercase tracking-wider ${
+//           isAccent ? "text-[#5D4037]" : "text-gray-500"
+//         }`}
+//         title={value}
+//       >
+//         {value}
+//       </span>
+//     </div>
+//   </div>
+// );
+
+// export default ConnectionCard;
+
+
+
+import React, { useState,useEffect } from "react";
 import {
-  visibleConnections,
-  handleConnectLogic,
-  getUserById,
-} from "../../Data/UserDashboard";
+  getVisibleConnections,
+  getUserProfile,
+  sendConnectionRequest
+} from "../../api/userApi";
+
+import { Eye, MapPin, Briefcase, User, GraduationCap, FileText, X, Globe, Lock } from "lucide-react";
 
 const ConnectionCard = () => {
-  console.log("✅ ConnectionCard rendered")
+  const [connections, setConnections] = useState([]);
   const [activeTab, setActiveTab] = useState("Public");
-  const [selectedUser, setSelectedUser] = useState(null); // 👁 view state
+  const [selectedUser, setSelectedUser] = useState(null);
+  useEffect(() => {
+  async function loadData() {
+    const res = await getVisibleConnections();
+    if (res.success) {
+      setConnections(res.data);
+    }
+  }
+  loadData();
+}, []);
+
+const handleViewProfile = async (userId) => {
+  try {
+    const res = await getUserProfile(userId);
+    if (res.success) {
+      setSelectedUser(res.data);
+    } else {
+      alert(res.message || "Profile not found");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+const handleConnect = async (toUserId) => {
+  try {
+    const res = await sendConnectionRequest(toUserId);
+    alert(res.message || "Request sent");
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   return (
-    <div className="p-2 sm:p-4 bg-transparent space-y-10">
-      {/* ================= TAB HEADER ================= */}
+    <div className="p-2 sm:p-4 bg-transparent space-y-10 font-serif">
+      {/* ================= TAB HEADER - Brown Theme ================= */}
       <div className="flex items-center gap-4">
         <button
           onClick={() => setActiveTab("Public")}
-          className={`px-6 py-2 rounded-full text-[10px] font-extrabold tracking-[2px] uppercase transition-all ${
+          className={`px-8 py-2.5 rounded-full text-[10px] font-black tracking-[2px] uppercase transition-all duration-300 ${
             activeTab === "Public"
-              ? "bg-[#3B1E54] text-white shadow-lg"
-              : "bg-[#EEEEEE] text-[#3B1E54]"
+              ? "bg-[#5D4037] text-white shadow-xl -translate-y-0.5"
+              : "bg-white text-gray-400 border border-[#EEEEEE]"
           }`}
         >
-          🌍 Public
+          <span className="flex items-center gap-2"><Globe size={14}/> Public</span>
         </button>
 
         <button
           onClick={() => setActiveTab("Private")}
-          className={`px-6 py-2 rounded-full text-[10px] font-extrabold tracking-[2px] uppercase transition-all ${
+          className={`px-8 py-2.5 rounded-full text-[10px] font-black tracking-[2px] uppercase transition-all duration-300 ${
             activeTab === "Private"
-              ? "bg-[#3B1E54] text-white shadow-lg"
-              : "bg-[#EEEEEE] text-[#3B1E54]"
+              ? "bg-[#5D4037] text-white shadow-xl -translate-y-0.5"
+              : "bg-white text-gray-400 border border-[#EEEEEE]"
           }`}
         >
-          🔒 Private
+          <span className="flex items-center gap-2"><Lock size={14}/> Private</span>
         </button>
       </div>
 
       {/* ================= CARD GRID ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center max-w-7xl mx-auto">
-        {visibleConnections
-          .filter((u) => u.visibility === activeTab)
+        {connections
+          .filter((u) => u.privacy === activeTab)
           .map((u) => (
             <div
               key={u.id}
-              className="group relative bg-white rounded-[32px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#D4BEE4] transition-all duration-500 flex flex-col w-full max-w-[310px] h-fit pt-12 pb-6 px-6 overflow-visible"
+              className="group relative bg-white rounded-[32px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#A67C52]/30 transition-all duration-500 flex flex-col w-full max-w-[310px] h-fit pt-12 pb-6 px-6 overflow-visible"
             >
-              {/* 👁 EYE ICON – PUBLIC PROFILE ONLY */}
-              {u.visibility === "Public" && (
+              {/* 👁 EYE ICON */}
+              {u.privacy === "Public" && (
                 <button
-                  onClick={() => setSelectedUser(getUserById(u.id))}
-                  className="absolute top-4 right-4 p-2 rounded-full bg-white shadow-md
-                             hover:bg-[#3B1E54] hover:text-white transition"
+                  onClick={() => handleViewProfile(u.user_id)}
+                  
+                  className="absolute top-4 right-4 p-2.5 rounded-xl bg-[#FAF6F3] text-[#5D4037] shadow-sm 
+                             hover:bg-[#5D4037] hover:text-white transition-all duration-300"
                 >
-                  👁
+                  <Eye size={16} />
                 </button>
               )}
 
@@ -61,18 +340,12 @@ const ConnectionCard = () => {
               <div
                 className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full shadow-md border border-white transition-transform group-hover:scale-105"
                 style={{
-                  backgroundColor:
-                    u.visibility === "Public" ? "#D4BEE4" : "#EEEEEE",
-                  color: "#3B1E54",
+                  backgroundColor: u.visibility === "Public" ? "#FAF6F3" : "#EEEEEE",
+                  color: "#5D4037",
                 }}
               >
-                <span className="text-[11px] leading-none">
-                  {u.visibility === "Public" ? "📡" : "🔐"}
-                </span>
-                <span className="text-[8.5px] font-extrabold uppercase tracking-[1px] whitespace-nowrap leading-none">
-                  {u.visibility === "Public"
-                    ? "Public Mode"
-                    : "Private Mode"}
+                <span className="text-[9px] font-black uppercase tracking-[1.5px] whitespace-nowrap leading-none">
+                  {u.privacy === "Public" ? "📡 Public Mode" : "🔐 Private Mode"}
                 </span>
               </div>
 
@@ -84,21 +357,21 @@ const ConnectionCard = () => {
                   label="Gender"
                   value={u.gender}
                 />
-                <DetailItem icon="💰" label="Salary" value={u.salary} />
+                <DetailItem icon="💰" label="Salary" value={u.income} />
                 <DetailItem
                   icon="💼"
                   label="Work"
-                  value={u.work}
+                  value={u.occupation}
                   isAccent
                 />
-                <DetailItem icon="📍" label="Location" value={u.location} />
+                <DetailItem icon="📍" label="Location" value={u.city} />
               </div>
 
               {/* ACTION */}
-              <div className="mt-8 pt-5 border-t border-dashed border-[#D4BEE4]">
+              <div className="mt-8 pt-5 border-t border-dashed border-[#EEEEEE]">
                 <button
-                  onClick={() => handleConnectLogic(u.id, u.work)}
-                  className="w-full bg-[#3B1E54] text-white py-3.5 rounded-[20px] text-[9.5px] font-bold uppercase tracking-[2px] hover:bg-[#9B7EBD] transition-all transform active:scale-[0.94] shadow-lg hover:shadow-[#D4BEE4]"
+                  onClick={() => handleConnect(u.id)}
+                  className="w-full bg-[#5D4037] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#4a332c] transition-all transform active:scale-[0.96] shadow-lg shadow-stone-200"
                 >
                   Connect Now
                 </button>
@@ -107,135 +380,135 @@ const ConnectionCard = () => {
           ))}
       </div>
 
-      {/* ================= VIEW USER POPUP ================= */}
- {selectedUser && (
-  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    {/* Width increased to 600px for a better two-column feel */}
-    <div className="bg-white rounded-3xl p-6 w-full max-w-[600px] relative max-h-[90vh] overflow-y-auto shadow-2xl">
-      
-      {/* CLOSE BUTTON */}
-      <button
-        onClick={() => setSelectedUser(null)}
-        className="absolute top-4 right-4 text-xl hover:scale-110 transition-transform"
-      >
-        ❌
-      </button>
+      {/* ================= VIEW USER POPUP - Premium Styled ================= */}
+      {selectedUser && (
+        <div className="fixed inset-0 bg-[#5D4037]/40 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+          <div className="bg-white rounded-[40px] p-8 w-full max-w-[650px] relative max-h-[90vh] overflow-y-auto shadow-2xl border border-[#EEEEEE]">
+            
+            <button
+              onClick={() => setSelectedUser(null)}
+              className="absolute top-6 right-6 p-2 bg-[#FAF6F3] rounded-full text-[#5D4037] hover:bg-[#5D4037] hover:text-white transition-all"
+            >
+              <X size={20} />
+            </button>
 
-      {/* HEADER SECTION */}
-      <div className="flex flex-col items-center mb-6">
-        <img
-          src={selectedUser.photo || "https://i.pravatar.cc/300"}
-          alt=""
-          className="w-24 h-24 rounded-full shadow-md mb-3 border-2 border-gray-100"
-        />
-        <h3 className="text-center font-black text-xl text-gray-800">
-          {selectedUser.fullName}
-        </h3>
-        <p className="text-center text-sm text-[#3B1E54] font-semibold">
-          {selectedUser.occupation}
-        </p>
-        <p className="text-center text-xs text-gray-400 mt-1 uppercase tracking-wider">
-          📍 {selectedUser.city}, {selectedUser.country}
-        </p>
-      </div>
-
-      <hr className="mb-6" />
-
-      {/* TWO COLUMN DETAILS GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4 text-xs">
-        
-        {/* Left Column: Personal & Education */}
-        <div className="space-y-2">
-          <p className="flex justify-between"><b>Gender:</b> <span>{selectedUser.gender}</span></p>
-          <p className="flex justify-between"><b>DOB:</b> <span>{selectedUser.dob}</span></p>
-          <p className="flex justify-between"><b>Birth Time:</b> <span>{selectedUser.birthTime}</span></p>
-          <p className="flex justify-between"><b>Marital Status:</b> <span>{selectedUser.maritalStatus}</span></p>
-          <div className="pt-2 border-t border-gray-50 mt-2">
-            <p className="flex flex-col gap-1"><b>Education:</b> <span className="text-gray-600">{selectedUser.education}</span></p>
-            <p className="flex justify-between mt-2"><b>Income:</b> <span className="text-green-600 font-bold">{selectedUser.income}</span></p>
-          </div>
-        </div>
-
-        {/* Right Column: Family & Astrology */}
-        <div className="space-y-2">
-          <p className="flex justify-between"><b>Father:</b> <span>{selectedUser.father}</span></p>
-          <p className="flex justify-between"><b>Mother:</b> <span>{selectedUser.mother}</span></p>
-          <p className="flex justify-between"><b>Grandfather:</b> <span>{selectedUser.grandfather}</span></p>
-          <p className="flex justify-between"><b>Grandmother:</b> <span>{selectedUser.grandmother}</span></p>
-          <p className="flex justify-between"><b>Siblings:</b> <span>{selectedUser.siblings}</span></p>
-          
-          <div className="pt-2 border-t border-gray-50 mt-2">
-            <div className="grid grid-cols-2 gap-2 bg-gray-50 p-2 rounded-lg">
-              <p className="flex flex-col"><b>Raasi:</b> {selectedUser.raasi}</p>
-              <p className="flex flex-col"><b>Star:</b> {selectedUser.star}</p>
+            {/* HEADER SECTION */}
+            <div className="flex flex-col items-center mb-8">
+              <div className="relative mb-4">
+                 <img
+                  src={selectedUser.photo || "https://i.pravatar.cc/300"}
+                  alt=""
+                  className="w-28 h-28 rounded-[30px] shadow-xl border-4 border-[#FAF6F3] object-cover"
+                />
+                <div className="absolute -bottom-2 -right-2 bg-[#A67C52] text-white p-2 rounded-lg shadow-lg">
+                   <User size={16} />
+                </div>
+              </div>
+              <h3 className="text-center font-black text-2xl text-[#5D4037] tracking-tight">
+                {selectedUser.full_name}
+              </h3>
+              <p className="text-center text-[10px] text-[#A67C52] font-black uppercase tracking-[3px] mt-1">
+                {selectedUser.occupation}
+              </p>
+              <p className="text-center text-[10px] text-gray-400 mt-2 uppercase tracking-widest flex items-center gap-1">
+                <MapPin size={12} /> {selectedUser.city}, {selectedUser.country}
+              </p>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* FULL WIDTH SECTIONS */}
-      <div className="mt-6 text-xs space-y-4">
-        <hr />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-           <p><b>Email:</b> <span className="text-blue-600">{selectedUser.email}</span></p>
-           <p><b>Birth Place:</b> {selectedUser.birthPlace}</p>
-        </div>
-        
-        <p className="bg-slate-50 p-3 rounded-xl leading-relaxed">
-          <b>Address:</b> {selectedUser.address}, {selectedUser.city}, {selectedUser.country}
-        </p>
-
-        {/* JADHAGAM / HOROSCOPE */}
-        <div className="mt-6">
-          {selectedUser.horoscope?.uploaded ? (
-            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-gray-800">📜 Jadhagam</p>
-                <p className="text-[10px] text-gray-500 truncate max-w-[150px]">
-                  {selectedUser.horoscope.fileName || "Horoscope File"}
-                </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+              {/* Left Column */}
+              <div className="space-y-3">
+                <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">Personal Info</h4>
+                <PopupDetail label="Gender" value={selectedUser.gender} />
+                <PopupDetail label="DOB" value={selectedUser.dob} />
+                <PopupDetail label="Birth Time" value={selectedUser.birth_time} />
+                <PopupDetail label="Marital Status" value={selectedUser.marital_status} />
+                <div className="mt-4 pt-4 border-t border-[#FAF6F3]">
+                   <p className="text-[10px] font-black text-[#5D4037] uppercase mb-1 flex items-center gap-2">
+                     <GraduationCap size={14} /> Education
+                   </p>
+                   <p className="text-xs text-gray-500 font-medium leading-relaxed">{selectedUser.education}</p>
+                </div>
               </div>
 
-              <a
-                href={`/${selectedUser.horoscope.fileUrl}`}
-                target="_blank"
-                rel="noreferrer"
-                className="px-5 py-2 text-[10px] bg-[#3B1E54] text-white rounded-xl font-bold hover:bg-[#2a153d] transition-colors shadow-sm"
-              >
-                View / Download
-              </a>
+              {/* Right Column */}
+              <div className="space-y-3">
+                <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">Family & Astrology</h4>
+                <PopupDetail label="Father" value={selectedUser.father_name} />
+                <PopupDetail label="Mother" value={selectedUser.mother_name} />
+                <PopupDetail label="Siblings" value={selectedUser.siblings} />
+                
+                <div className="mt-6 grid grid-cols-2 gap-3 bg-[#FAF6F3] p-4 rounded-2xl border border-[#EEEEEE]">
+                  <div>
+                    <p className="text-[9px] font-black text-[#A67C52] uppercase">Raasi</p>
+                    <p className="text-xs font-bold text-[#5D4037]">{selectedUser.raasi}</p>
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-black text-[#A67C52] uppercase">Star</p>
+                    <p className="text-xs font-bold text-[#5D4037]">{selectedUser.star}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-          ) : (
-            <p className="text-center text-xs text-gray-400 py-4 bg-gray-50 rounded-xl border-2 border-dashed">
-              📜 Jadhagam not uploaded
-            </p>
-          )}
-        </div>
-      </div>
 
-    </div>
-  </div>
-)}
+            {/* JADHAGAM SECTION */}
+            <div className="mt-10">
+              {selectedUser.horoscope_uploaded ? (
+                <div className="p-5 bg-[#FAF6F3] rounded-[24px] border border-[#EEEEEE] flex items-center justify-between group hover:border-[#A67C52] transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-white rounded-xl text-[#A67C52] shadow-sm">
+                      <FileText size={20} />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-black text-[#5D4037] uppercase tracking-wider">📜 Horoscope / Jadhagam</p>
+                      <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">Ready to View</p>
+                    </div>
+                  </div>
+                  <a
+                    href={`/${selectedUser.horoscope_file_url}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-6 py-2.5 text-[9px] bg-[#5D4037] text-white rounded-xl font-black uppercase tracking-widest hover:bg-[#A67C52] transition-all shadow-md"
+                  >
+                    Download
+                  </a>
+                </div>
+              ) : (
+                <div className="py-6 text-center border-2 border-dashed border-[#EEEEEE] rounded-[24px]">
+                  <p className="text-[10px] font-black text-gray-300 uppercase tracking-[2px]">Horoscope Not Uploaded</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-// SUB COMPONENT – UNCHANGED
+/* Helper Component for Popup Rows */
+const PopupDetail = ({ label, value }) => (
+  <div className="flex justify-between items-center py-1 border-b border-[#FAF6F3]">
+    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</span>
+    <span className="text-[11px] font-black text-[#5D4037]">{value}</span>
+  </div>
+);
+
+/* Main Card Detail Item - Styled with Admin Palette */
 const DetailItem = ({ icon, label, value, isAccent }) => (
   <div className="flex flex-col min-w-0 w-full">
-    <div className="flex items-center gap-1.5 mb-0.5">
-      <span className="w-4 shrink-0 flex justify-center text-[15px] leading-none opacity-80">
+    <div className="flex items-center gap-1.5 mb-1">
+      <span className="w-5 h-5 flex items-center justify-center bg-[#FAF6F3] rounded-md text-[12px]">
         {icon}
       </span>
-      <span className="text-[10px] text-[#9B7EBD] uppercase font-bold tracking-[0.12em] leading-none truncate">
+      <span className="text-[9px] text-[#A67C52] uppercase font-black tracking-[0.15em] leading-none truncate">
         {label}
       </span>
     </div>
-
-    <div className="ml-5 pr-1 min-h-[22px]">
+    <div className="ml-6">
       <span
-        className={`text-[10px] font-bold leading-snug block line-clamp-2 ${
-          isAccent ? "text-purple-600" : "text-green-500"
+        className={`text-[10px] font-black leading-tight block line-clamp-1 uppercase tracking-wider ${
+          isAccent ? "text-[#5D4037]" : "text-gray-500"
         }`}
         title={value}
       >
@@ -246,3 +519,6 @@ const DetailItem = ({ icon, label, value, isAccent }) => (
 );
 
 export default ConnectionCard;
+
+
+
