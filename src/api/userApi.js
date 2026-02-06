@@ -53,3 +53,65 @@ export async function getReceivedConnections() {
 
   return await res.json();
 }
+
+//// change by vinoth without check
+
+/* =======================
+   CONNECTION LIST APIs
+======================= */
+
+// // 🔹 Received connections (MyConnection – left side)
+// export async function getReceivedConnections() {
+//   const res = await fetch(`${BASE_URL}/connections/received`, {
+//     headers: authHeader,
+//   });
+//   return res.json();
+// }
+
+// // 🔹 Sent connections (MyConnection – right side)
+// export async function getSentConnections() {
+//   const res = await fetch(`${BASE_URL}/connections/sent`, {
+//     headers: authHeader,
+//   });
+//   return res.json();
+// }
+
+// /* =======================
+//    CONNECTION ACTION APIs
+// ======================= */
+
+// // ✅ Accept connection
+// export async function acceptConnection(connectionId) {
+//   const res = await fetch(
+//     `${BASE_URL}/connections/${connectionId}/accept`,
+//     {
+//       method: "POST",
+//       headers: authHeader,
+//     }
+//   );
+//   return res.json();
+// }
+
+// // ❌ Reject connection
+// export async function rejectConnection(connectionId) {
+//   const res = await fetch(
+//     `${BASE_URL}/connections/${connectionId}/reject`,
+//     {
+//       method: "POST",
+//       headers: authHeader,
+//     }
+//   );
+//   return res.json();
+// }
+
+// // ↩️ Withdraw sent request
+// export async function withdrawConnection(connectionId) {
+//   const res = await fetch(
+//     `${BASE_URL}/connections/${connectionId}`,
+//     {
+//       method: "DELETE",
+//       headers: authHeader,
+//     }
+//   );
+//   return res.json();
+
