@@ -22,15 +22,14 @@ const ConnectionCard = () => {
   const [connections, setConnections] = useState([]);
   const [activeTab, setActiveTab] = useState("Public");
   const [selectedUser, setSelectedUser] = useState(null);
-  // ✅ ADDED (ONLY FOR GENDER FILTER)
   const [myGender, setMyGender] = useState(null);
+  const [loadingId, setLoadingId] = useState(null);
 
+  // Load connections
   useEffect(() => {
     async function loadData() {
       const res = await getVisibleConnections();
-      if (res.success) {
-        setConnections(res.data);
-      }
+      if (res.success) setConnections(res.data);
     }
     loadData();
   }, []);
@@ -90,7 +89,9 @@ const ConnectionCard = () => {
 
   return (
     <div className="p-2 sm:p-4 bg-transparent space-y-10 font-serif">
-      {/* ================= TAB HEADER - Brown Theme ================= */}
+      <Toaster position="top-right" reverseOrder={false} />
+
+      {/* ================= TAB HEADER ================= */}
       <div className="flex items-center gap-4">
         <button
           onClick={() => setActiveTab("Public")}
@@ -173,17 +174,11 @@ const ConnectionCard = () => {
                 />
 
                 <DetailItem icon="💰" label="Salary" value={u.income} />
-                <DetailItem
-                  icon="💼"
-                  label="Work"
-                  value={u.occupation}
-                  isAccent
-                />
+                <DetailItem icon="💼" label="Work" value={u.occupation} isAccent />
                 <DetailItem icon="📍" label="Location" value={u.city} />
               </div>
 
-              {/* ACTION */}
-
+              {/* ACTION BUTTON */}
               {u.privacy === "Private" && (
                 <div className="mt-8 pt-5 border-t border-dashed border-[#EEEEEE]">
                   <button
@@ -198,7 +193,7 @@ const ConnectionCard = () => {
           ))}
       </div>
 
-      {/* ================= VIEW USER POPUP - Premium Styled ================= */}
+      {/* ================= VIEW USER POPUP ================= */}
       {selectedUser && (
         <div className="fixed inset-0 bg-[#5D4037]/40 backdrop-blur-md flex items-center justify-center z-[100] p-4">
           <div className="bg-white rounded-[40px] p-8 w-full max-w-[650px]  overflow-y-auto shadow-2xl border border-[#EEEEEE]">
@@ -390,7 +385,7 @@ const ConnectionCard = () => {
   );
 };
 
-/* Helper Component for Popup Rows */
+/* ================= HELPER COMPONENTS ================= */
 const PopupDetail = ({ label, value }) => (
   <div className="flex justify-between items-center py-1 border-b border-[#FAF6F3]">
     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -400,24 +395,14 @@ const PopupDetail = ({ label, value }) => (
   </div>
 );
 
-/* Main Card Detail Item - Styled with Admin Palette */
 const DetailItem = ({ icon, label, value, isAccent }) => (
   <div className="flex flex-col min-w-0 w-full">
     <div className="flex items-center gap-1.5 mb-1">
-      <span className="w-5 h-5 flex items-center justify-center bg-[#FAF6F3] rounded-md text-[12px]">
-        {icon}
-      </span>
-      <span className="text-[9px] text-[#A67C52] uppercase font-black tracking-[0.15em] leading-none truncate">
-        {label}
-      </span>
+      <span className="w-5 h-5 flex items-center justify-center bg-[#FAF6F3] rounded-md text-[12px]">{icon}</span>
+      <span className="text-[9px] text-[#A67C52] uppercase font-black tracking-[0.15em] leading-none truncate">{label}</span>
     </div>
     <div className="ml-6">
-      <span
-        className={`text-[10px] font-black leading-tight block line-clamp-1 uppercase tracking-wider ${
-          isAccent ? "text-[#5D4037]" : "text-gray-500"
-        }`}
-        title={value}
-      >
+      <span className={`text-[10px] font-black leading-tight block line-clamp-1 uppercase tracking-wider ${isAccent ? "text-[#5D4037]" : "text-gray-500"}`} title={value}>
         {value}
       </span>
     </div>
