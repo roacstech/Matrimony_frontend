@@ -155,9 +155,9 @@ import { Check, X, MapPin, Mail, User } from "lucide-react";
 
 // ✅ API functions import
 import {
-  getPendingForms,
-  approveUser,
-  rejectUser,
+  getPendingUsers,
+  adminApproveUser,
+  adminRejectUser,
 } from "../../api/adminApi";
 
 const PendingForms = () => {
@@ -167,7 +167,7 @@ const PendingForms = () => {
   useEffect(() => {
     const loadPending = async () => {
       try {
-        const users = await getPendingForms();
+        const users = await getPendingUsers();
         setPending(users);
       } catch (error) {
         console.error("Failed to load pending requests", error);
@@ -180,7 +180,7 @@ const PendingForms = () => {
   // ✅ APPROVE (cleaned)
   const handleAccept = async (item) => {
     try {
-      await approveUser(item.id);
+      await adminApproveUser(item.id);
       setPending((prev) => prev.filter((p) => p.id !== item.id));
       toast.success("User approved & mail sent ✅");
     } catch {
@@ -191,7 +191,7 @@ const PendingForms = () => {
   // ❌ REJECT (cleaned)
   const handleReject = async (item) => {
     try {
-      await rejectUser(item.id);
+      await  adminRejectUser(item.id, "Profile details not sufficient");
       setPending((prev) => prev.filter((p) => p.id !== item.id));
       toast.error("User rejected ❌");
     } catch {

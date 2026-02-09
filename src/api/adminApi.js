@@ -5,36 +5,36 @@ const getAuthHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
 });
 
-// 🔹 Get pending users
-export const getPendingForms = async () => {
-  const res = await fetch(`${BASE_URL}/forms/pending`, {
-    headers: getAuthHeader(),
-  });
-  const data = await res.json();
+// // 🔹 Get pending users
+// export const getPendingForms = async () => {
+//   const res = await fetch(`${BASE_URL}/forms/pending`, {
+//     headers: getAuthHeader(),
+//   });
+//   const data = await res.json();
 
-  // backend structure ku adjust
-  return data?.data?.data || [];
-};
+//   // backend structure ku adjust
+//   return data?.data?.data || [];
+// };
 
-// 🔹 Reject user
-export const rejectUser = async (id) => {
-  return fetch(`${BASE_URL}/reject/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      ...getAuthHeader(),
-    },
-    body: JSON.stringify({ reason: "Profile incomplete" }),
-  });
-};
+// // 🔹 Reject user
+// export const rejectUser = async (id) => {
+//   return fetch(`${BASE_URL}/reject/${id}`, {
+//     method: "PUT",
+//     headers: {
+//       "Content-Type": "application/json",
+//       ...getAuthHeader(),
+//     },
+//     body: JSON.stringify({ reason: "Profile incomplete" }),
+//   });
+// };
 
-// 🔹 Approve user (backend ready illa naalum)
-export const approveUser = async (id) => {
-  return fetch(`${BASE_URL}/approve/${id}`, {
-    method: "PUT",
-    headers: getAuthHeader(),
-  });
-};
+// // 🔹 Approve user (backend ready illa naalum)
+// export const approveUser = async (id) => {
+//   return fetch(`${BASE_URL}/approve/${id}`, {
+//     method: "PUT",
+//     headers: getAuthHeader(),
+//   });
+// };
 
 
 
@@ -102,14 +102,18 @@ export const adminApproveUser = async (profileId) => {
 /* ================================
    ADMIN REJECT USER
 ================================ */
-export const adminRejectUser = async (profileId) => {
+export const adminRejectUser = async (profileId, reason) => {
   const res = await fetch(
     `${BASE_URL}/users/${profileId}/reject`,
     {
       method: "PUT",
       headers: {
+        "Content-Type": "application/json",
         ...getAuthHeader(),
       },
+      body: JSON.stringify({
+        reason: reason || "Not specified",
+      }),
     }
   );
 
@@ -121,6 +125,7 @@ export const adminRejectUser = async (profileId) => {
 
   return data;
 };
+
 
 /* ================================
    TOGGLE PUBLIC / PRIVATE
