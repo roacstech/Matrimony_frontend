@@ -233,7 +233,7 @@ const PendingForms = () => {
               </div>
               <div>
                 <p className="text-[15px] font-black text-[#5D4037] leading-none mb-2">
-                  {item.profile?.fullName || "N/A"}
+                  {item.profile?.full_name || "N/A"}
                 </p>
                 <div className="flex flex-col gap-1">
                   <p className="flex items-center gap-1.5 text-[10px] font-bold text-stone-400 lowercase">

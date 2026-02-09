@@ -253,18 +253,33 @@ import {
 import { Eye, MapPin, Briefcase, User, GraduationCap, FileText, X, Globe, Lock } from "lucide-react";
 
 const ConnectionCard = () => {
+
   const [connections, setConnections] = useState([]);
   const [activeTab, setActiveTab] = useState("Public");
   const [selectedUser, setSelectedUser] = useState(null);
+  // ✅ ADDED (ONLY FOR GENDER FILTER)
+  const [myGender, setMyGender] = useState(null);
+
   useEffect(() => {
-  async function loadData() {
-    const res = await getVisibleConnections();
-    if (res.success) {
-      setConnections(res.data);
+    async function loadData() {
+      const res = await getVisibleConnections();
+      if (res.success) {
+        setConnections(res.data);
+      }
     }
-  }
-  loadData();
-}, []);
+    loadData();
+  }, []);
+ useEffect(() => {
+    async function loadMyGender() {
+      const res = await getUserProfile("me");
+      if (res.success) {
+        setMyGender(res.data.gender);
+      }
+    }
+    loadMyGender();
+  }, []);
+
+
 
 const handleViewProfile = async (userId) => {
   try {
@@ -278,6 +293,8 @@ const handleViewProfile = async (userId) => {
     console.error(err);
   }
 };
+
+
 const handleConnect = async (toUserId) => {
   try {
     const res = await sendConnectionRequest(toUserId);
@@ -286,6 +303,13 @@ const handleConnect = async (toUserId) => {
     console.error(err);
   }
 };
+// ✅ ADDED (SEPARATE GENDER FILTER FUNCTION)
+  const genderFilter = (profileGender) => {
+    if (!myGender) return true;
+    if (myGender === "Male" && profileGender === "Female") return true;
+    if (myGender === "Female" && profileGender === "Male") return true;
+    return false;
+  };
 
 
   return (
@@ -318,7 +342,15 @@ const handleConnect = async (toUserId) => {
       {/* ================= CARD GRID ================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center max-w-7xl mx-auto">
         {connections
-          .filter((u) => u.privacy === activeTab)
+          .filter((u) =>{
+             if (u.privacy !== activeTab) return false;
+            if (!genderFilter(u.gender)) return false; // ✅ ONLY LOGIC CHANGE
+            return true;
+            
+          })
+            
+            
+           
           .map((u) => (
             <div
               key={u.id}
@@ -368,6 +400,8 @@ const handleConnect = async (toUserId) => {
               </div>
 
               {/* ACTION */}
+
+              {u.privacy === "Private" && (
               <div className="mt-8 pt-5 border-t border-dashed border-[#EEEEEE]">
                 <button
                   onClick={() => handleConnect(u.id)}
@@ -376,6 +410,7 @@ const handleConnect = async (toUserId) => {
                   Connect Now
                 </button>
               </div>
+              )}
             </div>
           ))}
       </div>
