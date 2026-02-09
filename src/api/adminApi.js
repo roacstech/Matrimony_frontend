@@ -1,24 +1,34 @@
 const BASE_URL = "http://localhost:5000/api/admin";
 
-// token helper
+/* ===============================
+   AUTH HEADER
+================================ */
 const getAuthHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
 });
 
-// 🔹 Get pending users
+/* ===============================
+   GET PENDING FORMS
+================================ */
+// ../../api/adminApi.js
 export const getPendingForms = async () => {
-  const res = await fetch(`${BASE_URL}/forms/pending`, {
-    headers: getAuthHeader(),
-  });
-  const data = await res.json();
-
-  // backend structure ku adjust
-  return data?.data?.data || [];
+  try {
+    const res = await fetch("http://localhost:5000/api/admin/forms/pending");
+    const data = await res.json();
+    return data.data.data; // ✅ this is the array of pending users
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 };
 
-// 🔹 Reject user
+
+
+/* ===============================
+   REJECT USER
+================================ */
 export const rejectUser = async (id) => {
-  return fetch(`${BASE_URL}/reject/${id}`, {
+  const res = await fetch(`${BASE_URL}/reject/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -26,26 +36,28 @@ export const rejectUser = async (id) => {
     },
     body: JSON.stringify({ reason: "Profile incomplete" }),
   });
+
+  return res.json();
 };
 
-// 🔹 Approve user (backend ready illa naalum)
+/* ===============================
+   APPROVE USER
+================================ */
 export const approveUser = async (id) => {
-  return fetch(`${BASE_URL}/approve/${id}`, {
+  const res = await fetch(`${BASE_URL}/approve/${id}`, {
     method: "PUT",
     headers: getAuthHeader(),
   });
+
+  return res.json();
 };
 
-
-
-/* ================================
-   GET ALL USERS (AllUsers table)
+/* ===============================
+   GET ALL USERS (AllUsers.jsx)
 ================================ */
 export const getAllUsers = async () => {
   const res = await fetch(`${BASE_URL}/users`, {
-    headers: {
-      ...getAuthHeader(),
-    },
+    headers: getAuthHeader(),
   });
 
   const data = await res.json();
@@ -54,17 +66,15 @@ export const getAllUsers = async () => {
     throw new Error(data?.message || "Failed to fetch users");
   }
 
-  return data.data; // 👈 direct array
+  return data.data; // 👈 array of users
 };
 
-/* ================================
-   GET PENDING USERS (Admin approve list)
+/* ===============================
+   GET PENDING USERS
 ================================ */
 export const getPendingUsers = async () => {
   const res = await fetch(`${BASE_URL}/users/pending`, {
-    headers: {
-      ...getAuthHeader(),
-    },
+    headers: getAuthHeader(),
   });
 
   const data = await res.json();
@@ -76,19 +86,14 @@ export const getPendingUsers = async () => {
   return data.data;
 };
 
-/* ================================
+/* ===============================
    ADMIN APPROVE USER
 ================================ */
 export const adminApproveUser = async (profileId) => {
-  const res = await fetch(
-    `${BASE_URL}/users/${profileId}/approve`,
-    {
-      method: "PUT",
-      headers: {
-        ...getAuthHeader(),
-      },
-    }
-  );
+  const res = await fetch(`${BASE_URL}/users/${profileId}/approve`, {
+    method: "PUT",
+    headers: getAuthHeader(),
+  });
 
   const data = await res.json();
 
@@ -99,19 +104,14 @@ export const adminApproveUser = async (profileId) => {
   return data;
 };
 
-/* ================================
+/* ===============================
    ADMIN REJECT USER
 ================================ */
 export const adminRejectUser = async (profileId) => {
-  const res = await fetch(
-    `${BASE_URL}/users/${profileId}/reject`,
-    {
-      method: "PUT",
-      headers: {
-        ...getAuthHeader(),
-      },
-    }
-  );
+  const res = await fetch(`${BASE_URL}/users/${profileId}/reject`, {
+    method: "PUT",
+    headers: getAuthHeader(),
+  });
 
   const data = await res.json();
 
@@ -122,19 +122,18 @@ export const adminRejectUser = async (profileId) => {
   return data;
 };
 
-/* ================================
-   TOGGLE PUBLIC / PRIVATE
+/* ===============================
+   TOGGLE USER VISIBILITY (IMPORTANT)
 ================================ */
-export const toggleUserVisibility = async (profileId) => {
-  const res = await fetch(
-    `${BASE_URL}/users/${profileId}/visibility`,
-    {
-      method: "PUT",
-      headers: {
-        ...getAuthHeader(),
-      },
-    }
-  );
+export const adminToggleVisibility = async ({ id, key }) => {
+  const res = await fetch(`${BASE_URL}/users/visibility`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeader(),
+    },
+    body: JSON.stringify({ id, key }),
+  });
 
   const data = await res.json();
 
@@ -142,29 +141,25 @@ export const toggleUserVisibility = async (profileId) => {
     throw new Error(data?.message || "Visibility update failed");
   }
 
-  return data; // { success, isPublic }
+  return data; // { success, is_active }
 };
 
-// ================= DASHBOARD STATS =================
+/* ===============================
+   ADMIN DASHBOARD STATS
+================================ */
 export const getAdminDashboard = async () => {
   const res = await fetch(`${BASE_URL}/dashboard`, {
-    headers: {
-      ...getAuthHeader(),
-    },
+    headers: getAuthHeader(),
   });
 
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data?.message || "Failed to fetch dashboard data");
+    throw new Error(data?.message || "Failed to fetch dashboard");
   }
 
-  return data.data; 
-  // {
-  //   totalUsers,
-  //   activeUsers,
-  //   inactiveUsers,
-  //   maleUsers,
-  //   femaleUsers
-  // }
+  return data.data;
 };
+
+
+

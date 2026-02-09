@@ -1,17 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { getAdminDashboard } from "../../api/adminApi";
 
 /* ================= CIRCULAR STAT COMPONENT ================= */
 const CircularStat = ({ label, value, total, color1, color2 }) => {
   const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+
   const radius = 36;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (circumference * percentage) / 100;
+
+  // ✅ Unique gradient ID (prevents collision)
+  const gradientId = useMemo(
+    () => `grad-${label.replace(/\s+/g, "-")}-${Math.random()}`,
+    []
+  );
 
   return (
     <div className="flex flex-col items-center justify-center p-4 sm:p-6 bg-white rounded-[28px] shadow-sm border border-[#EEEEEE] hover:shadow-md transition-all group">
       <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 128 128">
+
+          {/* ✅ Gradient Definition */}
+          <defs>
+            <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor={color1} />
+              <stop offset="100%" stopColor={color2} />
+            </linearGradient>
+          </defs>
+
           {/* Background circle */}
           <circle
             cx="64"
@@ -27,28 +43,24 @@ const CircularStat = ({ label, value, total, color1, color2 }) => {
             cx="64"
             cy="64"
             r={radius}
-            stroke={`url(#grad-${label.replace(/\s+/g, "-")}-${value})`}
+            stroke={`url(#${gradientId})`}
             strokeWidth="8"
             strokeDasharray={circumference}
             strokeDashoffset={circumference}
             strokeLinecap="round"
             fill="transparent"
-            className="transition-all duration-[1500ms] ease-out"
             style={{
-              "--target-offset": offset,
-              animation: `spin-load 1.5s ease-out forwards`,
+              animation: `progress 1.5s ease-out forwards`,
+              "--offset": offset,
             }}
           />
-
-        
         </svg>
 
-        {/* Center text */}
+        {/* Center value */}
         <div className="absolute flex flex-col items-center animate-fade-in">
           <span className="text-xl sm:text-2xl font-black text-[#5D4037]">
             {value}
           </span>
-          
         </div>
       </div>
 
@@ -57,27 +69,29 @@ const CircularStat = ({ label, value, total, color1, color2 }) => {
       </h4>
 
       {/* Animations */}
-      <style jsx>{`
-        @keyframes spin-load {
+      <style>{`
+        @keyframes progress {
           from {
             stroke-dashoffset: ${circumference};
           }
           to {
-            stroke-dashoffset: var(--target-offset);
+            stroke-dashoffset: var(--offset);
           }
         }
+
         @keyframes fade-in {
           from {
             opacity: 0;
-            transform: translateY(5px);
+            transform: translateY(6px);
           }
           to {
             opacity: 1;
             transform: translateY(0);
           }
         }
+
         .animate-fade-in {
-          animation: fade-in 1s ease-out forwards;
+          animation: fade-in 0.8s ease-out forwards;
         }
       `}</style>
     </div>
@@ -100,18 +114,19 @@ const AdminChart = () => {
     const fetchStats = () => {
       getAdminDashboard()
         .then((data) => {
-          setStats(data);
+          setStats({
+            totalUsers: Number(data.totalUsers),
+            activeUsers: Number(data.activeUsers),
+            inactiveUsers: Number(data.inactiveUsers),
+            maleUsers: Number(data.maleUsers),
+            femaleUsers: Number(data.femaleUsers),
+          });
           setError("");
         })
-        .catch(() => {
-          setError("Failed to load dashboard data");
-        });
+        .catch(() => setError("Failed to load dashboard data"));
     };
 
-    // initial load
     fetchStats();
-
-    // 🔥 polling every 10 seconds (DB-based dynamic update)
     const interval = setInterval(fetchStats, 10000);
 
     return () => clearInterval(interval);
@@ -121,14 +136,7 @@ const AdminChart = () => {
     <div className="bg-[#FAF6F3]/50 p-4 sm:p-6 md:p-8 rounded-[40px] border border-[#EEEEEE]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-        <div>
-          <h3 className="text-2xl sm:text-3xl font-black text-[#5D4037] tracking-tight">
-            System Insights
-          </h3>
-          <p className="text-[#A67C52] text-[10px] font-bold uppercase tracking-[3px] mt-1">
-            Real-time user distribution
-          </p>
-        </div>
+       
 
         <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-[#EEEEEE] flex items-center gap-3">
           <div className="w-2 h-2 bg-[#A67C52] rounded-full animate-pulse"></div>
