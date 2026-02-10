@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getImageUrl } from "../../utils/imageHelper";
 import {
   Eye,
   ArrowLeft,
@@ -33,6 +34,7 @@ const AllUsers = () => {
     })
     .catch(console.error);
 }, []);
+console.log("Get All User:",getAllUsers)
 
 
   /* ================= TOGGLE FUNCTION (NUMBER BASED) ================= */
@@ -49,7 +51,7 @@ const AllUsers = () => {
   setData((prev) =>
     prev.map((u) =>
       u.id === id
-        ? { ...u, is_active: Number(res.is_active) } // ✅
+        ? { ...u, is_active: Number(res.is_active) } 
         : u
     )
   );
@@ -64,6 +66,9 @@ const AllUsers = () => {
 
   /* ================= FILTER LOGIC ================= */
   const filteredUsers = data.filter((u) => {
+    console.log("PHOTO:", u.photo);
+console.log("PHOTO URL:", getImageUrl(u.photo));
+
     if (filter === "all") return true;
     if (filter === "male" || filter === "female")
       return u.gender?.toLowerCase() === filter;
@@ -71,6 +76,10 @@ const AllUsers = () => {
     if (filter === "inactive") return u.is_active === 0;
     return true;
   });
+
+  console.log("Selected User",selectedUser)
+  
+
 
   /* ================= 1. PROFILE DETAIL VIEW ================= */
   if (selectedUser) {
@@ -88,7 +97,12 @@ const AllUsers = () => {
             <div className="flex items-center gap-4 md:gap-5">
               <div className="w-16 h-16 md:w-20 md:h-20 rounded-[22px] md:rounded-[28px] bg-[#5D4037] overflow-hidden border-4 border-[#FAF6F3] shadow-md flex items-center justify-center flex-shrink-0">
                 {selectedUser.photo ? (
-                  <img src={selectedUser.photo} alt="" className="w-full h-full object-cover" />
+                  <img
+  src={`http://localhost:5000/uploads/photos/${u.photo}`}
+  alt=""
+/>
+
+
                 ) : (
                   <span className="text-white text-2xl md:text-3xl font-black">{selectedUser.fullName.charAt(0)}</span>
                 )}
