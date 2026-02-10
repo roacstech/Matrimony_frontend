@@ -63,36 +63,36 @@ export async function sendConnectionRequest(profileId, toUserId) {
    CONNECTION LIST APIs
 ======================= */
 
-//🔹 Received connections (MyConnection – left side)
-export async function getReceivedConnections() {
-  const res = await fetch(`${BASE_URL}/connections/received`, {
-    headers: authHeader,
-  });
+// //🔹 Received connections (MyConnection – left side)
+// export async function getReceivedConnections() {
+//   const res = await fetch(`${BASE_URL}/connections/received`, {
+//     headers: authHeader,
+//   });
 
-  console.log("tyestt", res);
-  return res.json();
-}
+//   console.log("tyestt", res);
+//   return res.json();
+// }
 
-// 🔹 Sent connections (MyConnection – right side)
-export async function getSentConnections() {
-  const res = await fetch(`${BASE_URL}/connections/sent`, {
-    headers: authHeader,
-  });
-  return res.json();
-}
+// // 🔹 Sent connections (MyConnection – right side)
+// export async function getSentConnections() {
+//   const res = await fetch(`${BASE_URL}/connections/sent`, {
+//     headers: authHeader,
+//   });
+//   return res.json();
+// }
 
 /* =======================
     CONNECTION ACTION APIs
  ======================= */
 
-//✅ Accept connection
-export async function acceptConnection(connectionId) {
-  const res = await fetch(`${BASE_URL}/connections/${connectionId}/accept`, {
-    method: "POST",
-    headers: authHeader,
-  });
-  return res.json();
-}
+// //✅ Accept connection
+// export async function acceptConnection(connectionId) {
+//   const res = await fetch(`${BASE_URL}/connections/${connectionId}/accept`, {
+//     method: "POST",
+//     headers: authHeader,
+//   });
+//   return res.json();
+// }
 
 //  // ❌ Reject connection
 //  export async function rejectConnection(connectionId) {
@@ -110,25 +110,91 @@ export async function acceptConnection(connectionId) {
 
 //  }
 
-// 🔹 Reject connection (USER)
-export const rejectConnection = async (connectionId) => {
-  return fetch(`${BASE_URL}/connections/${connectionId}/reject`, {
-    method: "PUT", // 👈 same as admin
-    headers: {
-      "Content-Type": "application/json",
-      ...getAuthHeader(), // 👈 JWT token
-    },
-    body: JSON.stringify({
-      reason: "Not interested", // optional
-    }),
-  });
-};
+// // 🔹 Reject connection (USER)
+// export const rejectConnection = async (connectionId) => {
+//   return fetch(`${BASE_URL}/connections/${connectionId}/reject`, {
+//     method: "PUT", // 👈 same as admin
+//     headers: {
+//       "Content-Type": "application/json",
+//       ...getAuthHeader(), // 👈 JWT token
+//     },
+//     body: JSON.stringify({
+//       reason: "Not interested", // optional
+//     }),
+//   });
+// };
 
 // ↩️ Withdraw sent request
+// export async function withdrawConnection(connectionId) {
+//   const res = await fetch(`${BASE_URL}/connections/${connectionId}`, {
+//     method: "DELETE",
+//     headers: authHeader,
+//   });
+//   return res.json();
+// }
+
+
+// My user connections
+const BASE_URL_ = "http://localhost:5000/api/user";
+
+/* =======================
+   CONNECTION LIST APIs
+======================= */
+
+// 📥 Received
+export async function getReceivedConnections() {
+  const res = await fetch(
+    `${BASE_URL_}/connections/received`,
+    { headers: getAuthHeader() }
+  );
+  return res.json();
+}
+
+// 📤 Sent
+export async function getSentConnections() {
+  const res = await fetch(
+    `${BASE_URL_}/connections/sent`,
+    { headers: getAuthHeader() }
+  );
+  return res.json();
+}
+
+/* =======================
+   CONNECTION ACTION APIs
+======================= */
+
+// ✅ Accept
+export async function acceptConnection(connectionId) {
+  const res = await fetch(
+    `${BASE_URL_}/connections/${connectionId}/accept`,
+    {
+      method: "POST",
+      headers: getAuthHeader(),
+    }
+  );
+  return res.json();
+}
+
+// ❌ Reject
+export async function rejectConnection(connectionId) {
+  const res = await fetch(
+    `${BASE_URL_}/connections/${connectionId}/reject`,
+    {
+      method: "POST",
+      headers: getAuthHeader(),
+    }
+  );
+  return res.json();
+}
+
+// ↩️ Withdraw
 export async function withdrawConnection(connectionId) {
-  const res = await fetch(`${BASE_URL}/connections/${connectionId}`, {
-    method: "DELETE",
-    headers: authHeader,
-  });
+  const res = await fetch(
+    `${BASE_URL_}/connections/${connectionId}/withdraw`,
+    {
+      method: "POST",
+      headers: getAuthHeader(),
+    }
+  );
   return res.json();
 }
