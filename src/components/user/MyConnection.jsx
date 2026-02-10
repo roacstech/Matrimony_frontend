@@ -375,7 +375,6 @@ import {
 const MyConnection = () => {
   const [received, setReceived] = useState([]);
   const [sent, setSent] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const [toast, setToast] = useState({ show: false, msg: "" });
 
@@ -391,8 +390,9 @@ const MyConnection = () => {
         const receivedRes = await getReceivedConnections();
         const sentRes = await getSentConnections();
 
-        setReceived(receivedRes.data || []);
-        setSent(sentRes.data || []);
+        // ✅ correct
+setReceived(receivedRes.data.data || []);
+        setSent(sentRes.data.data || []);
       } catch (err) {
         console.error("Failed to load connections", err);
       }
@@ -414,8 +414,16 @@ const MyConnection = () => {
   };
 
   // 🔥 ACTION HANDLERS
-  const handleAcceptConnection = async (connectionId, name) => {
-    await acceptConnection(connectionId);
+const handleAcceptConnection = async (connectionId) => {
+  try {
+    const res = await acceptConnection(connectionId);
+    const data = res.data;
+
+    if (!data.success) {
+      triggerToast(data.message || "Accept failed");
+      return;
+    }
+
     setReceived((prev) =>
       prev.map((c) =>
         c.connectionId === connectionId
@@ -423,16 +431,41 @@ const MyConnection = () => {
           : c
       )
     );
-    triggerToast(`Connection accepted with ${name}`);
-  };
 
-  const handleRejectConnection = async (connectionId, name) => {
-    await rejectConnection(connectionId);
+    triggerToast("Connection accepted");
+  } catch (err) {
+    triggerToast("Something went wrong");
+    console.error("Accept connection error:", err);
+  }
+};
+
+
+
+/// User Rejct connections
+
+
+const handleRejectConnection = async (connectionId) => {
+  try {
+    const data = await rejectConnection(connectionId);
+
+    if (!data.success) {
+      triggerToast(data.message || "Reject failed");
+      return;
+    }
+
     setReceived((prev) =>
       prev.filter((c) => c.connectionId !== connectionId)
     );
-    triggerToast(`Connection rejected from ${name}`);
-  };
+
+    triggerToast("Connection rejected");
+  } catch (err) {
+    console.error("Reject connection error:", err);
+    triggerToast("Something went wrong");
+  }
+};
+
+
+
 
   const handleWithdrawRequest = async (connectionId, name) => {
     await withdrawConnection(connectionId);
@@ -474,7 +507,7 @@ const MyConnection = () => {
                 >
                   <div className="flex justify-between mb-2">
                     <h3 className="font-black text-[#3B1E54]">
-                      {c.fullName || "User"}
+                      {c.full_name || "User"}
                     </h3>
                     {!expired && !isAccepted && (
                       <span className="text-[10px] text-green-600 font-bold">
@@ -507,7 +540,7 @@ const MyConnection = () => {
                             c.fullName
                           )
                         }
-                        className="bg-red-500 text-white px-4 py-2 rounded-full text-xs"
+                        className="bg-red-500 text-white px-4 py-2 rounded-full text-xs reject-btn"
                       >
                         Reject
                       </button>
@@ -538,7 +571,7 @@ const MyConnection = () => {
                 className="flex justify-between items-center bg-white p-4 rounded-2xl border"
               >
                 <div>
-                  <p className="font-bold text-sm">{c.fullName}</p>
+                  <p className="font-bold text-sm">{c.full_name}</p>
                   <p className="text-xs text-gray-500">
                     {c.gender} • {c.occupation} • {c.city}
                   </p>
