@@ -1,12 +1,19 @@
-import React, { useState ,useEffect } from "react";
-import { Eye, ArrowLeft, FileText, Download, Mail, MapPin, ShieldCheck, ShieldAlert } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { getImageUrl } from "../../utils/imageHelper";
+import {
+  Eye,
+  ArrowLeft,
+  FileText,
+  Download,
+  Mail,
+  MapPin,
+  ShieldCheck,
+  ShieldAlert,
+} from "lucide-react";
 import {
   getAllUsers,
-  adminApproveUser,
-  adminRejectUser,
-  toggleUserVisibility,
+  adminToggleVisibility,
 } from "../../api/adminApi";
-
 
 const AllUsers = () => {
   const [data, setData] = useState([]);
@@ -14,52 +21,65 @@ const AllUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [activeTab, setActiveTab] = useState("personal");
   const [togglingUserId, setTogglingUserId] = useState(null);
-  useEffect(() => {
+
+  /* ================= FETCH USERS ================= */
+ useEffect(() => {
   getAllUsers()
-    .then(setData)
-    .catch(err => console.error(err));
+    .then((res) => {
+      const fixedData = res.map((u) => ({
+        ...u,
+        is_active: Number(u.is_active), // ✅ FORCE NUMBER
+      }));
+      setData(fixedData);
+    })
+    .catch(console.error);
 }, []);
+console.log("Get All User:",getAllUsers)
 
 
- const togglePublicStatus = async (id) => {
-  setTogglingUserId(id);
+  /* ================= TOGGLE FUNCTION (NUMBER BASED) ================= */
+  const togglePublicStatus = async (id, currentStatus) => {
+    setTogglingUserId(id);
 
-  try {
-    await toggleUserVisibility(id);
+    try {
+      const res = await adminToggleVisibility({
+        id,
+        key: currentStatus === 1 ? 0 : 1, // ✅ toggle 1 ↔ 0
+      });
 
-    setData(prev =>
-      prev.map(u =>
-        u.id === id ? { ...u, isPublic: !u.isPublic } : u
-      )
-    );
-  } catch (err) {
-    console.error(err);
-  }
+    if (res.success) {
+  setData((prev) =>
+    prev.map((u) =>
+      u.id === id
+        ? { ...u, is_active: Number(res.is_active) } 
+        : u
+    )
+  );
+}
 
- 
-};
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTogglingUserId(null);
+    }
+  };
 
+  /* ================= FILTER LOGIC ================= */
+  const filteredUsers = data.filter((u) => {
+    console.log("PHOTO:", u.photo);
+console.log("PHOTO URL:", getImageUrl(u.photo));
 
-const filteredUsers = data.filter((u) => {
-  if (filter === "all") return true;
+    if (filter === "all") return true;
+    if (filter === "male" || filter === "female")
+      return u.gender?.toLowerCase() === filter;
+    if (filter === "active") return u.is_active === 1;
+    if (filter === "inactive") return u.is_active === 0;
+    return true;
+  });
 
-  if (filter === "male" || filter === "female") {
-    return u.gender.toLowerCase() === filter;
-  }
+  console.log("Selected User",selectedUser)
+  
 
-  // ⭐ IMPORTANT FIX
-  if (filter === "active") {
-    if (togglingUserId === u.id) return true;
-    return u.isPublic;
-  }
-
-  if (filter === "inactive") {
-    if (togglingUserId === u.id) return true;
-    return !u.isPublic;
-  }
-
-  return true;
-});
 
   /* ================= 1. PROFILE DETAIL VIEW ================= */
   if (selectedUser) {
@@ -77,7 +97,12 @@ const filteredUsers = data.filter((u) => {
             <div className="flex items-center gap-4 md:gap-5">
               <div className="w-16 h-16 md:w-20 md:h-20 rounded-[22px] md:rounded-[28px] bg-[#5D4037] overflow-hidden border-4 border-[#FAF6F3] shadow-md flex items-center justify-center flex-shrink-0">
                 {selectedUser.photo ? (
-                  <img src={selectedUser.photo} alt="" className="w-full h-full object-cover" />
+                  <img
+  src={`http://localhost:5000/uploads/photos/${u.photo}`}
+  alt=""
+/>
+
+
                 ) : (
                   <span className="text-white text-2xl md:text-3xl font-black">{selectedUser.fullName.charAt(0)}</span>
                 )}
@@ -96,11 +121,11 @@ const filteredUsers = data.filter((u) => {
             </div>
           </div>
           
-          <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl border-2 w-full lg:w-auto justify-center lg:justify-start ${selectedUser.isPublic ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-500'}`}>
-             {selectedUser.isPublic ? <ShieldCheck size={18}/> : <ShieldAlert size={18}/>}
+          <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl border-2 w-full lg:w-auto justify-center lg:justify-start ${selectedUser.is_active ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-500'}`}>
+             {selectedUser.is_active ? <ShieldCheck size={18}/> : <ShieldAlert size={18}/>}
              <div className="flex flex-col">
                <span className="text-[11px] font-black uppercase tracking-widest leading-none">
-                 {selectedUser.isPublic ? 'Active Profile' : 'Private Profile'}
+                 {selectedUser.is_active ? 'Active Profile' : 'Private Profile'}
                </span>
              </div>
           </div>
@@ -232,12 +257,17 @@ const filteredUsers = data.filter((u) => {
                 </td>
                 <td className="px-6 md:px-8 py-5 text-center">
                   <div className="flex flex-col items-center gap-1.5">
-                    <button onClick={() => togglePublicStatus(u.id)} 
-                      className={`w-9 h-4.5 md:w-10 md:h-5 rounded-full relative transition-all ${u.isPublic ? "bg-[#A67C52]" : "bg-stone-200"}`}>
-                      <span className={`absolute top-0.5 w-3.5 h-3.5 md:w-4 md:h-4 bg-white rounded-full shadow-sm transition-all ${u.isPublic ? "left-[19px] md:left-[22px]" : "left-0.5"}`} />
+                   <button
+  onClick={() => togglePublicStatus(u.id, u.is_active)}
+  className={`w-9 h-4.5 md:w-10 md:h-5 rounded-full relative transition-all ${
+    u.is_active === 1 ? "bg-[#A67C52]" : "bg-stone-200"
+  }`}
+>
+                      <span className={`absolute top-0.5 w-3.5 h-3.5 md:w-4 md:h-4 bg-white rounded-full shadow-sm transition-all ${u.is_active ? "left-[19px] md:left-[22px]" : "left-0.5"}`} />
                     </button>
-                    <span className={`text-[8px] font-black uppercase tracking-tighter ${u.isPublic ? 'text-[#A67C52]' : 'text-rose-400'}`}>
-                      {u.isPublic ? 'ACTIVE' : 'INACTIVE'}
+                    <span className={`text-[8px] font-black uppercase tracking-tighter ${u.is_active ? 'text-[#A67C52]' : 'text-rose-400'}`}>
+                     {u.is_active === 1 ? "ACTIVE" : "INACTIVE"}
+
                     </span>
                   </div>
                 </td>
