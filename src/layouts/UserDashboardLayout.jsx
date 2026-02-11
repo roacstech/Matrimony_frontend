@@ -36,7 +36,7 @@ const UserDashboardLayout = ({
               onClick={() => {
                 toast.dismiss(t.id);
                 performLogout(navigate);
-                toast.success("Logged out successfully");
+                toast.success("Logged out successfully",{duration:2000});
               }}
               className="px-4 py-2 bg-[#573D2F] text-white rounded-xl text-xs font-black uppercase tracking-widest"
             >
