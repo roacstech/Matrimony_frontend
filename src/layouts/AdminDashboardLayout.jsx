@@ -29,7 +29,7 @@ const AdminDashboardLayout = () => {
               onClick={() => {
                 toast.dismiss(t.id);
                 performLogout();
-                toast.success("Logged out successfully");
+                toast.success("Logged out successfully",{duration:2000});
               }}
               className="px-4 py-2 bg-[#573D2F] text-white rounded-xl text-xs font-black uppercase tracking-widest"
             >
@@ -58,12 +58,25 @@ const AdminDashboardLayout = () => {
           onClick={closeSidebar}
         />
       )}
+       
 
       {/* SIDEBAR */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-50 h-screen bg-white border-r border-[#EEEEEE] flex flex-col transition-all duration-300
+        className={`fixed lg:sticky top- left-0 z-50 h-screen bg-white border-r border-[#EEEEEE] flex flex-col transition-all duration-300
         w-[280px] ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
+      <div className="flex flex-col items-center justify-center mt-10">
+  <img
+    src="https://i.pravatar.cc/150?u=admin"
+    alt="Admin"
+    className="w-16 h-16 rounded-full cursor-pointer border-2 border-white shadow-md"
+  />
+  <span className="mt-2 text-sm font-semibold text-gray-700">
+    Admin
+  </span>
+</div>
+
+
         {/* Navigation Menu */}
         <nav className="flex-1 px-4 lg:px-6 py-10 space-y-3 overflow-y-auto">
           <MenuItem to="/admin/chart" label="Dashboard" icon={<LayoutDashboard size={18} />} onClick={closeSidebar} />
@@ -98,7 +111,7 @@ const AdminDashboardLayout = () => {
             <img
               src="https://i.pravatar.cc/150?u=admin"
               alt="Admin"
-              className="w-10 h-10 rounded-full cursor-pointer border-2 border-white shadow-md"
+              className="w-13 h-13 rounded-full cursor-pointer border-2 border-white shadow-md"
               onClick={() => setProfileDropdown(!isProfileDropdown)}
             />
 
