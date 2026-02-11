@@ -92,8 +92,9 @@ export const useAuthForm = () => {
       // USER
       // =====================
       else if (Number(roleid) === 2) {
+        toast.dismiss();
         if (status === "NEW") {
-          toast.success("✅ Login successful");
+          toast.success("✅ Login successful" );
           setTimeout(() => navigate("/form"), 300);
         } 
         else if (status === "PENDING") {
@@ -113,7 +114,7 @@ export const useAuthForm = () => {
       isSubmittingRef.current = false;
     } catch (err) {
       toast.dismiss();
-      toast.error(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.message || "Login failed",{ duration: 2000 });
       isSubmittingRef.current = false;
     }
   };

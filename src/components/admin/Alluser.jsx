@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { getImageUrl } from "../../utils/imageHelper";
 import {
   Eye,
   ArrowLeft,
@@ -66,9 +65,7 @@ console.log("Get All User:",getAllUsers)
 
   /* ================= FILTER LOGIC ================= */
   const filteredUsers = data.filter((u) => {
-    console.log("PHOTO:", u.photo);
-console.log("PHOTO URL:", getImageUrl(u.photo));
-
+    console.log("PHOTO VALUE:", u.photo)
     if (filter === "all") return true;
     if (filter === "male" || filter === "female")
       return u.gender?.toLowerCase() === filter;
@@ -78,8 +75,6 @@ console.log("PHOTO URL:", getImageUrl(u.photo));
   });
 
   console.log("Selected User",selectedUser)
-  
-
 
   /* ================= 1. PROFILE DETAIL VIEW ================= */
   if (selectedUser) {
@@ -96,16 +91,18 @@ console.log("PHOTO URL:", getImageUrl(u.photo));
             
             <div className="flex items-center gap-4 md:gap-5">
               <div className="w-16 h-16 md:w-20 md:h-20 rounded-[22px] md:rounded-[28px] bg-[#5D4037] overflow-hidden border-4 border-[#FAF6F3] shadow-md flex items-center justify-center flex-shrink-0">
-                {selectedUser.photo ? (
-                  <img
-  src={`http://localhost:5000/uploads/photos/${u.photo}`}
-  alt=""
-/>
-
-
-                ) : (
-                  <span className="text-white text-2xl md:text-3xl font-black">{selectedUser.fullName.charAt(0)}</span>
-                )}
+               
+ {selectedUser?.photo ? (
+    <img
+      src={`http://localhost:5000/uploads/photos/${selectedUser.photo}`}
+      alt="user"
+      className="avatar-img"
+    />
+  ) : (
+    <div className="text-white text-bold">
+      {selectedUser?.fullName?.charAt(0).toUpperCase()}
+    </div>
+  )}                
               </div>
               <div>
                 <h2 className="text-xl md:text-2xl font-black text-[#5D4037] tracking-tight leading-tight">{selectedUser.fullName}</h2>
@@ -150,8 +147,7 @@ console.log("PHOTO URL:", getImageUrl(u.photo));
               <InfoBox label="Date of Birth" value={selectedUser.dob} />
               <InfoBox label="Birth Time" value={selectedUser.birthTime} />
               <InfoBox label="Marital Status" value={selectedUser.maritalStatus} />
-              <InfoBox label="Religion" value={selectedUser.religion} />
-              <InfoBox label="Caste" value={selectedUser.caste} />
+              
               <div className="sm:col-span-2 lg:col-span-3">
                 <InfoBox label="Full Address" value={selectedUser.address} />
               </div>
@@ -194,13 +190,16 @@ console.log("PHOTO URL:", getImageUrl(u.photo));
                       <p className="text-sm font-bold text-[#5D4037] truncate max-w-[150px] sm:max-w-xs">{selectedUser.horoscope?.uploaded ? (selectedUser.horoscope.fileName || "horoscope.pdf") : "Not Uploaded"}</p>
                     </div>
                   </div>
-                  {selectedUser.horoscope?.uploaded && (
-                    <a href={`/${selectedUser.horoscope.fileUrl}`} target="_blank" rel="noreferrer"
-                       className="px-6 py-2.5 bg-[#5D4037] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition flex items-center gap-2">
-                      <Download size={14} /> View / Download
-                    </a>
-                  )}
-                </div>
+               {selectedUser.horoscope?.uploaded && (
+  <a
+    href={`http://localhost:5000/uploads/horoscope/${selectedUser.horoscope.fileName}`}
+    target="_blank"
+    rel="noreferrer"
+    className="px-6 py-2.5 bg-[#5D4037] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition flex items-center gap-2"
+  >
+    <Download size={14} /> View / Download
+  </a>
+)}          </div>
               </div>
             </>
           )}
@@ -243,8 +242,19 @@ console.log("PHOTO URL:", getImageUrl(u.photo));
                 <td className="px-6 md:px-8 py-5">
                   <div className="flex items-center gap-4">
                     <div className="w-11 h-11 md:w-12 md:h-12 rounded-[16px] md:rounded-[18px] bg-[#5D4037] overflow-hidden flex-shrink-0 flex items-center justify-center">
-                      {u.photo ? <img src={u.photo} alt="" className="w-full h-full object-cover"/> : <span className="text-white font-black text-sm">{u.fullName.charAt(0)}</span>}
-                    </div>
+                     {u?.photo ? (
+    <img
+      src={`http://localhost:5000/uploads/photos/${u.photo}`}
+      alt="user"
+      className="avatar-img"
+    />
+  ) : (
+    <div className="text-white text-bold">
+      {u?.fullName?.charAt(0).toUpperCase()}
+    </div>
+  )} 
+               </div>
+             
                     <div>
                       <p className="text-[13px] md:text-[14px] font-black text-[#5D4037] leading-none">{u.fullName}</p>
                       <p className="text-[9px] md:text-[10px] text-[#A67C52] font-bold uppercase tracking-widest mt-1.5">{u.gender} • {u.city}</p>
