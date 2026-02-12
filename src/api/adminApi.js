@@ -43,14 +43,14 @@ export const rejectUser = async (id) => {
 /* ===============================
    APPROVE USER
 ================================ */
-export const approveUser = async (id) => {
-  const res = await fetch(`${BASE_URL}/approve/${id}`, {
-    method: "PUT",
-    headers: getAuthHeader(),
-  });
+// export const approveUser = async (id) => {
+//   const res = await fetch(`${BASE_URL}/approve/${id}`, {
+//     method: "PUT",
+//     headers: getAuthHeader(),
+//   });
 
-  return res.json();
-};
+//   return res.json();
+// };
 
 /* ===============================
    GET ALL USERS (AllUsers.jsx)
@@ -92,7 +92,10 @@ export const getPendingUsers = async () => {
 export const adminApproveUser = async (profileId) => {
   const res = await fetch(`${BASE_URL}/users/${profileId}/approve`, {
     method: "PUT",
-    headers: getAuthHeader(),
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeader(),
+    },
   });
 
   const data = await res.json();
@@ -103,6 +106,8 @@ export const adminApproveUser = async (profileId) => {
 
   return data;
 };
+
+
 
 /* ===============================
    ADMIN REJECT USER

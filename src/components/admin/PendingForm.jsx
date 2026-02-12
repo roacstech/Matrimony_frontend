@@ -5,12 +5,16 @@ import { Check, X, MapPin, Mail, User, Eye } from "lucide-react";
 // ✅ API functions import
 import {
   getPendingForms,
-  approveUser,
-  rejectUser,
+  adminApproveUser,
+  adminRejectUser,
+ 
 } from "../../api/adminApi";
 
 const PendingForms = () => {
   const [pending, setPending] = useState([]);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+
+
   const [selectedUser, setSelectedUser] = useState(null); // For modal
 
   // LOAD PENDING
@@ -28,20 +32,22 @@ const PendingForms = () => {
   }, []);
 
   // APPROVE
-  const handleAccept = async (item) => {
+  const handleApprove = async (id) => {
     try {
-      await approveUser(item.id);
-      setPending((prev) => prev.filter((p) => p.id !== item.id));
-      toast.success("User approved & mail sent ✅");
-    } catch {
-      toast.error("Approval failed");
+      const res = await adminApproveUser(id);
+
+      toast.success(res.message || "Approved successfully");
+
+      setPending((prev) => prev.filter((item) => item.id !== id));
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
   // REJECT
   const handleReject = async (item) => {
     try {
-      await rejectUser(item.id);
+      await adminRejectUser(item.id);
       setPending((prev) => prev.filter((p) => p.id !== item.id));
       toast.error("User rejected ❌");
     } catch {
@@ -50,7 +56,21 @@ const PendingForms = () => {
   };
 
   // VIEW DETAILS
-  const handleView = (item) => setSelectedUser(item);
+  const handleView = async (item) => {
+  try {
+    setLoadingProfile(true);
+
+    const fullProfile = await getUserProfile(item.id);
+
+    setSelectedUser(fullProfile);
+
+  } catch (err) {
+    toast.error("Failed to load profile details");
+  } finally {
+    setLoadingProfile(false);
+  }
+};
+
 
   // CLOSE MODAL
   const closeModal = () => setSelectedUser(null);
@@ -97,6 +117,7 @@ const PendingForms = () => {
                   <User size={24} />
                 )}
               </div>
+
               <div>
                 <p className="text-[15px] font-black text-[#5D4037] leading-none mb-2">
                   {item.profile?.fullName || item.name || "N/A"}
@@ -107,7 +128,7 @@ const PendingForms = () => {
                   </p>
                   <p className="flex items-center gap-1.5 text-[10px] font-black text-stone-400 uppercase tracking-tight">
                     <MapPin size={12} className="text-[#A67C52]" />{" "}
-                     {item.profile?.country || "INDIA"}
+                    {item.profile?.country || "INDIA"}
                   </p>
                 </div>
               </div>
@@ -116,7 +137,7 @@ const PendingForms = () => {
             {/* ACTIONS */}
             <div className="flex items-center gap-3">
               <button
-                onClick={() => handleAccept(item)}
+                onClick={() => handleApprove(item.id)}
                 className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#5D4037] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-sm"
               >
                 <Check size={14} /> Accept
@@ -133,7 +154,7 @@ const PendingForms = () => {
                 onClick={() => handleView(item)}
                 className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#FAF6F3] text-[#5D4037] border border-[#A67C52] rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-[#FAEBCF] transition-all"
               >
-                <Eye size={14} /> 
+                <Eye size={14} />
               </button>
             </div>
           </div>
@@ -141,38 +162,36 @@ const PendingForms = () => {
       </div>
 
       {/* Modal for viewing user */}
-      {selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-96 relative">
-            <h2 className="text-lg font-black text-[#5D4037] mb-4">
-              {selectedUser.profile?.fullName || selectedUser.name || "N/A"}
-            </h2>
-            <p>
-              <span className="font-bold">Email:</span> {selectedUser.email}
-            </p>
-            <p>
-              <span className="font-bold">Phone:</span> {selectedUser.phone || "N/A"}
-            </p>
-            
-            <p>
-              <span className="font-bold">Country:</span> {selectedUser.country || "INDIA"}
-            </p>
-             <p>
-              <span className="font-bold">RoleID:</span> {selectedUser.roleid || "N/A"}
-            </p>
-            <p>
-              <span className="font-bold">Status:</span> {selectedUser.status || "N/A"}
-            </p>
+    {selectedUser && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-2xl p-6 w-96 relative overflow-y-auto max-h-[80vh]">
 
-            <button
-              onClick={closeModal}
-              className="mt-4 px-4 py-2 bg-[#5D4037] text-white rounded-lg"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      <h2 className="text-lg font-black text-[#5D4037] mb-4">
+        {selectedUser.full_name || selectedUser.name}
+      </h2>
+
+      <p><strong>Email:</strong> {selectedUser.email}</p>
+      <p><strong>Phone:</strong> {selectedUser.phone}</p>
+      <p><strong>Age:</strong> {selectedUser.age}</p>
+      <p><strong>Gender:</strong> {selectedUser.gender}</p>
+      <p><strong>Education:</strong> {selectedUser.education}</p>
+      <p><strong>Job:</strong> {selectedUser.occupation}</p>
+      <p><strong>Religion:</strong> {selectedUser.religion}</p>
+      <p><strong>Caste:</strong> {selectedUser.caste}</p>
+      <p><strong>Height:</strong> {selectedUser.height}</p>
+      <p><strong>Country:</strong> {selectedUser.country}</p>
+      <p><strong>Status:</strong> {selectedUser.status}</p>
+
+      <button
+        onClick={closeModal}
+        className="mt-4 px-4 py-2 bg-[#5D4037] text-white rounded-lg"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
