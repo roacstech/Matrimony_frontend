@@ -108,11 +108,15 @@ const PendingForms = () => {
             <div className="flex items-center gap-5">
               <div className="w-14 h-14 rounded-2xl bg-[#FAF6F3] flex items-center justify-center text-[#A67C52] flex-shrink-0">
                 {item.profile?.photo ? (
-                  <img
-                    src={item.profile.photo}
-                    alt={item.profile.fullName || "User"}
-                    className="w-12 h-12 rounded-2xl object-cover"
-                  />
+                   <img
+      src={
+        item.profile?.photo
+          ? `http://localhost:5000/${item.profile.photo}`
+          : "https://i.pravatar.cc/100"
+      }
+      alt={item.profile?.fullName || "User"}
+      className="w-full h-full object-cover"
+    />
                 ) : (
                   <User size={24} />
                 )}
