@@ -67,7 +67,7 @@ const AdminDashboardLayout = () => {
       >
       <div className="flex flex-col items-center justify-center mt-10">
   <img
-    src="https://i.pravatar.cc/150?u=admin"
+    src="src/assets/adminprofile.jpg"
     alt="Admin"
     className="w-16 h-16 rounded-full cursor-pointer border-2 border-white shadow-md"
   />
@@ -109,7 +109,7 @@ const AdminDashboardLayout = () => {
           {/* PROFILE AVATAR (TOP-RIGHT) */}
           <div className="relative">
             <img
-              src="https://i.pravatar.cc/150?u=admin"
+              src="src/assets/adminprofile.jpg"
               alt="Admin"
               className="w-13 h-13 rounded-full cursor-pointer border-2 border-white shadow-md"
               onClick={() => setProfileDropdown(!isProfileDropdown)}

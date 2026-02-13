@@ -41,16 +41,6 @@
 //   return await res.json();
 // }
 
-// export async function getUserProfile(userId) {
-//    const token = localStorage.getItem("accesstoken");
-//   const res = await fetch(`${BASE_URL}/profile`, {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-
-//   return await res.json();
-// }
 
 
 

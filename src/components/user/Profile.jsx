@@ -15,10 +15,11 @@ import {
 import {
   getUserProfile,
   updateUserProfile,
+  uploadHoroscope,
   uploadProfilePhoto,
 } from "../../api/userApi";
 const Profile = () => {
-  // const userId = 1;
+  const userId = localStorage.getItem("userid");  
   const [user, setUser] = useState(null);
   const [edit, setEdit] = useState(false);
   const fileInputRef = useRef(null);
@@ -26,7 +27,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getUserProfile()
+    getUserProfile(userId)
       .then((res) => {
         if (res?.success) {
           setUser(res.data);
@@ -39,13 +40,34 @@ const Profile = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleHoroscopeUpload = () => {
-    toast("Horoscope upload later");
-  };
+  const handleHoroscopeUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-  if (loading) {
-    return <div className="p-6 text-center">Loading...</div>;
+  try {
+    const res = await uploadHoroscope(file);
+
+    if (res.success) {
+      toast.success("Horoscope updated");
+
+      setUser((prev) => ({
+        ...prev,
+        horoscope_uploaded: 1,
+        horoscope_file_name: res?.horoscope?.fileName,
+        horoscope_file_url: res?.horoscope?.fileUrl,
+        horoscope: {
+          uploaded: true,
+          fileName: res?.horoscope?.fileName,
+          fileUrl: res?.horoscope?.fileUrl,
+        },
+      }));
+    }
+  } catch {
+    toast.error("Upload failed");
   }
+};
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -79,6 +101,22 @@ const Profile = () => {
     }
   };
 
+
+  const formatTimeAMPM = (timeStr) => {
+  if (!timeStr) return "";
+
+  const [hours, minutes] = timeStr.split(":");
+  const date = new Date();
+  date.setHours(hours, minutes);
+
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
+
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6 bg-transparent min-h-screen font-serif">
       {/* ================= HEADER SECTION ================= */}
@@ -86,21 +124,21 @@ const Profile = () => {
         <div className="flex items-center gap-6">
           <div className="relative group">
             <div className="w-24 h-24 rounded-[30px] border-4 border-[#FAF6F3] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md">
-              {user.photo ? (
+              {user?.photo ? (
                 <img
-                  src={`http://localhost:5000/uploads/photos/${user.photo}`}
+                  src={`http://localhost:5000/uploads/photos/${user?.photo}`}
                   className="w-full h-full object-cover"
                 />
               ) : (
                 <span className="text-3xl font-black text-[#5D4037]">
-                  {user.full_name.charAt(0)}
+                  {user?.fullName.charAt(0)}
                 </span>
               )}
             </div>
             <div
-              className={`absolute -bottom-1 -right-1 px-3 py-1 rounded-lg text-[8px] font-black uppercase border-2 border-white shadow-md ${user.privacy === "Public" ? "bg-emerald-500 text-white" : "bg-[#A67C52] text-white"}`}
+              className={`absolute -bottom-1 -right-1 px-3 py-1 rounded-lg text-[8px] font-black uppercase border-2 border-white shadow-md ${user?.privacy === "Public" ? "bg-emerald-500 text-white" : "bg-[#A67C52] text-white"}`}
             >
-              {user.privacy} Mode
+              {user?.privacy} Mode
             </div>
             {edit && (
               <button
@@ -119,10 +157,10 @@ const Profile = () => {
           </div>
           <div>
             <h1 className="text-2xl font-black text-[#5D4037] uppercase tracking-tight">
-              {user.full_name}
+              {user?.full_name}
             </h1>
             <p className="text-[10px] font-black text-[#A67C52] uppercase tracking-[3px] flex items-center gap-2 mt-1">
-              <MapPin size={14} /> {user.city}, {user.country}
+              <MapPin size={14} /> {user?.city}, {user?.country}
             </p>
           </div>
         </div>
@@ -160,35 +198,36 @@ const Profile = () => {
             edit={edit}
             label="Full Name"
             name="full_name"
-            value={user.full_name}
+            value={user?.full_name}
             onChange={handleChange}
           />
           <Input
             edit={edit}
             label="Gender"
             name="gender"
-            value={user.gender}
+            value={user?.gender}
             onChange={handleChange}
           />
           <Input
             edit={edit}
             label="Date of Birth"
             name="dob"
-            value={user.dob}
+            value={new Date(user?.dob).toLocaleDateString("en-GB")
+}
             onChange={handleChange}
           />
           <Input
             edit={edit}
             label="Birth Time"
             name="birth_time"
-            value={user.birth_time}
+            value={user?.birth_time}
             onChange={handleChange}
           />
           <Input
             edit={edit}
             label="Marital Status"
             name="marital_status"
-            value={user.marital_status}
+            value={user?.marital_status}
             onChange={handleChange}
           />
         </Section>
@@ -198,21 +237,21 @@ const Profile = () => {
             edit={edit}
             label="Education"
             name="education"
-            value={user.education}
+            value={user?.education}
             onChange={handleChange}
           />
           <Input
             edit={edit}
             label="Occupation"
             name="occupation"
-            value={user.occupation}
+            value={user?.occupation}
             onChange={handleChange}
           />
           <Input
             edit={edit}
             label="Income"
             name="income"
-            value={user.income}
+            value={user?.income}
             onChange={handleChange}
           />
         </Section>
@@ -223,21 +262,21 @@ const Profile = () => {
             edit={edit}
             label="Raasi"
             name="raasi"
-            value={user.raasi}
+            value={user?.raasi}
             onChange={handleChange}
           />
           <Input
             edit={edit}
             label="Star"
             name="star"
-            value={user.star}
+            value={user?.star}
             onChange={handleChange}
           />
           <Input
             edit={edit}
             label="Dosham"
             name="dosham"
-            value={user.dosham}
+            value={user?.dosham}
             onChange={handleChange}
           />
 
@@ -261,18 +300,19 @@ const Profile = () => {
             ) : (
               <div className="flex items-center gap-2 text-[11px] font-black text-[#5D4037] py-2 bg-[#FAF6F3] px-3 rounded-xl border border-[#EEEEEE]">
                 <FileText size={14} className="text-[#A67C52]" />
-                {user.horoscope?.uploaded ? (
-                  <a
-                    href={user.horoscope.fileUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline truncate decoration-[#A67C52] decoration-2"
-                  >
-                    {user.horoscope.fileName}
-                  </a>
-                ) : (
-                  <span className="text-gray-400">Not Uploaded</span>
-                )}
+                {user?.horoscope?.uploaded ? (
+  <a
+    href={user?.horoscope?.fileUrl}
+    target="_blank"
+    rel="noreferrer"
+    className="underline"
+  >
+    {user?.horoscope?.fileName}
+  </a>
+) : (
+  <span className="text-gray-400">Not Uploaded</span>
+)}
+
               </div>
             )}
           </div>
@@ -283,21 +323,21 @@ const Profile = () => {
             edit={edit}
             label="Father Name"
             name="father_name"
-            value={user.father_name}
+            value={user?.father_name}
             onChange={handleChange}
           />
           <Input
             edit={edit}
             label="Mother Name"
             name="mother_name"
-            value={user.mother_name}
+            value={user?.mother_name}
             onChange={handleChange}
           />
           <Input
             edit={edit}
             label="grandfather name"
             name="grandfather_name"
-            value={user.grandfather_name}
+            value={user?.grandfather_name}
             onChange={handleChange}
           />
 
@@ -305,7 +345,7 @@ const Profile = () => {
             edit={edit}
             label="grandmother name"
             name="grandmother_name"
-            value={user.grandmother_name}
+            value={user?.grandmother_name}
             onChange={handleChange}
           />
         </Section>
@@ -320,21 +360,21 @@ const Profile = () => {
               edit={edit}
               label="City"
               name="city"
-              value={user.city}
+              value={user?.city}
               onChange={handleChange}
             />
             <Input
               edit={edit}
               label="Country"
               name="country"
-              value={user.country}
+              value={user?.country}
               onChange={handleChange}
             />
             <Input
               edit={edit}
               label="Privacy Status"
               name="privacy"
-              value={user.privacy}
+              value={user?.privacy}
               onChange={handleChange}
             />
           </div>

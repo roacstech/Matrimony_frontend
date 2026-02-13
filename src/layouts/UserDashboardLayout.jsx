@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { 
@@ -13,8 +13,9 @@ import {
 } from "lucide-react";
 import { performLogout } from "../Data/logout";
 
+import {getUserProfile} from "../api/userApi"
+
 const UserDashboardLayout = ({
-  user,
   showMenu,
   onAvatarClick,
   children,
@@ -22,6 +23,36 @@ const UserDashboardLayout = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [user, setUserData] = useState([]);
+
+
+
+    const Img_Url = import.meta.env.VITE_IMG_URL;
+
+    const userId = localStorage.getItem("userid")
+
+
+   useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const res = await getUserProfile(userId);
+
+      console.log("👍",res);
+      
+
+      if (res?.success) {
+        setUserData(res.data);
+      } else {
+        toast.error(res?.message || "Failed to load profile");
+      }
+    } catch (err) {
+      toast.error("Profile fetch failed");
+    }
+  };
+
+  fetchUser();
+}, []);
+
 
   /* ✅ ADMIN STYLE LOGOUT TOAST */
   const handleLogout = () => {
@@ -83,13 +114,13 @@ const UserDashboardLayout = ({
 
           <div className="w-16 h-16 rounded-[20px] bg-[#5D4037] flex items-center justify-center shadow-xl border-4 border-white overflow-hidden mb-4">
             <img
-              src={user?.photo || "https://i.pravatar.cc/150?u=user"}
+              src={`http://localhost:5000/uploads/photos/${user.photo}`}
               alt="user"
               className="w-full h-full object-cover"
             />
           </div>
           <h2 className="text-xs font-black text-[#5D4037] tracking-tight uppercase">
-            {user?.name || "User"}
+            {user?.full_name || "User"}
           </h2>
           <p className="text-[9px] font-bold text-[#A67C52] uppercase tracking-[2px] mt-1">Welcome Back</p>
         </div>
@@ -128,11 +159,11 @@ const UserDashboardLayout = ({
         </nav>
         
         {/* Simple Logout at Bottom of Sidebar (Optional) */}
-        <div className="p-6">
+        {/* <div className="p-6">
            <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 text-rose-600 text-[10px] font-black uppercase tracking-widest opacity-70 hover:opacity-100">
              <LogOut size={14} /> Logout
            </button>
-        </div>
+        </div> */}
       </aside>
 
       {/* MAIN CONTENT */}
@@ -154,12 +185,12 @@ const UserDashboardLayout = ({
 
           <div className="flex items-center gap-3 relative">
             {/* NOTIFICATIONS */}
-            <button
+            {/* <button
               onClick={() => navigate("/user/dashboard/notifications")}
               className="p-2.5 bg-white rounded-xl border border-[#EEEEEE] text-[#5D4037] hover:bg-[#FAF6F3] transition-colors shadow-sm"
             >
               <Bell size={18} />
-            </button>
+            </button> */}
 
             {/* PROFILE DROPDOWN TRIGGER */}
             <div
@@ -167,7 +198,7 @@ const UserDashboardLayout = ({
               className="flex items-center gap-2 cursor-pointer bg-white p-1.5 pr-4 rounded-full border border-[#EEEEEE] shadow-sm hover:border-[#A67C52] transition-all"
             >
               <img
-                src={user?.photo || "https://i.pravatar.cc/150?u=user"}
+                src={`http://localhost:5000/uploads/photos/${user.photo}`}
                 alt="user"
                 className="w-8 h-8 rounded-full object-cover"
               />
