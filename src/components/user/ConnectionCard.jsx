@@ -158,7 +158,8 @@ const ConnectionCard = () => {
               </div>
 
               {/* DETAILS GRID */}
-<div className="grid grid-cols-2 gap-y-7 gap-x-2 sm:gap-x-8 mt-2 w-full px-2">
+
+<div className="grid grid-cols-2 gap-y-7 gap-x-2 sm:gap-x-6 mt-2 w-full px-2">
   <DetailItem icon="🌙" label="Raasi" value={u.raasi} />
   <DetailItem
     icon={u.gender === "Male" ? "👨" : "👩"}
@@ -166,13 +167,12 @@ const ConnectionCard = () => {
     value={u.gender}
   />
   <DetailItem icon="💰" label="Salary" value={u.income} />
-      <DetailItem icon="📍" label="Location" value={u.city} />
-
+  <DetailItem icon="💼" label="Work" value={u.occupation} isAccent />
   
   {/* Location Spanning properly */}
-
-      <DetailItem icon="💼" label="Work" value={u.occupation} isAccent />
-
+  <div className="col-span-1">
+    <DetailItem icon="📍" label="Location" value={u.city} />
+  </div>
 </div>
 
               {/* ACTION BUTTON */}
