@@ -192,7 +192,7 @@ console.log("Get All User:",getAllUsers)
                   </div>
                {selectedUser.horoscope?.uploaded && (
   <a
-    href={`http://localhost:5000/uploads/horoscope/${selectedUser.horoscope.fileName}`}
+    href={`http://localhost:5000/uploads/photos/${selectedUser.horoscope.fileName}`}
     target="_blank"
     rel="noreferrer"
     className="px-6 py-2.5 bg-[#5D4037] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition flex items-center gap-2"
