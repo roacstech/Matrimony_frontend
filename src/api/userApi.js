@@ -288,11 +288,14 @@ api.interceptors.request.use((config) => {
 
 // 📥 Received
 export async function getReceivedConnections() {
-  const res = await fetch(`${BASE_URL_}/connections/received`, {
+  const res = await fetch(`${BASE_URL}/connections/received`, {
+    method: "GET",
     headers: getAuthHeader(),
   });
+
   return res.json();
 }
+
 
 // 📤 Sent
 export async function getSentConnections() {
@@ -307,12 +310,20 @@ export async function getSentConnections() {
 ======================= */
 //acpect connection
 export async function acceptConnection(connectionId) {
-  const res = await fetch(`${BASE_URL_}/connections/${connectionId}/accept`, {
-    method: "POST",
-    headers: getAuthHeader(),
-  });
+  const res = await fetch(
+    `${BASE_URL}/connections/${connectionId}/accept`,
+    {
+      method: "POST",
+      headers: {
+        ...getAuthHeader(),
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
   return res.json();
 }
+
 
 
 //acpect connection get
