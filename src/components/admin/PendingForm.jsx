@@ -135,68 +135,108 @@ const PendingForms = () => {
      
       {/* ================= MODAL ================= */}
 {selectedUser && (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-    
-    <div className="bg-white rounded-2xl w-[900px] p-8 shadow-xl relative">
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-6">
+    <div className="bg-[#FDFBF9] w-[900px] max-w-full rounded-3xl shadow-xl p-10 relative">
 
       {/* Close */}
       <button
         onClick={closeModal}
-        className="absolute top-4 right-6 text-sm font-semibold text-gray-400 hover:text-black"
+        className="absolute top-6 right-6 text-[#5D4037] text-lg"
       >
         ✕
       </button>
 
-      {/* Header */}
-      <div className="mb-6 text-center">
-         <img
-      src={`http://localhost:5000/uploads/photos/${selectedUser.photo}`}
-      alt="user"
-      className="avatar-img w-10 h-10 ml-100 rounded-[22px]"
-    />
-        <h2 className="text-lg font-bold text-[#5D4037]">
+      {/* Profile Image */}
+      <div className="flex justify-center mb-6">
+        {selectedUser.photo ? (
+          <img
+            src={`http://localhost:5000/uploads/photos/${selectedUser.photo}`}
+            alt="user"
+            className="w-20 h-20 rounded-2xl object-cover shadow-sm"
+          />
+        ) : (
+          <div className="w-20 h-20 rounded-2xl bg-[#FAF6F3] flex items-center justify-center">
+            <User size={28} />
+          </div>
+        )}
+      </div>
+
+      {/* Name */}
+      <div className="text-center mb-10">
+        <h2 className="text-3xl font-semibold text-[#5D4037]">
           {selectedUser.fullName}
         </h2>
-        <p className="text-xs text-gray-500">
-          {selectedUser.email}
+        <p className="text-sm text-gray-500 mt-1">
+          {selectedUser.city}, {selectedUser.country}
         </p>
       </div>
 
-      {/* Table Layout */}
-      <div className="grid grid-cols-2 gap-x-16 gap-y-3 text-sm">
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-2 gap-12">
 
-        <DataRow label="Gender" value={selectedUser.gender} />
-        <DataRow label="Marital Status" value={selectedUser.maritalStatus} />
+        {/* LEFT */}
+        <div>
+          <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">
+            PERSONAL INFO
+          </h3>
 
-        <DataRow label="Date of Birth" value={selectedUser.dob?.split("T")[0]} />
-        <DataRow label="Birth Time" value={selectedUser.birthTime} />
+          <InfoRow label="Gender" value={selectedUser.gender} />
+          <InfoRow label="DOB" value={selectedUser.dob?.split("T")[0]} />
+          <InfoRow label="Marital Status" value={selectedUser.maritalStatus} />
+          <InfoRow label="Email" value={selectedUser.email} />
+          <InfoRow label="Income" value={selectedUser.income} />
+          <InfoRow label="Birth Place" value={selectedUser.birthPlace} />
+          <InfoRow label="Education" value={selectedUser.education} />
+        </div>
 
-        <DataRow label="Education" value={selectedUser.education} />
-        <DataRow label="Occupation" value={selectedUser.occupation} />
+        {/* RIGHT */}
+        <div>
+          <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">
+            FAMILY & ASTROLOGY
+          </h3>
 
-        <DataRow label="Income" value={selectedUser.income} />
-        <DataRow label="Raasi" value={selectedUser.raasi} />
+          <InfoRow label="Father" value={selectedUser.father} />
+          <InfoRow label="Mother" value={selectedUser.mother} />
+          <InfoRow label="Grandfather" value={selectedUser.grandfather} />
+          <InfoRow label="Grandmother" value={selectedUser.grandmother} />
+          <InfoRow label="Siblings" value={selectedUser.siblings} />
+          <InfoRow label="Raasi" value={selectedUser.raasi} />
+          <InfoRow label="Star" value={selectedUser.star} />
+          <InfoRow label="Dosham" value={selectedUser.dosham} />
+        </div>
+      </div>
 
-        <DataRow label="Star" value={selectedUser.star} />
-        <DataRow label="Dosham" value={selectedUser.dosham} />
+      {/* HOROSCOPE SECTION (Separate Row Full Width) */}
+      <div className="mt-10">
+        <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-3">
+          JADHAGAM FILE
+        </h3>
 
-        <DataRow label="Father" value={selectedUser.father} />
-        <DataRow label="Mother" value={selectedUser.mother} />
+        {selectedUser.horoscope?.uploaded ? (
+          <div className="flex items-center justify-between bg-[#FAF6F3] px-5 py-3 rounded-2xl">
+            <span className="text-sm text-[#5D4037] truncate">
+              {selectedUser.horoscope.fileName}
+            </span>
 
-        <DataRow label="Grandfather" value={selectedUser.grandfather} />
-        <DataRow label="Grandmother" value={selectedUser.grandmother} />
-
-        <DataRow label="City" value={selectedUser.city} />
-        <DataRow label="Country" value={selectedUser.country} />
-
-        <DataRow label="Privacy" value={selectedUser.privacy} />
-        <DataRow label="Status" value={selectedUser.status} />
-
+            <a
+              href={`http://localhost:5000/uploads/photos/${selectedUser.horoscope.fileName}`}
+              target="_blank"
+              rel="noreferrer"
+              className="px-4 py-2 bg-[#5D4037] text-white text-xs rounded-xl font-semibold hover:opacity-90 transition"
+            >
+              View
+            </a>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-400">Not Uploaded</p>
+        )}
       </div>
 
     </div>
   </div>
 )}
+
+
 
     </div>
   );
@@ -207,21 +247,17 @@ export default PendingForms;
 
 /* ================= REUSABLE COMPONENTS ================= */
 
-const DataRow = ({ label, value }) => (
-  <div className="flex flex-col gap-1">
-    
-    {/* Label */}
-    <label className="text-[9px] uppercase tracking-wide text-gray-400 font-semibold">
+const InfoRow = ({ label, value }) => (
+  <div className="flex justify-between py-2 border-b border-[#E6DFD8] text-sm">
+    <span className="text-gray-400 uppercase text-[11px] tracking-wide">
       {label}
-    </label>
-
-    {/* Value Box */}
-    <div className="bg-rose-50 text-gray-800 text-[13px] font-medium px-3 py-1.5 rounded-md">
+    </span>
+    <span className="text-[#5D4037] font-medium text-right max-w-[55%]">
       {value || "-"}
-    </div>
-
+    </span>
   </div>
 );
+
 
 
 
