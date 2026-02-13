@@ -295,7 +295,7 @@ const ConnectionCard = () => {
                     rel="noreferrer"
                     className="w-full sm:w-auto text-center px-6 py-2.5 text-[9px] bg-[#5D4037] text-white rounded-xl font-black uppercase tracking-widest hover:bg-[#A67C52] transition-all shadow-md"
                   >
-                    Download
+                    View 
                   </a>
                 </div>
               ) : (
