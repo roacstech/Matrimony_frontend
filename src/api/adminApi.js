@@ -168,3 +168,21 @@ export const getAdminDashboard = async () => {
 
 
 
+/* ===============================
+   GET SINGLE USER PROFILE
+================================ */
+export const getUserProfile = async (profileId) => {
+  const res = await fetch(`${BASE_URL}/users/${profileId}`, {
+    headers: getAuthHeader(),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message || "Failed to fetch profile");
+  }
+
+  return data.data; // adjust based on your backend response
+};
+
+
