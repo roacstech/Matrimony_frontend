@@ -53,71 +53,50 @@ export const useAuthForm = () => {
     }
   };
 
-  // =====================
-  // LOGIN
-  // =====================
-  const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    if (isSubmittingRef.current) return;
-    isSubmittingRef.current = true;
+ // =====================
+// LOGIN
+// =====================
+const handleLoginSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      const res = await loginUser({
-        email: formData.email,
-        password: formData.password,
-      });
+  try {
+    const input = formData.email;
 
-      const { response, roleid, status } = res.data;
+    const payload = {
+      password: formData.password,
+    };
 
-      // 🔑 Decode JWT safely
-      const decoded = jwtDecode(response);
-
-      // 🔐 Store auth data
-      localStorage.setItem("accesstoken", response);
-      localStorage.setItem("roleid", roleid);
-      localStorage.setItem("status", status);
-      localStorage.setItem("userid", decoded.userid);
-
-      toast.dismiss();
-
-      // =====================
-      // ADMIN
-      // =====================
-      if (Number(roleid) === 1) {
-        toast.success("✅ Admin login successful");
-        setTimeout(() => navigate("/admin"), 300);
-      }
-
-      // =====================
-      // USER
-      // =====================
-      else if (Number(roleid) === 2) {
-        toast.dismiss();
-        if (status === "NEW") {
-          toast.success("✅ Login successful" );
-          setTimeout(() => navigate("/form"), 300);
-        } 
-        else if (status === "PENDING") {
-          toast("⏳ Admin approval pending. Please wait.");
-          setTimeout(() => navigate("/"), 300);
-        } 
-        else if (status === "ACTIVE") {
-          toast.success("✅ Login successful");
-          setTimeout(() => navigate("/user/dashboard"), 300);
-        } 
-        else if (status === "REJECTED") {
-          toast.error("❌ Your profile was rejected by admin");
-          setTimeout(() => navigate("/"), 300);
-        }
-      }
-
-      isSubmittingRef.current = false;
-    } catch (err) {
-      toast.dismiss();
-      toast.error(err.response?.data?.message || "Login failed",{ duration: 2000 });
-      isSubmittingRef.current = false;
+    // check if input is number (phone) or email
+    if (/^\d+$/.test(input)) {
+      payload.phone = input;
+    } else {
+      payload.email = input;
     }
-  };
+
+    const res = await loginUser(payload);
+
+    const token = res.data.response;
+
+    if (!token) {
+      toast.error("Login failed");
+      return;
+    }
+
+    const decoded = jwtDecode(token);
+
+    localStorage.setItem("accesstoken", token);
+    localStorage.setItem("roleid", res.data.roleid);
+    localStorage.setItem("userid", decoded.userid);
+
+    toast.success("Login successful");
+    navigate("/user/dashboard");
+
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Login failed");
+  }
+};
+
+
 
   return {
     formData,
