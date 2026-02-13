@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -20,6 +19,8 @@ import {
   Lock,
 } from "lucide-react";
 
+const Img_Url = import.meta.env.VITE_IMG_URL;
+
 const ConnectionCard = () => {
   const [connections, setConnections] = useState([]);
   const [activeTab, setActiveTab] = useState("Public");
@@ -35,6 +36,7 @@ const ConnectionCard = () => {
     }
     loadData();
   }, []);
+  
   useEffect(() => {
     async function loadMyGender() {
       const res = await getUserProfile();
@@ -44,8 +46,6 @@ const ConnectionCard = () => {
     }
     loadMyGender();
   }, []);
-
-  // tost define
 
   const [toast, setToast] = useState({
     show: false,
@@ -65,8 +65,6 @@ const ConnectionCard = () => {
     }
   };
 
-  // tost declarre
-
   const triggerToast = (msg) => {
     setToast({ show: true, msg });
     setTimeout(() => setToast({ show: false, msg: "" }), 2000);
@@ -81,7 +79,7 @@ const ConnectionCard = () => {
       triggerToast("Something went wrong");
     }
   };
-  // ✅ ADDED (SEPARATE GENDER FILTER FUNCTION)
+
   const genderFilter = (profileGender) => {
     if (!myGender) return true;
     if (myGender === "Male" && profileGender === "Female") return true;
@@ -90,54 +88,50 @@ const ConnectionCard = () => {
   };
 
   return (
-    <div className="p-2 sm:p-4 bg-transparent space-y-10 font-serif">
+    <div className="p-4 sm:p-6 lg:p-8 bg-transparent space-y-6 sm:space-y-10 font-serif overflow-x-hidden">
       <Toaster position="top-right" reverseOrder={false} />
 
       {/* ================= TAB HEADER ================= */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto pb-2 no-scrollbar">
         <button
           onClick={() => setActiveTab("Public")}
-          className={`px-8 py-2.5 rounded-full text-[10px] font-black tracking-[2px] uppercase transition-all duration-300 ${
+          className={`flex-1 sm:flex-none whitespace-nowrap px-6 sm:px-8 py-2.5 rounded-full text-[10px] font-black tracking-[2px] uppercase transition-all duration-300 ${
             activeTab === "Public"
               ? "bg-[#5D4037] text-white shadow-xl -translate-y-0.5"
               : "bg-white text-gray-400 border border-[#EEEEEE]"
           }`}
         >
-          <span className="flex items-center gap-2">
+          <span className="flex items-center justify-center gap-2">
             <Globe size={14} /> Public
           </span>
         </button>
 
         <button
           onClick={() => setActiveTab("Private")}
-          className={`px-8 py-2.5 rounded-full text-[10px] font-black tracking-[2px] uppercase transition-all duration-300 ${
+          className={`flex-1 sm:flex-none whitespace-nowrap px-6 sm:px-8 py-2.5 rounded-full text-[10px] font-black tracking-[2px] uppercase transition-all duration-300 ${
             activeTab === "Private"
               ? "bg-[#5D4037] text-white shadow-xl -translate-y-0.5"
               : "bg-white text-gray-400 border border-[#EEEEEE]"
           }`}
         >
-          <span className="flex items-center gap-2">
+          <span className="flex items-center justify-center gap-2">
             <Lock size={14} /> Private
           </span>
         </button>
       </div>
 
       {/* ================= CARD GRID ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 justify-items-center max-w-7xl mx-auto">
         {connections
-          .filter(
-            (u) => {
-              if (u.privacy !== activeTab) return false;
-              if (!genderFilter(u.gender)) return false; // ✅ ONLY LOGIC CHANGE
-              return true;
-            },
-            ////tost jsx
-          )
-
+          .filter((u) => {
+            if (u.privacy !== activeTab) return false;
+            if (!genderFilter(u.gender)) return false;
+            return true;
+          })
           .map((u) => (
             <div
               key={u.id}
-              className="group relative bg-white rounded-[32px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#A67C52]/30 transition-all duration-500 flex flex-col w-full max-w-[310px] h-fit pt-12 pb-6 px-6 overflow-visible"
+              className="group relative bg-white rounded-[32px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#A67C52]/30 transition-all duration-500 flex flex-col w-full max-w-full sm:max-w-[340px] h-fit pt-12 pb-6 px-5 sm:px-6"
             >
               {/* 👁 EYE ICON */}
               {u.privacy === "Public" && (
@@ -154,31 +148,32 @@ const ConnectionCard = () => {
               <div
                 className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full shadow-md border border-white transition-transform group-hover:scale-105"
                 style={{
-                  backgroundColor:
-                    u.visibility === "Public" ? "#FAF6F3" : "#EEEEEE",
+                  backgroundColor: u.privacy === "Public" ? "#FAF6F3" : "#EEEEEE",
                   color: "#5D4037",
                 }}
               >
                 <span className="text-[9px] font-black uppercase tracking-[1.5px] whitespace-nowrap leading-none">
-                  {u.privacy === "Public"
-                    ? "📡 Public Mode"
-                    : "🔐 Private Mode"}
+                  {u.privacy === "Public" ? "📡 Public Mode" : "🔐 Private Mode"}
                 </span>
               </div>
 
               {/* DETAILS GRID */}
-              <div className="grid grid-cols-2 gap-y-8 gap-x-10 mt-2">
-                <DetailItem icon="🌙" label="Raasi" value={u.raasi} />
-                <DetailItem
-                  icon={u.gender === "Male" ? "👨" : "👩"}
-                  label="Gender"
-                  value={u.gender}
-                />
+<div className="grid grid-cols-2 gap-y-7 gap-x-2 sm:gap-x-8 mt-2 w-full px-2">
+  <DetailItem icon="🌙" label="Raasi" value={u.raasi} />
+  <DetailItem
+    icon={u.gender === "Male" ? "👨" : "👩"}
+    label="Gender"
+    value={u.gender}
+  />
+  <DetailItem icon="💰" label="Salary" value={u.income} />
+      <DetailItem icon="📍" label="Location" value={u.city} />
 
-                <DetailItem icon="💰" label="Salary" value={u.income} />
-                <DetailItem icon="💼" label="Work" value={u.occupation} isAccent />
-                <DetailItem icon="📍" label="Location" value={u.city} />
-              </div>
+  
+  {/* Location Spanning properly */}
+
+      <DetailItem icon="💼" label="Work" value={u.occupation} isAccent />
+
+</div>
 
               {/* ACTION BUTTON */}
               {u.privacy === "Private" && (
@@ -197,72 +192,50 @@ const ConnectionCard = () => {
 
       {/* ================= VIEW USER POPUP ================= */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-[#5D4037]/40 backdrop-blur-md flex items-center justify-center z-[100] p-4">
-          <div className="bg-white rounded-[40px] p-8 w-full max-w-[650px]  overflow-y-auto shadow-2xl border border-[#EEEEEE]">
+        <div className="fixed inset-0 bg-[#5D4037]/40 backdrop-blur-md flex items-center justify-center z-[100] p-3 sm:p-4">
+          <div className="relative bg-white rounded-[32px] sm:rounded-[40px] p-5 sm:p-8 w-full max-w-[650px] max-h-[90vh] overflow-y-auto shadow-2xl border border-[#EEEEEE]">
             <button
               onClick={() => setSelectedUser(null)}
-              className="absolute top-6  p-2 bg-[#5D4037] rounded-full text-white  transition-all"
+              className="sticky top-0 float-right z-10 p-2 bg-[#5D4037] rounded-full text-white hover:bg-[#A67C52] transition-all mb-2"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
 
             {/* HEADER SECTION */}
-            <div className="flex flex-col items-center mb-8">
+            <div className="flex flex-col items-center mb-8 clear-both">
               <div className="relative mb-4">
                 <img
-                  src={selectedUser.photo || "https://i.pravatar.cc/300"}
+                  src={`http://localhost:5000/uploads/photos/${selectedUser.photo}`}
                   alt=""
-                  className="w-28 h-28 rounded-[30px] shadow-xl border-4 border-[#FAF6F3] object-cover"
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-[25px] sm:rounded-[30px] shadow-xl border-4 border-[#FAF6F3] object-cover"
                 />
                 <div className="absolute -bottom-2 -right-2 bg-[#A67C52] text-white p-2 rounded-lg shadow-lg">
                   <User size={16} />
                 </div>
               </div>
-              <h3 className="text-center font-black text-2xl text-[#5D4037] tracking-tight">
+              <h3 className="text-center font-black text-xl sm:text-2xl text-[#5D4037] tracking-tight px-2">
                 {selectedUser.full_name}
               </h3>
-              <p className="text-center text-[10px] text-[#A67C52] font-black uppercase tracking-[3px] mt-1">
+              <p className="text-center text-[9px] sm:text-[10px] text-[#A67C52] font-black uppercase tracking-[2px] sm:tracking-[3px] mt-1">
                 {selectedUser.occupation}
               </p>
-              <p className="text-center text-[10px] text-gray-400 mt-2 uppercase tracking-widest flex items-center gap-1">
+              <p className="text-center text-[10px] text-gray-400 mt-2 uppercase tracking-widest flex items-center justify-center gap-1">
                 <MapPin size={12} /> {selectedUser.city}, {selectedUser.country}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
               {/* Left Column */}
               <div className="space-y-3">
                 <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">
                   Personal Info
                 </h4>
-                <PopupDetail
-                  label="Gender / பாலினம்"
-                  value={selectedUser.gender}
-                />
-                <PopupDetail
-                  label="DOB / பிறந்த தேதி"
-                  value={selectedUser.dob}
-                />
-                {/* <PopupDetail
-                  label="Birth Time / பிறப்பு நேரம்"
-                  value={selectedUser.birth_time}
-                /> */}
-                <PopupDetail
-                  label="Marital Status / திருமண நிலை"
-                  value={selectedUser.marital_status}
-                />
-                <PopupDetail
-                  label="Email / மின்னஞ்சல்"
-                  value={selectedUser.email}
-                />
-                <PopupDetail
-                  label="Income / வருமானம்"
-                  value={selectedUser.income}
-                />
-                <PopupDetail
-                  label="Birth Place / பிறந்த இடம்"
-                  value={selectedUser.birth_place}
-                />
+                <PopupDetail label="Gender / பாலினம்" value={selectedUser.gender} />
+                <PopupDetail label="DOB / பிறந்த தேதி" value={selectedUser.dob} />
+                <PopupDetail label="Marital Status / திருமண நிலை" value={selectedUser.marital_status} />
+                <PopupDetail label="Email / மின்னஞ்சல்" value={selectedUser.email} />
+                <PopupDetail label="Income / வருமானம்" value={selectedUser.income} />
+                <PopupDetail label="Birth Place / பிறந்த இடம்" value={selectedUser.birth_place} />
 
                 <div className="mt-4 pt-4 border-t border-[#FAF6F3]">
                   <p className="text-[10px] font-black text-[#5D4037] uppercase mb-1 flex items-center gap-2">
@@ -279,52 +252,24 @@ const ConnectionCard = () => {
                 <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">
                   Family & Astrology
                 </h4>
-                <PopupDetail
-                  label="Father / தந்தை"
-                  value={selectedUser.father_name}
-                />
-                <PopupDetail
-                  label="Mother / அம்மா"
-                  value={selectedUser.mother_name}
-                />
-                <PopupDetail
-                  label="Grandfather / தாத்தா"
-                  value={selectedUser.grandfather_name}
-                />
-                <PopupDetail
-                  label="Grandmother / பாட்டி"
-                  value={selectedUser.grandmother_name}
-                />
-
-                <PopupDetail
-                  label="Siblings / உடன்பிறப்புகள்"
-                  value={selectedUser.siblings}
-                />
+                <PopupDetail label="Father / தந்தை" value={selectedUser.father_name} />
+                <PopupDetail label="Mother / அம்மா" value={selectedUser.mother_name} />
+                <PopupDetail label="Grandfather / தாத்தா" value={selectedUser.grandfather_name} />
+                <PopupDetail label="Grandmother / பாட்டி" value={selectedUser.grandmother_name} />
+                <PopupDetail label="Siblings / உடன்பிறப்புகள்" value={selectedUser.siblings} />
 
                 <div className="mt-6 grid grid-cols-2 gap-3 bg-[#FAF6F3] p-4 rounded-2xl border border-[#EEEEEE]">
                   <div>
-                    <p className="text-[9px] font-black text-[#A67C52] uppercase">
-                      Raasi / இராசி
-                    </p>
-                    <p className="text-xs font-bold text-[#5D4037]">
-                      {selectedUser.raasi}
-                    </p>
+                    <p className="text-[9px] font-black text-[#A67C52] uppercase">Raasi</p>
+                    <p className="text-[11px] font-bold text-[#5D4037]">{selectedUser.raasi}</p>
                   </div>
                   <div>
-                    <p className="text-[9px] font-black text-[#A67C52] uppercase">
-                      Natchathiram / நட்சத்திரம்
-                    </p>
-                    <p className="text-xs font-bold text-[#5D4037]">
-                      {selectedUser.star}
-                    </p>
+                    <p className="text-[9px] font-black text-[#A67C52] uppercase">Star</p>
+                    <p className="text-[11px] font-bold text-[#5D4037]">{selectedUser.star}</p>
                   </div>
-                  <div>
-                    <p className="text-[9px] font-black text-[#A67C52] uppercase">
-                      Dosham / தோஷாம்
-                    </p>
-                    <p className="text-xs font-bold text-[#5D4037]">
-                      {selectedUser.dosham}
-                    </p>
+                  <div className="col-span-2 mt-1">
+                    <p className="text-[9px] font-black text-[#A67C52] uppercase">Dosham</p>
+                    <p className="text-[11px] font-bold text-[#5D4037]">{selectedUser.dosham}</p>
                   </div>
                 </div>
               </div>
@@ -333,7 +278,7 @@ const ConnectionCard = () => {
             {/* JADHAGAM SECTION */}
             <div className="mt-10">
               {selectedUser.horoscope_uploaded ? (
-                <div className="p-5 bg-[#FAF6F3] rounded-[24px] border border-[#EEEEEE] flex items-center justify-between group hover:border-[#A67C52] transition-all">
+                <div className="p-4 sm:p-5 bg-[#FAF6F3] rounded-[24px] border border-[#EEEEEE] flex flex-col sm:flex-row items-center justify-between gap-4 group hover:border-[#A67C52] transition-all">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-white rounded-xl text-[#A67C52] shadow-sm">
                       <FileText size={20} />
@@ -342,16 +287,13 @@ const ConnectionCard = () => {
                       <p className="text-[11px] font-black text-[#5D4037] uppercase tracking-wider">
                         📜 Horoscope / Jadhagam
                       </p>
-                      <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">
-                        Ready to View
-                      </p>
                     </div>
                   </div>
                   <a
-                    href={`/${selectedUser.horoscope_file_url}`}
+                    href={`http://localhost:5000/uploads/photos/${selectedUser.horoscope_file_name}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-6 py-2.5 text-[9px] bg-[#5D4037] text-white rounded-xl font-black uppercase tracking-widest hover:bg-[#A67C52] transition-all shadow-md"
+                    className="w-full sm:w-auto text-center px-6 py-2.5 text-[9px] bg-[#5D4037] text-white rounded-xl font-black uppercase tracking-widest hover:bg-[#A67C52] transition-all shadow-md"
                   >
                     Download
                   </a>
@@ -367,18 +309,11 @@ const ConnectionCard = () => {
           </div>
         </div>
       )}
-      {/* 🔔 GLOBAL TOAST POPUP (CENTER) */}
+
+      {/* 🔔 GLOBAL TOAST POPUP (MOBILE OPTIMIZED) */}
       {toast.show && (
-        <div className="fixed inset-0 z-[9999] flex items-start justify-center ml-60 pt-32">
-          <div
-            className="
-        bg-[#5D4037] text-[#FAF6F3] font-bold 
-        px-10 py-3 rounded-2xl shadow-2xl
-        transform-gpu origin-center
-        transition-all duration-300 ease-out
-        scale-100 opacity-100
-      "
-          >
+        <div className="fixed bottom-10 left-0 right-0 z-[9999] flex justify-center px-4 sm:bottom-auto sm:top-32 sm:ml-60">
+          <div className="bg-[#5D4037] text-[#FAF6F3] font-bold px-6 sm:px-10 py-3 rounded-2xl shadow-2xl text-center transform-gpu scale-100 opacity-100 transition-all duration-300">
             {toast.msg}
           </div>
         </div>
@@ -389,23 +324,23 @@ const ConnectionCard = () => {
 
 /* ================= HELPER COMPONENTS ================= */
 const PopupDetail = ({ label, value }) => (
-  <div className="flex justify-between items-center py-1 border-b border-[#FAF6F3]">
-    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+  <div className="flex justify-between items-start py-1.5 border-b border-[#FAF6F3] gap-4">
+    <span className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest min-w-[100px]">
       {label}
     </span>
-    <span className="text-[11px] font-black text-[#5D4037]">{value}</span>
+    <span className="text-[10px] sm:text-[11px] font-black text-[#5D4037] text-right">{value || "N/A"}</span>
   </div>
 );
 
 const DetailItem = ({ icon, label, value, isAccent }) => (
   <div className="flex flex-col min-w-0 w-full">
     <div className="flex items-center gap-1.5 mb-1">
-      <span className="w-5 h-5 flex items-center justify-center bg-[#FAF6F3] rounded-md text-[12px]">{icon}</span>
-      <span className="text-[9px] text-[#A67C52] uppercase font-black tracking-[0.15em] leading-none truncate">{label}</span>
+      <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-[#FAF6F3] rounded-md text-[12px]">{icon}</span>
+      <span className="text-[8px] sm:text-[9px] text-[#A67C52] uppercase font-black tracking-[0.1em] leading-none truncate">{label}</span>
     </div>
     <div className="ml-6">
-      <span className={`text-[10px] font-black leading-tight block line-clamp-1 uppercase tracking-wider ${isAccent ? "text-[#5D4037]" : "text-gray-500"}`} title={value}>
-        {value}
+      <span className={`text-[10px] font-black leading-tight block truncate uppercase tracking-wider ${isAccent ? "text-[#5D4037]" : "text-gray-500"}`} title={value}>
+        {value || "---"}
       </span>
     </div>
   </div>
