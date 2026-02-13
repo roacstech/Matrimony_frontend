@@ -1,6 +1,3 @@
-;
-
-
 import React, { useEffect, useState } from "react";
 import {
   getReceivedConnections,
@@ -8,38 +5,65 @@ import {
   acceptConnection,
   rejectConnection,
   withdrawConnection,
+  getUserProfile,
+  getAcceptedConnections,
 } from "../../api/userApi";
 
 const MyConnection = () => {
   const [received, setReceived] = useState([]);
   const [sent, setSent] = useState([]);
+  const [acceptedReceived, setAcceptedReceived] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const [toast, setToast] = useState({ show: false, msg: "" });
+  const Img_Url = import.meta.env.VITE_IMG_URL;
 
+
+  console.log("👌",sent);
+  
   const triggerToast = (msg) => {
     setToast({ show: true, msg });
     setTimeout(() => setToast({ show: false, msg: "" }), 2000);
   };
 
-  // 🔥 LOAD DATA FROM BACKEND
+  // ================= LOAD RECEIVED + SENT =================
   useEffect(() => {
     const loadConnections = async () => {
       try {
         const receivedRes = await getReceivedConnections();
         const sentRes = await getSentConnections();
 
-        // ✅ correct
-setReceived(receivedRes.data.data || []);
-        setSent(sentRes.data.data || []);
+        setReceived(receivedRes.data || []);
+        setSent(sentRes.data || []);
       } catch (err) {
         console.error("Failed to load connections", err);
       }
     };
-
     loadConnections();
   }, []);
 
-  // 🔥 HELPERS
+  // ================= LOAD ACCEPTED =================
+  const loadAcceptedConnections = async () => {
+    try {
+      const res = await getAcceptedConnections();
+      if (res.success) {
+        // ⭐ mark accepted
+        const acceptedWithStatus = (res.data || []).map((c) => ({
+          ...c,
+          status: "Accepted",
+        }));
+        setAcceptedReceived(acceptedWithStatus);
+      }
+    } catch (err) {
+      console.error("Failed to load accepted connections", err);
+    }
+  };
+
+  useEffect(() => {
+    loadAcceptedConnections();
+  }, []);
+
+  // ================= HELPERS =================
   const isExpired = (createdAt) => {
     const created = new Date(createdAt).getTime();
     return Date.now() - created >= 24 * 60 * 60 * 1000;
@@ -51,67 +75,63 @@ setReceived(receivedRes.data.data || []);
     return Math.max(0, Math.floor(diff / (1000 * 60 * 60)));
   };
 
-  // 🔥 ACTION HANDLERS
-const handleAcceptConnection = async (connectionId) => {
-  try {
-    const res = await acceptConnection(connectionId);
-    const data = res.data;
-
-    if (!data.success) {
-      triggerToast(data.message || "Accept failed");
-      return;
+  // ================= ACCEPT =================
+  const handleAcceptConnection = async (connectionId) => {
+    try {
+      const res = await acceptConnection(connectionId);
+      if (!res.success) {
+        triggerToast(res.message || "Accept failed");
+        return;
+      }
+      triggerToast("Connection accepted");
+      await loadAcceptedConnections();
+    } catch (err) {
+      console.error(err);
+      triggerToast("Something went wrong");
     }
-
-    setReceived((prev) =>
-      prev.map((c) =>
-        c.connectionId === connectionId
-          ? { ...c, status: "Accepted" }
-          : c
-      )
-    );
-
-    triggerToast("Connection accepted");
-  } catch (err) {
-    triggerToast("Something went wrong");
-    console.error("Accept connection error:", err);
-  }
-};
-
-
-
-/// User Rejct connections
-
-
-const handleRejectConnection = async (connectionId) => {
-  try {
-    const data = await rejectConnection(connectionId);
-
-    if (!data.success) {
-      triggerToast(data.message || "Reject failed");
-      return;
-    }
-
-    setReceived((prev) =>
-      prev.filter((c) => c.connectionId !== connectionId)
-    );
-
-    triggerToast("Connection rejected");
-  } catch (err) {
-    console.error("Reject connection error:", err);
-    triggerToast("Something went wrong");
-  }
-};
-
-
-
-
-  const handleWithdrawRequest = async (connectionId, name) => {
-    await withdrawConnection(connectionId);
-    setSent((prev) =>
-      prev.filter((c) => c.connectionId !== connectionId)
-    );
-    triggerToast(`Request withdrawn from ${name}`);
   };
+
+  // ================= REJECT =================
+  const handleRejectConnection = async (connectionId) => {
+    try {
+      const data = await rejectConnection(connectionId);
+      if (!data.success) {
+        triggerToast(data.message || "Reject failed");
+        return;
+      }
+      setReceived((prev) =>
+        prev.filter((c) => c.connectionId !== connectionId)
+      );
+      triggerToast("Connection rejected");
+    } catch (err) {
+      console.error(err);
+      triggerToast("Something went wrong");
+    }
+  };
+
+  // ================= WITHDRAW =================
+  const handleWithdrawRequest = async (connectionId) => {
+    console.log("withdraw id", connectionId);
+
+    await withdrawConnection(connectionId);
+    setSent((prev) => prev.filter((c) => c.connectionId !== connectionId));
+    triggerToast(`Request withdrawn from ${connectionId}`);
+  };
+
+  // ================= VIEW PROFILE =================
+  const handleViewProfile = async (userId) => {
+    try {
+      const res = await getUserProfile(userId);
+      if (res.success) setSelectedUser(res.data);
+      else triggerToast(res.message || "Profile not found");
+    } catch (err) {
+      console.error(err);
+      triggerToast("Failed to load profile");
+    }
+  };
+
+  // ⭐ merge pending + accepted
+  const allReceived = [...received, ...acceptedReceived];
 
   return (
     <div className="p-4 sm:p-6 max-w-[1600px] mx-auto min-h-screen bg-[#FBFBFE] relative">
@@ -129,16 +149,23 @@ const handleRejectConnection = async (connectionId) => {
           </h2>
 
           <div className="grid grid-cols-1 gap-5">
-            {received.map((c) => {
+            {allReceived.map((c) => {
               const expired = isExpired(c.created_at);
               const isAccepted = c.status === "Accepted";
 
               return (
                 <div
                   key={c.connectionId}
-                  className={`bg-white rounded-[32px] p-6 border-l-[10px]
+                  onClick={() => {
+                    if (isAccepted) {
+                      handleViewProfile(c.user_id || c.from_user);
+                    }
+                  }}
+                  className={`bg-white rounded-[32px] p-6 border-l-[10px] cursor-pointer transition
                     ${
-                      expired
+                      isAccepted
+                        ? "border-l-green-600 bg-green-50"
+                        : expired
                         ? "opacity-50 border-l-gray-400"
                         : "border-l-[#3B1E54]"
                     }`}
@@ -147,6 +174,13 @@ const handleRejectConnection = async (connectionId) => {
                     <h3 className="font-black text-[#3B1E54]">
                       {c.full_name || "User"}
                     </h3>
+
+                    {isAccepted && (
+                      <span className="text-[10px] bg-green-600 text-white px-3 py-1 rounded-full font-bold">
+                        ✓ Accepted
+                      </span>
+                    )}
+
                     {!expired && !isAccepted && (
                       <span className="text-[10px] text-green-600 font-bold">
                         ⏳ {hoursLeft(c.created_at)} hrs left
@@ -161,24 +195,20 @@ const handleRejectConnection = async (connectionId) => {
                   {!expired && !isAccepted && (
                     <div className="flex gap-3 mt-4">
                       <button
-                        onClick={() =>
-                          handleAcceptConnection(
-                            c.connectionId,
-                            c.fullName
-                          )
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAcceptConnection(c.connectionId);
+                        }}
                         className="bg-green-600 text-white px-4 py-2 rounded-full text-xs"
                       >
                         Accept
                       </button>
                       <button
-                        onClick={() =>
-                          handleRejectConnection(
-                            c.connectionId,
-                            c.full_name
-                          )
-                        }
-                        className="bg-red-500 text-white px-4 py-2 rounded-full text-xs reject-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRejectConnection(c.connectionId);
+                        }}
+                        className="bg-red-500 text-white px-4 py-2 rounded-full text-xs"
                       >
                         Reject
                       </button>
@@ -188,7 +218,7 @@ const handleRejectConnection = async (connectionId) => {
               );
             })}
 
-            {received.length === 0 && (
+            {allReceived.length === 0 && (
               <p className="text-center text-gray-400 text-xs">
                 No received requests
               </p>
@@ -209,15 +239,15 @@ const handleRejectConnection = async (connectionId) => {
                 className="flex justify-between items-center bg-white p-4 rounded-2xl border"
               >
                 <div>
-                  <p className="font-bold text-sm">{c.full_name}</p>
+                  <p className="font-bold text-sm">{c.receiver_work}</p>
                   <p className="text-xs text-gray-500">
-                    {c.gender} • {c.occupation} • {c.city}
+                    {c.receiver_city} • {c.receiver_raasi} • {c.receiver_salary}
                   </p>
                 </div>
 
                 <button
                   onClick={() =>
-                    handleWithdrawRequest(c.connectionId, c.fullName)
+                    handleWithdrawRequest(c.connectionId)
                   }
                   className="bg-rose-100 text-rose-600 px-4 py-1.5 rounded-xl text-xs font-bold"
                 >
@@ -225,18 +255,120 @@ const handleRejectConnection = async (connectionId) => {
                 </button>
               </div>
             ))}
-
-            {sent.length === 0 && (
-              <p className="text-center text-gray-400 text-xs">
-                No pending requests
-              </p>
-            )}
           </div>
         </section>
       </div>
+
+      {/* ================= PROFILE MODAL ================= */}
+      {/* ================= PROFILE MODAL ================= */}
+{selectedUser && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 relative">
+
+      {/* CLOSE */}
+      <button
+        onClick={() => setSelectedUser(null)}
+        className="absolute top-4 right-4 bg-gray-100 px-3 py-1 rounded-full"
+      >
+        ✕
+      </button>
+
+      {/* HEADER */}
+      <div className="text-center mb-6">
+        <img
+          src={`${Img_Url}/photos/${selectedUser.photo}`}
+          className="w-28 h-28 object-cover rounded-2xl mx-auto mb-3"
+        />
+        <h2 className="text-2xl font-bold">{selectedUser.full_name}</h2>
+        <p className="text-gray-500">
+          {selectedUser.city}, {selectedUser.country}
+        </p>
+      </div>
+
+      {/* PERSONAL INFO */}
+      <Section title="Personal Information">
+        <Row label="Gender" value={selectedUser.gender} />
+        <Row label="Date of Birth" value={selectedUser.dob?.split("T")[0]} />
+        <Row label="Birth Time" value={selectedUser.birth_time} />
+        <Row label="Birth Place" value={selectedUser.birth_place} />
+        <Row label="Marital Status" value={selectedUser.marital_status} />
+      </Section>
+
+      {/* EDUCATION & CAREER */}
+      <Section title="Education & Career">
+        <Row label="Education" value={selectedUser.education} />
+        <Row label="Occupation" value={selectedUser.occupation} />
+        <Row label="Income" value={selectedUser.income} />
+      </Section>
+
+      {/* FAMILY */}
+      <Section title="Family Details">
+        <Row label="Father" value={selectedUser.father_name} />
+        <Row label="Mother" value={selectedUser.mother_name} />
+        <Row label="Grandfather" value={selectedUser.grandfather_name} />
+        <Row label="Grandmother" value={selectedUser.grandmother_name} />
+        <Row label="Siblings" value={selectedUser.siblings} />
+      </Section>
+
+      {/* ASTROLOGY */}
+      <Section title="Astrology">
+        <Row label="Raasi" value={selectedUser.raasi} />
+        <Row label="Star" value={selectedUser.star} />
+        <Row label="Dosham" value={selectedUser.dosham} />
+      </Section>
+
+      {/* RELIGION */}
+      <Section title="Religion & Community">
+        <Row label="Religion" value={selectedUser.religion} />
+        <Row label="Caste" value={selectedUser.caste} />
+      </Section>
+
+      {/* ADDRESS */}
+      <Section title="Address">
+        <Row label="Address" value={selectedUser.address} />
+        <Row label="City" value={selectedUser.city} />
+        <Row label="Country" value={selectedUser.country} />
+      </Section>
+
+      {/* HOROSCOPE */}
+      <Section title="Horoscope">
+        {selectedUser.horoscope_uploaded ? (
+          <a
+            href={`${Img_Url}${selectedUser.horoscope_file_url}`}
+            target="_blank"
+            className="text-blue-600 underline"
+          >
+            View Horoscope File
+          </a>
+        ) : (
+          <p className="text-gray-400">Not uploaded</p>
+        )}
+      </Section>
+
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
 
+
+const Section = ({ title, children }) => (
+  <div className="mb-6">
+    <h3 className="font-bold text-lg mb-3 border-b pb-1">{title}</h3>
+    <div className="space-y-2">{children}</div>
+  </div>
+);
+
+const Row = ({ label, value }) => (
+  <div className="flex justify-between text-sm">
+    <span className="text-gray-500">{label}</span>
+    <span className="font-medium">{value || "-"}</span>
+  </div>
+);
+
+
 export default MyConnection;
+
 
