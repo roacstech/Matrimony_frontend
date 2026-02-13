@@ -321,8 +321,12 @@ const MatrimonyForm = () => {
   value={formData.dosham}
 >
   <option value="">Dosham / தோஷாம்</option>
-  <option value="No">Sevvai Raagu / செவ்வாய் ராகு</option>
-  <option value="Yes">Kethu ullatha /கேது உள்ளதா</option>
+  <option value="No">Sevvai  / செவ்வாய்</option>
+  <option value="Yes">Kethu  / கேது </option>
+    <option value="No"> Raagu / ராகு</option>
+      <option value="No">No / இல்லை</option>
+
+
 </select>
 {/* 
                   <input

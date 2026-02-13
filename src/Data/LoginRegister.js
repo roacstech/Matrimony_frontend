@@ -54,49 +54,87 @@ export const useAuthForm = () => {
   };
 
  // =====================
+
 // LOGIN
-// =====================
+  // =====================
 const handleLoginSubmit = async (e) => {
   e.preventDefault();
+  if (isSubmittingRef.current) return;
+  isSubmittingRef.current = true;
 
   try {
-    const input = formData.email;
+    const identifier = formData.email?.trim();
 
+    if (!identifier || !formData.password) {
+      toast.error("Email / Phone and Password required");
+      isSubmittingRef.current = false;
+      return;
+    }
+
+    // 🔍 detect email or phone
     const payload = {
       password: formData.password,
     };
 
-    // check if input is number (phone) or email
-    if (/^\d+$/.test(input)) {
-      payload.phone = input;
+    if (/^\d+$/.test(identifier)) {
+      payload.phone = identifier;   // 📱 mobile login
     } else {
-      payload.email = input;
+      payload.email = identifier;   // 📧 email login
     }
 
     const res = await loginUser(payload);
 
-    const token = res.data.response;
+    const { response, roleid, status } = res.data;
 
-    if (!token) {
-      toast.error("Login failed");
-      return;
-    }
+    // 🔑 Decode JWT
+    const decoded = jwtDecode(response);
 
-    const decoded = jwtDecode(token);
-
-    localStorage.setItem("accesstoken", token);
-    localStorage.setItem("roleid", res.data.roleid);
+    // 🔐 Store auth
+    localStorage.setItem("accesstoken", response);
+    localStorage.setItem("roleid", roleid);
+    localStorage.setItem("status", status);
     localStorage.setItem("userid", decoded.userid);
 
-    toast.success("Login successful");
-    navigate("/user/dashboard");
+    toast.dismiss();
 
+    // =====================
+    // ADMIN
+    // =====================
+    if (Number(roleid) === 1) {
+      toast.success("✅ Admin login successful");
+      setTimeout(() => navigate("/admin"), 300);
+    }
+
+    // =====================
+    // USER
+    // =====================
+    else if (Number(roleid) === 2) {
+      if (status === "NEW") {
+        toast.success("✅ Login successful");
+        setTimeout(() => navigate("/form"), 300);
+      } else if (status === "PENDING") {
+        toast("⏳ Admin approval pending. Please wait.");
+        setTimeout(() => navigate("/"), 300);
+      } else if (status === "ACTIVE") {
+        toast.success("✅ Login successful");
+        setTimeout(() => navigate("/user/dashboard"), 300);
+      } else if (status === "REJECTED") {
+        toast.error("❌ Your profile was rejected by admin");
+        setTimeout(() => navigate("/"), 300);
+      }
+    }
+
+    isSubmittingRef.current = false;
   } catch (err) {
-    toast.error(err.response?.data?.message || "Login failed");
+    toast.dismiss();
+    toast.error(err.response?.data?.message || "Login failed", {
+      duration: 2000,
+    });
+    isSubmittingRef.current = false;
   }
 };
 
-
+  
 
   return {
     formData,

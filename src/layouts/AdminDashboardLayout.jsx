@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   LayoutDashboard,
@@ -9,12 +9,14 @@ import {
   Menu,
 } from "lucide-react";
 import { performLogout } from "../Data/logout";
-
+import IMG from "../assets/adminprofile.jpg"
 const AdminDashboardLayout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isProfileDropdown, setProfileDropdown] = useState(false);
 
   const closeSidebar = () => setSidebarOpen(false);
+
+  const navigate = useNavigate();
 //
   const handleLogout = () => {
     toast(
@@ -28,7 +30,7 @@ const AdminDashboardLayout = () => {
             <button
               onClick={() => {
                 toast.dismiss(t.id);
-                performLogout();
+                performLogout(navigate);
                 toast.success("Logged out successfully",{duration:2000});
               }}
               className="px-4 py-2 bg-[#573D2F] text-white rounded-xl text-xs font-black uppercase tracking-widest"
@@ -67,7 +69,7 @@ const AdminDashboardLayout = () => {
       >
       <div className="flex flex-col items-center justify-center mt-10">
   <img
-    src="src/assets/adminprofile.jpg"
+    src={`${IMG}`}
     alt="Admin"
     className="w-16 h-16 rounded-full cursor-pointer border-2 border-white shadow-md"
   />
@@ -109,7 +111,7 @@ const AdminDashboardLayout = () => {
           {/* PROFILE AVATAR (TOP-RIGHT) */}
           <div className="relative">
             <img
-              src="src/assets/adminprofile.jpg"
+             src={`${IMG}`}
               alt="Admin"
               className="w-13 h-13 rounded-full cursor-pointer border-2 border-white shadow-md"
               onClick={() => setProfileDropdown(!isProfileDropdown)}

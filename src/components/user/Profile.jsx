@@ -302,7 +302,7 @@ const Profile = () => {
                 <FileText size={14} className="text-[#A67C52]" />
                 {user?.horoscope?.uploaded ? (
   <a
-    href={user?.horoscope?.fileUrl}
+              href={`http://localhost:5000/uploads/photos/${user?.horoscope?.fileUrl}`}
     target="_blank"
     rel="noreferrer"
     className="underline"
