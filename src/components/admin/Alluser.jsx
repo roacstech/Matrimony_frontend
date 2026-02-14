@@ -94,7 +94,7 @@ console.log("Get All User:",getAllUsers)
                
  {selectedUser?.photo ? (
     <img
-      src={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${selectedUser.photo}`}
+      src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`}
       alt="user"
       className="avatar-img"
     />
@@ -192,7 +192,7 @@ console.log("Get All User:",getAllUsers)
                   </div>
                {selectedUser.horoscope?.uploaded && (
   <a
-    href={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${selectedUser.horoscope.fileName}`}
+    href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope.fileName}`}
     target="_blank"
     rel="noreferrer"
     className="px-6 py-2.5 bg-[#5D4037] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition flex items-center gap-2"
@@ -244,7 +244,7 @@ console.log("Get All User:",getAllUsers)
                     <div className="w-11 h-11 md:w-12 md:h-12 rounded-[16px] md:rounded-[18px] bg-[#5D4037] overflow-hidden flex-shrink-0 flex items-center justify-center">
                      {u?.photo ? (
     <img
-      src={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${u.photo}`}
+      src={`${import.meta.env.VITE_IMG_URL}/photos/${u.photo}`}
       alt="user"
       className="avatar-img"
     />

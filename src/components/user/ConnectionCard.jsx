@@ -205,7 +205,7 @@ const ConnectionCard = () => {
             <div className="flex flex-col items-center mb-8 clear-both">
               <div className="relative mb-4">
                 <img
-                  src={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${selectedUser.photo}`}
+                  src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`}
                   alt=""
                   className="w-24 h-24 sm:w-28 sm:h-28 rounded-[25px] sm:rounded-[30px] shadow-xl border-4 border-[#FAF6F3] object-cover"
                 />
@@ -290,7 +290,7 @@ const ConnectionCard = () => {
                     </div>
                   </div>
                   <a
-                    href={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${selectedUser.horoscope_file_name}`}
+                    href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope_file_name}`}
                     target="_blank"
                     rel="noreferrer"
                     className="w-full sm:w-auto text-center px-6 py-2.5 text-[9px] bg-[#5D4037] text-white rounded-xl font-black uppercase tracking-widest hover:bg-[#A67C52] transition-all shadow-md"
