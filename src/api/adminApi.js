@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_APP_API_URL || "https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/admin";
+const BASE_URL = `${import.meta.env.VITE_APP_API_URL}admin`
 
 /* ===============================
    AUTH HEADER
@@ -13,7 +13,7 @@ const getAuthHeader = () => ({
 // ../../api/adminApi.js
 export const getPendingForms = async () => {
   try {
-    const res = await fetch("https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/admin/forms/pending");
+    const res = await fetch(`${import.meta.env.VITE_APP_API_URL}admin/forms/pending`);
     const data = await res.json();
     return data.data.data; // ✅ this is the array of pending users
   } catch (err) {

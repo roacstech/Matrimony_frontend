@@ -4,7 +4,7 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_API_URL, 
-  // https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/
+  // ${import.meta.env.VITE_APP_API_URL}
 });
 console.log("AXIOS BASE URL 👉", import.meta.env.VITE_APP_API_URL);
 

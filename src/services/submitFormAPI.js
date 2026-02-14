@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/user/form/submit";
+const API_URL = `${import.meta.env.VITE_APP_API_URL}user/form/submit`;
 
 export const submitFormAPI = async (formData, token) => {
   try {

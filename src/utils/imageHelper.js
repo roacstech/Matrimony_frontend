@@ -1,4 +1,4 @@
-const BASE_URL = "https://bec-frontend-matrimony-api.3t5o2t.easypanel.host";
+const BASE_URL = `${import.meta.env.VITE_APP_API_URL}`;
 
 export const getImageUrl = (filename) => {
   if (!filename) return null;
