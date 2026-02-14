@@ -1,6 +1,6 @@
 import { Profiler } from "react";
 
-const BASE_URL = "http://localhost:5000/api/user";
+const BASE_URL = "https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/user";
 
 // 🔑 ONE key name – use this everywhere
 const TOKEN_KEY = "accesstoken";
@@ -53,7 +53,7 @@ export async function sendConnectionRequest(profileId) {
 }
 
 // My user connections
-const BASE_URL_ = "http://localhost:5000/api/user";
+const BASE_URL_ = "https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/user";
 
 /* =======================
    CONNECTION LIST APIs
@@ -62,7 +62,7 @@ const BASE_URL_ = "http://localhost:5000/api/user";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api",
 });
 
 api.interceptors.request.use((config) => {

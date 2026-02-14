@@ -126,7 +126,7 @@ const Profile = () => {
             <div className="w-24 h-24 rounded-[30px] border-4 border-[#FAF6F3] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md">
               {user?.photo ? (
                 <img
-                  src={`http://localhost:5000/uploads/photos/${user?.photo}`}
+                  src={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${user?.photo}`}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -302,7 +302,7 @@ const Profile = () => {
                 <FileText size={14} className="text-[#A67C52]" />
                 {user?.horoscope?.uploaded ? (
   <a
-              href={`http://localhost:5000/uploads/photos/${user?.horoscope?.fileUrl}`}
+              href={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${user?.horoscope?.fileUrl}`}
     target="_blank"
     rel="noreferrer"
     className="underline"

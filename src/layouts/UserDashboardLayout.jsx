@@ -114,7 +114,7 @@ const UserDashboardLayout = ({
 
           <div className="w-16 h-16 rounded-[20px] bg-[#5D4037] flex items-center justify-center shadow-xl border-4 border-white overflow-hidden mb-4">
             <img
-              src={`http://localhost:5000/uploads/photos/${user.photo}`}
+              src={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${user.photo}`}
               alt="user"
               className="w-full h-full object-cover"
             />
@@ -198,7 +198,7 @@ const UserDashboardLayout = ({
               className="flex items-center gap-2 cursor-pointer bg-white p-1.5 pr-4 rounded-full border border-[#EEEEEE] shadow-sm hover:border-[#A67C52] transition-all"
             >
               <img
-                src={`http://localhost:5000/uploads/photos/${user.photo}`}
+                src={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${user.photo}`}
                 alt="user"
                 className="w-8 h-8 rounded-full object-cover"
               />

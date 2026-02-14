@@ -99,7 +99,7 @@ const PendingForms = () => {
               <div className="w-14 h-14 rounded-2xl overflow-hidden bg-[#FAF6F3] flex items-center justify-center">
                 {item.photo ? (
                   <img
-                    src={`http://localhost:5000/uploads/photos/${item.photo}`}
+                    src={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${item.photo}`}
                     alt="user"
                     className="w-full h-full object-cover"
                   />
@@ -150,7 +150,7 @@ const PendingForms = () => {
       <div className="flex justify-center mb-6">
         {selectedUser.photo ? (
           <img
-            src={`http://localhost:5000/uploads/photos/${selectedUser.photo}`}
+            src={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${selectedUser.photo}`}
             alt="user"
             className="w-20 h-20 rounded-2xl object-cover shadow-sm"
           />
@@ -219,7 +219,7 @@ const PendingForms = () => {
             </span>
 
             <a
-              href={`http://localhost:5000/uploads/photos/${selectedUser.horoscope.fileName}`}
+              href={`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${selectedUser.horoscope.fileName}`}
               target="_blank"
               rel="noreferrer"
               className="px-4 py-2 bg-[#5D4037] text-white text-xs rounded-xl font-semibold hover:opacity-90 transition"
