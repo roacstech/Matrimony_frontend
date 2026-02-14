@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_24", "npm", "nginx"]
+
+[phases.install]
+commands = ["npm install"]
+
+[phases.build]
+commands = ["npm run build"]
+
+[phases.start]
+commands = ["npx serve -s dist -l 80"]
