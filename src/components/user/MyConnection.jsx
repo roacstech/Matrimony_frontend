@@ -257,7 +257,7 @@ useEffect(() => {
                 <div className="pt-2">
                   {selectedUser.horoscope_uploaded ? (
                     <button
-                      onClick={() => window.open(`http://localhost:5000/uploads/photos/${selectedUser.horoscope_file_name}`, "_blank")}
+                      onClick={() => window.open(`https://bec-frontend-matrimony-api.3t5o2t.easypanel.host/api/uploads/photos/${selectedUser.horoscope_file_name}`, "_blank")}
                       className="bg-[#3B1E54] text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md hover:bg-[#2A153D] transition-all"
                     >
                       View Full Horoscope

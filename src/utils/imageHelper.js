@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://bec-frontend-matrimony-api.3t5o2t.easypanel.host";
 
 export const getImageUrl = (filename) => {
   if (!filename) return null;
