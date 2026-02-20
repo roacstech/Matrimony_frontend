@@ -1,0 +1,7 @@
+services:
+  frontend:
+    build: .
+    ports:
+      - "3009:80"
+    container_name: matrimony_frontend
+    restart: always
