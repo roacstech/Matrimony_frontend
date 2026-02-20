@@ -16,7 +16,7 @@ const CircularStat = ({ label, value, total, color1, color2 }) => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 sm:p-6 bg-white rounded-[28px] shadow-sm border border-[#EEEEEE] hover:shadow-md transition-all group">
+    <div className="flex flex-col items-center justify-center p-4 sm:p-6 bg-white rounded-[28px] shadow-sm border border-[#EEEEEE] hover:shadow-md transition-all group ">
       <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 128 128">
 
