@@ -79,13 +79,13 @@ console.log("Get All User:",getAllUsers)
   /* ================= 1. PROFILE DETAIL VIEW ================= */
   if (selectedUser) {
     return (
-      <div className="bg-white rounded-[30px] md:rounded-[40px] p-5 md:p-10 shadow-xl border border-[#EEEEEE] animate-in fade-in slide-in-from-right-5 duration-500">
+      <div className="bg-white rounded-[30px] md:rounded-[40px] p-5 md:p-10 shadow-xl border border-[#EEEEEE] animate-in fade-in slide-in-from-right-5 duration-500 cursor-pointer">
         
         {/* Header Section */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8 md:mb-10">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8 md:mb-10 cursor-pointer">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 md:gap-6 w-full lg:w-auto">
             <button onClick={() => { setSelectedUser(null); setActiveTab("personal"); }} 
-              className="p-3.5 md:p-4 bg-[#FAF6F3] text-[#5D4037] rounded-[20px] md:rounded-[24px] hover:bg-[#5D4037] hover:text-white transition-all shadow-sm">
+              className="p-3.5 md:p-4 bg-[#FAF6F3] text-[#5D4037] rounded-[20px] md:rounded-[24px] hover:bg-[#5D4037] hover:text-white transition-all shadow-sm cursor-pointer">
               <ArrowLeft size={20} />
             </button>
             
@@ -118,7 +118,7 @@ console.log("Get All User:",getAllUsers)
             </div>
           </div>
           
-          <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl border-2 w-full lg:w-auto justify-center lg:justify-start ${selectedUser.is_active ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-500'}`}>
+          <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl border-2 w-full lg:w-auto justify-center lg:justify-start ${selectedUser.is_active ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-500 cursor-pointer'}`}>
              {selectedUser.is_active ? <ShieldCheck size={18}/> : <ShieldAlert size={18}/>}
              <div className="flex flex-col">
                <span className="text-[11px] font-black uppercase tracking-widest leading-none">
@@ -129,17 +129,17 @@ console.log("Get All User:",getAllUsers)
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex gap-1 mb-8 overflow-x-auto no-scrollbar border-b border-[#EEEEEE] -mx-5 px-5 md:mx-0 md:px-0">
+        <div className="flex gap-1 mb-8 overflow-x-auto no-scrollbar border-b border-[#EEEEEE] -mx-5 px-5 md:mx-0 md:px-0 cursor-pointer">
           {["personal", "education", "family", "horoscope"].map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`px-6 md:px-8 py-3 md:py-4 rounded-t-[15px] md:rounded-t-[20px] text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab ? "bg-[#5D4037] text-white shadow-lg" : "text-stone-400 hover:text-[#5D4037]"}`}>
+              className={`px-6 md:px-8 py-3 md:py-4 rounded-t-[15px] md:rounded-t-[20px] text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab ? "bg-[#5D4037] text-white shadow-lg" : "text-stone-400 hover:text-[#5D4037] cursor-pointer"}`}>
               {tab}
             </button>
           ))}
         </div>
 
         {/* Grid Content */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-in fade-in duration-500">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-in fade-in duration-500 cursor-pointer">
           {activeTab === "personal" && (
             <>
               <InfoBox label="Full Name" value={selectedUser.fullName} />
@@ -197,7 +197,7 @@ console.log("Get All User:",getAllUsers)
     rel="noreferrer"
     className="px-6 py-2.5 bg-[#5D4037] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition flex items-center gap-2"
   >
-    <Download size={14} /> View / Download
+    <Download size={14} /> View 
   </a>
 )}          </div>
               </div>
@@ -210,7 +210,7 @@ console.log("Get All User:",getAllUsers)
 
   /* ================= 2. TABLE VIEW ================= */
   return (
-    <div className="bg-white rounded-[30px] md:rounded-[40px] shadow-sm border border-[#EEEEEE] overflow-hidden">
+    <div className="bg-white rounded-[30px] md:rounded-[40px] shadow-sm border border-[#EEEEEE] overflow-hidden cursor-pointer">
       <div className="p-6 md:p-8 border-b border-[#EEEEEE] flex flex-col xl:flex-row justify-between items-center gap-6">
         <div className="text-center xl:text-left">
           <h2 className="text-xl md:text-2xl font-black text-[#5D4037] tracking-tight">User Records</h2>
@@ -219,14 +219,14 @@ console.log("Get All User:",getAllUsers)
         <div className="flex bg-[#FAF6F3] p-1.5 rounded-[22px] border border-[#EEEEEE] overflow-x-auto no-scrollbar max-w-full">
           {["all", "male", "female", "active", "inactive"].map((f) => (
             <button key={f} onClick={() => setFilter(f)} 
-              className={`px-5 md:px-6 py-2 md:py-2.5 text-[9px] md:text-[10px] font-black uppercase rounded-[18px] transition-all whitespace-nowrap ${filter === f ? "bg-white text-[#5D4037] shadow-sm" : "text-stone-400 hover:text-stone-600"}`}>
+              className={`px-5 md:px-6 py-2 md:py-2.5 text-[9px] md:text-[10px] font-black uppercase rounded-[18px] transition-all whitespace-nowrap ${filter === f ? "bg-white text-[#5D4037] shadow-sm" : "text-stone-400 hover:text-stone-600 cursor-pointer"}`}>
               {f}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto cursor-pointer">
         <table className="w-full text-left min-w-[700px]">
           <thead>
             <tr className="bg-[#FAF6F3]/50 text-[10px] font-black text-stone-400 uppercase tracking-[2px] border-b border-[#EEEEEE]">
@@ -236,9 +236,9 @@ console.log("Get All User:",getAllUsers)
               <th className="px-6 md:px-8 py-5 text-center">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#EEEEEE]">
+          <tbody className="divide-y divide-[#EEEEEE] ">
             {filteredUsers.map((u) => (
-              <tr key={u.id} className="group hover:bg-[#FAF6F3]/50 transition-all">
+              <tr key={u.id} className="group hover:bg-[#FAF6F3]/50 transition-all cursor-pointer ">
                 <td className="px-6 md:px-8 py-5">
                   <div className="flex items-center gap-4">
                     <div className="w-11 h-11 md:w-12 md:h-12 rounded-[16px] md:rounded-[18px] bg-[#5D4037] overflow-hidden flex-shrink-0 flex items-center justify-center">
@@ -265,24 +265,24 @@ console.log("Get All User:",getAllUsers)
                   <p className="text-xs font-bold text-stone-600 truncate max-w-[150px]">{u.occupation}</p>
                   <p className="text-[10px] text-stone-400 uppercase font-black mt-1 tracking-tighter">{u.income}</p>
                 </td>
-                <td className="px-6 md:px-8 py-5 text-center">
-                  <div className="flex flex-col items-center gap-1.5">
+                <td className="px-6 md:px-8 py-5 text-center cursor-pointer">
+                  <div className="flex flex-col items-center gap-1.5 cursor-pointer">
                    <button
   onClick={() => togglePublicStatus(u.id, u.is_active)}
   className={`w-9 h-4.5 md:w-10 md:h-5 rounded-full relative transition-all ${
     u.is_active === 1 ? "bg-[#A67C52]" : "bg-stone-200"
   }`}
 >
-                      <span className={`absolute top-0.5 w-3.5 h-3.5 md:w-4 md:h-4 bg-white rounded-full shadow-sm transition-all ${u.is_active ? "left-[19px] md:left-[22px]" : "left-0.5"}`} />
+                      <span className={`absolute top-0.5 w-3.5 h-3.5 md:w-4 md:h-4 cursor-pointer bg-white rounded-full shadow-sm transition-all ${u.is_active ? "left-[19px] md:left-[22px]" : "left-0.5"}`} />
                     </button>
-                    <span className={`text-[8px] font-black uppercase tracking-tighter ${u.is_active ? 'text-[#A67C52]' : 'text-rose-400'}`}>
+                    <span className={`text-[8px] font-black uppercase tracking-tighter ${u.is_active ? 'text-[#A67C52]' : 'text-rose-400 cursor'}`}>
                      {u.is_active === 1 ? "ACTIVE" : "INACTIVE"}
 
                     </span>
                   </div>
                 </td>
                 <td className="px-6 md:px-8 py-5 text-center">
-                  <button onClick={() => setSelectedUser(u)} className="p-2.5 md:p-3 text-[#5D4037] bg-[#FAF6F3] hover:bg-[#5D4037] hover:text-white rounded-xl md:rounded-2xl transition-all shadow-sm">
+                  <button onClick={() => setSelectedUser(u)} className="p-2.5 md:p-3 text-[#5D4037] bg-[#FAF6F3] hover:bg-[#5D4037] hover:text-white rounded-xl md:rounded-2xl transition-all shadow-sm cursor-pointer">
                     <Eye size={18} />
                   </button>
                 </td>
@@ -297,9 +297,9 @@ console.log("Get All User:",getAllUsers)
 
 /* ================= INFOBOX COMPONENT ================= */
 const InfoBox = ({ label, value }) => (
-  <div className="flex flex-col gap-1.5 group">
+  <div className="flex flex-col gap-1.5 group cursor-pointer">
     <label className="text-[8px] md:text-[9px] font-black text-stone-400 uppercase tracking-[1.5px] ml-1 group-hover:text-[#A67C52] transition-colors">{label}</label>
-    <div className="px-5 md:px-6 py-4 md:py-5 bg-[#FAF6F3]/50 border border-[#EEEEEE] rounded-[20px] md:rounded-[24px] text-[12px] md:text-[13px] font-bold text-[#5D4037] group-hover:border-[#A67C52] group-hover:bg-white transition-all shadow-sm">
+    <div className="px-5 md:px-6 py-4 md:py-5 bg-[#FAF6F3]/50 border border-[#EEEEEE] rounded-[20px] md:rounded-[24px] text-[12px] md:text-[13px] font-bold text-[#5D4037] group-hover:border-[#A67C52] group-hover:bg-white transition-all shadow-sm cursor-pointer">
       {value || "—"}
     </div>
   </div>
