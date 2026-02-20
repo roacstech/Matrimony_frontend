@@ -36,7 +36,7 @@ const ConnectionCard = () => {
     }
     loadData();
   }, []);
-  
+
   useEffect(() => {
     async function loadMyGender() {
       const res = await getUserProfile();
@@ -148,32 +148,40 @@ const ConnectionCard = () => {
               <div
                 className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full shadow-md border border-white transition-transform group-hover:scale-105"
                 style={{
-                  backgroundColor: u.privacy === "Public" ? "#FAF6F3" : "#EEEEEE",
+                  backgroundColor:
+                    u.privacy === "Public" ? "#FAF6F3" : "#EEEEEE",
                   color: "#5D4037",
                 }}
               >
                 <span className="text-[9px] font-black uppercase tracking-[1.5px] whitespace-nowrap leading-none">
-                  {u.privacy === "Public" ? "📡 Public Mode" : "🔐 Private Mode"}
+                  {u.privacy === "Public"
+                    ? "📡 Public Mode"
+                    : "🔐 Private Mode"}
                 </span>
               </div>
 
               {/* DETAILS GRID */}
 
-<div className="grid grid-cols-2 gap-y-7 gap-x-2 sm:gap-x-6 mt-2 w-full px-2">
-  <DetailItem icon="🌙" label="Raasi" value={u.raasi} />
-  <DetailItem
-    icon={u.gender === "Male" ? "👨" : "👩"}
-    label="Gender"
-    value={u.gender}
-  />
-  <DetailItem icon="💰" label="Salary" value={u.income} />
-  <DetailItem icon="💼" label="Work" value={u.occupation} isAccent />
-  
-  {/* Location Spanning properly */}
-  <div className="col-span-1">
-    <DetailItem icon="📍" label="Location" value={u.city} />
-  </div>
-</div>
+              <div className="grid grid-cols-2 gap-y-7 gap-x-2 sm:gap-x-6 mt-2 w-full px-2">
+                <DetailItem icon="🌙" label="Raasi" value={u.raasi} />
+                <DetailItem
+                  icon={u.gender === "Male" ? "👨" : "👩"}
+                  label="Gender"
+                  value={u.gender}
+                />
+                <DetailItem icon="💰" label="Salary" value={u.income} />
+                <DetailItem
+                  icon="💼"
+                  label="Work"
+                  value={u.occupation}
+                  isAccent
+                />
+
+                {/* Location Spanning properly */}
+                <div className="col-span-1">
+                  <DetailItem icon="📍" label="Location" value={u.city} />
+                </div>
+              </div>
 
               {/* ACTION BUTTON */}
               {u.privacy === "Private" && (
@@ -230,12 +238,30 @@ const ConnectionCard = () => {
                 <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">
                   Personal Info
                 </h4>
-                <PopupDetail label="Gender / பாலினம்" value={selectedUser.gender} />
-                <PopupDetail label="DOB / பிறந்த தேதி" value={selectedUser.dob} />
-                <PopupDetail label="Marital Status / திருமண நிலை" value={selectedUser.marital_status} />
-                <PopupDetail label="Email / மின்னஞ்சல்" value={selectedUser.email} />
-                <PopupDetail label="Income / வருமானம்" value={selectedUser.income} />
-                <PopupDetail label="Birth Place / பிறந்த இடம்" value={selectedUser.birth_place} />
+                <PopupDetail
+                  label="Gender / பாலினம்"
+                  value={selectedUser.gender}
+                />
+                <PopupDetail
+                  label="DOB / பிறந்த தேதி"
+                  value={selectedUser.dob}
+                />
+                <PopupDetail
+                  label="Marital Status / திருமண நிலை"
+                  value={selectedUser.marital_status}
+                />
+                <PopupDetail
+                  label="Email / மின்னஞ்சல்"
+                  value={selectedUser.email}
+                />
+                <PopupDetail
+                  label="Income / வருமானம்"
+                  value={selectedUser.income}
+                />
+                <PopupDetail
+                  label="Birth Place / பிறந்த இடம்"
+                  value={selectedUser.birth_place}
+                />
 
                 <div className="mt-4 pt-4 border-t border-[#FAF6F3]">
                   <p className="text-[10px] font-black text-[#5D4037] uppercase mb-1 flex items-center gap-2">
@@ -252,24 +278,51 @@ const ConnectionCard = () => {
                 <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">
                   Family & Astrology
                 </h4>
-                <PopupDetail label="Father / தந்தை" value={selectedUser.father_name} />
-                <PopupDetail label="Mother / அம்மா" value={selectedUser.mother_name} />
-                <PopupDetail label="Grandfather / தாத்தா" value={selectedUser.grandfather_name} />
-                <PopupDetail label="Grandmother / பாட்டி" value={selectedUser.grandmother_name} />
-                <PopupDetail label="Siblings / உடன்பிறப்புகள்" value={selectedUser.siblings} />
+                <PopupDetail
+                  label="Father / தந்தை"
+                  value={selectedUser.father_name}
+                />
+                <PopupDetail
+                  label="Mother / அம்மா"
+                  value={selectedUser.mother_name}
+                />
+                <PopupDetail
+                  label="Grandfather / தாத்தா"
+                  value={selectedUser.grandfather_name}
+                />
+                <PopupDetail
+                  label="Grandmother / பாட்டி"
+                  value={selectedUser.grandmother_name}
+                />
+                <PopupDetail
+                  label="Siblings / உடன்பிறப்புகள்"
+                  value={selectedUser.siblings}
+                />
 
                 <div className="mt-6 grid grid-cols-2 gap-3 bg-[#FAF6F3] p-4 rounded-2xl border border-[#EEEEEE]">
                   <div>
-                    <p className="text-[9px] font-black text-[#A67C52] uppercase">Raasi</p>
-                    <p className="text-[11px] font-bold text-[#5D4037]">{selectedUser.raasi}</p>
+                    <p className="text-[9px] font-black text-[#A67C52] uppercase">
+                      Raasi
+                    </p>
+                    <p className="text-[11px] font-bold text-[#5D4037]">
+                      {selectedUser.raasi}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-[9px] font-black text-[#A67C52] uppercase">Star</p>
-                    <p className="text-[11px] font-bold text-[#5D4037]">{selectedUser.star}</p>
+                    <p className="text-[9px] font-black text-[#A67C52] uppercase">
+                      Star
+                    </p>
+                    <p className="text-[11px] font-bold text-[#5D4037]">
+                      {selectedUser.star}
+                    </p>
                   </div>
                   <div className="col-span-2 mt-1">
-                    <p className="text-[9px] font-black text-[#A67C52] uppercase">Dosham</p>
-                    <p className="text-[11px] font-bold text-[#5D4037]">{selectedUser.dosham}</p>
+                    <p className="text-[9px] font-black text-[#A67C52] uppercase">
+                      Dosham
+                    </p>
+                    <p className="text-[11px] font-bold text-[#5D4037]">
+                      {selectedUser.dosham}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -295,7 +348,7 @@ const ConnectionCard = () => {
                     rel="noreferrer"
                     className="w-full sm:w-auto text-center px-6 py-2.5 text-[9px] bg-[#5D4037] text-white rounded-xl font-black uppercase tracking-widest hover:bg-[#A67C52] transition-all shadow-md"
                   >
-                    View 
+                    View
                   </a>
                 </div>
               ) : (
@@ -328,18 +381,27 @@ const PopupDetail = ({ label, value }) => (
     <span className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest min-w-[100px]">
       {label}
     </span>
-    <span className="text-[10px] sm:text-[11px] font-black text-[#5D4037] text-right">{value || "N/A"}</span>
+    <span className="text-[10px] sm:text-[11px] font-black text-[#5D4037] text-right">
+      {value || "N/A"}
+    </span>
   </div>
 );
 
 const DetailItem = ({ icon, label, value, isAccent }) => (
   <div className="flex flex-col min-w-0 w-full">
     <div className="flex items-center gap-1.5 mb-1">
-      <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-[#FAF6F3] rounded-md text-[12px]">{icon}</span>
-      <span className="text-[8px] sm:text-[9px] text-[#A67C52] uppercase font-black tracking-[0.1em] leading-none truncate">{label}</span>
+      <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-[#FAF6F3] rounded-md text-[12px]">
+        {icon}
+      </span>
+      <span className="text-[8px] sm:text-[9px] text-[#A67C52] uppercase font-black tracking-[0.1em] leading-none truncate">
+        {label}
+      </span>
     </div>
     <div className="ml-6">
-      <span className={`text-[10px] font-black leading-tight block truncate uppercase tracking-wider ${isAccent ? "text-[#5D4037]" : "text-gray-500"}`} title={value}>
+      <span
+        className={`text-[10px] font-black leading-tight block truncate uppercase tracking-wider ${isAccent ? "text-[#5D4037]" : "text-gray-500"}`}
+        title={value}
+      >
         {value || "---"}
       </span>
     </div>
