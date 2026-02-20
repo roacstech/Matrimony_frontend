@@ -77,7 +77,7 @@ const PendingForms = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 cursor-pointer">
       {/* ================= HEADER ================= */}
       <div className="flex flex-col gap-1 ml-2">
         <h2 className="text-xl md:text-2xl font-black text-[#5D4037]">
@@ -121,12 +121,12 @@ const PendingForms = () => {
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="flex gap-3">
-             <button onClick={() => handleApprove(item.id)} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#5D4037] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-sm" > <Check size={14} /> Accept </button>
+            <div className="flex gap-3 cursor-pointer">
+             <button onClick={() => handleApprove(item.id)} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#5D4037] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-sm cursor-pointer" > <Check size={14} /> Accept </button>
 
-              <button onClick={() => handleReject(item)} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#FAF6F3] text-rose-500 border border-rose-100 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 transition-all" > <X size={14} /> Reject </button>
+              <button onClick={() => handleReject(item)} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#FAF6F3] text-rose-500 border border-rose-100 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 transition-all cursor-pointer " > <X size={14} /> Reject </button>
 
-              <button onClick={() => handleView(item)} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#FAF6F3] text-[#5D4037] border border-[#A67C52] rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-[#FAEBCF] transition-all" > <Eye size={14} /> </button>
+              <button onClick={() => handleView(item)} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#FAF6F3] text-[#5D4037] border border-[#A67C52] rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-[#FAEBCF] transition-all cursor-pointer" > <Eye size={14} /> </button>
             </div>
           </div>
         ))}
