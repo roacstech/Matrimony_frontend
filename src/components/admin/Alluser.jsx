@@ -311,17 +311,17 @@ const AllUsers = () => {
                   </p>
                 </td>
 
-                 <td className="px-6 md:px-8 py-5">
-                 <p
-  className={`inline-block px-3 py-1 text-xs font-bold rounded-full 
-    ${u.privacy === "Private" 
-      ? "bg-red-100 text-red-600 border border-red-300" 
-      : "bg-green-100 text-green-600 border border-green-300"
+                <td className="px-6 md:px-8 py-5">
+                  <p
+                    className={`inline-block px-3 py-1 text-xs font-bold rounded-full 
+    ${
+      u.privacy === "Private"
+        ? "bg-red-100 text-red-600 border border-red-300"
+        : "bg-green-100 text-green-600 border border-green-300"
     }`}
->
-  {u.privacy}
-</p>
-
+                  >
+                    {u.privacy}
+                  </p>
                 </td>
                 <td className="px-6 md:px-8 py-5 text-center cursor-pointer">
                   <div className="flex flex-col items-center gap-1.5 cursor-pointer">
