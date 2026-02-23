@@ -14,13 +14,10 @@ const Login = ({ onNavigate }) => {
   };
 
   return (
-    <div className="   w-full
-    max-w-[95%]
-    sm:max-w-[90%]
-    md:max-w-[720px]
-    lg:max-w-[900px]
-    xl:max-w-[1000px]
-    mx-auto bg-white/95 backdrop-blur-xl rounded-[30px] md:rounded-[40px] p-8 md:p-10 shadow-[0_20px_50px_rgba(93,64,55,0.1)] border border-[#EEEEEE] transition-all duration-300">
+    <div className="w-full
+  sm:w-[90%] 
+  md:w-[70%] 
+  lg:w-[800px] bg-white/95 backdrop-blur-xl rounded-[30px] md:rounded-[40px] p-8 md:p-10 shadow-[0_20px_50px_rgba(93,64,55,0.1)] border border-[#EEEEEE] transition-all duration-300">
       <div className="mb-6">
         <p className="font-bold text-xl md:text-2xl text-[#5D4037]">
           உள்நுழைக / Log In

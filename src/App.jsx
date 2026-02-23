@@ -29,7 +29,7 @@ function App()
       </Routes>
 
       <Toaster
-        position="top-right"
+        position="top"
         toastOptions={{
           duration: 1500,
           style: {
