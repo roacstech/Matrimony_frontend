@@ -18,12 +18,12 @@ const Home = () => {
         <div className="w-full lg:w-[50%] flex flex-col items-center lg:items-start justify-center space-y-8 lg:space-y-10 text-center lg:text-left">
           <div className="space-y-4 md:space-y-6">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-[#5D4037]">
-              தென்னிந்திய <br />
-              <span className="text-[#A67C52]">தாசபளஞ்சிக மஹாஜன சங்கம்</span>
+              ದಕ್ಷಿಣ ಭಾರತೀಯ <br />
+              <span className="text-[#A67C52]">ದಾಸಪಾಲಂಜಿಕ ಮಹಾಜನ ಸಂಗಮ</span>
             </h1>
             <div className="lg:border-l-4 border-[#A67C52] lg:pl-6 inline-block lg:inline">
               <p className="font-bold text-xl sm:text-2xl text-[#5D4037]/80">
-                “திருமண தகவல் மையம்”
+                “ವಿವಾಹ ಮಾಹಿತಿ ಕೇಂದ್ರ”
               </p>
             </div>
           </div>
