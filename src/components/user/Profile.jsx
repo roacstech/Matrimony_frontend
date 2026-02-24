@@ -26,6 +26,20 @@ const Profile = () => {
   const horoscopeRef = useRef(null);
   const [loading, setLoading] = useState(true);
 
+
+    const formatTime12h = (time) => {
+  if (!time) return "-";
+
+  const [h, m] = time.split(":");
+  let hours = Number(h);
+  const minutes = m;
+
+  const period = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+
+  return `${hours}:${minutes} ${period}`;
+};
+
   useEffect(() => {
     getUserProfile(userId)
       .then((res) => {
@@ -189,243 +203,247 @@ const Profile = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Section title="Basic Details" icon={<Users size={16} />}>
-          <Input
-            edit={edit}
-            label="Full Name"
-            name="full_name"
-            value={user?.full_name}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="Gender"
-            name="gender"
-            value={user?.gender}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="Date of Birth"
-            name="dob"
-            value={new Date(user?.dob).toLocaleDateString("en-GB")}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="Birth Time"
-            name="birth_time"
-            value={user?.birth_time}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="Marital Status"
-            name="marital_status"
-            value={user?.marital_status}
-            onChange={handleChange}
-          />
-        </Section>
+  <Section title="Basic Details" icon={<Users size={16} />}>
+    <Input
+      edit={edit}
+      label="Full Name / முழு பெயர்"
+      name="full_name"
+      value={user?.full_name}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Gender / பாலினம்"
+      name="gender"
+      value={user?.gender}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Date of Birth / பிறந்த தேதி"
+      name="dob"
+      value={new Date(user?.dob).toLocaleDateString("en-GB")}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Birth Time / பிறந்த நேரம்"
+      name="birth_time"
+      value={formatTime12h(user?.birth_time)}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Phone Number / தொலைபேசி எண்"
+      name="phone"
+      value={user?.phone}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Marital Status / திருமண நிலை"
+      name="marital_status"
+      value={user?.marital_status}
+      onChange={handleChange}
+    />
+  </Section>
 
-        <Section title="Education & Career" icon={<Briefcase size={16} />}>
-          <Input
-            edit={edit}
-            label="Education"
-            name="education"
-            value={user?.education}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="Occupation"
-            name="occupation"
-            value={user?.occupation}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="Income"
-            name="income"
-            value={user?.income}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="WorkLocation"
-            name="work_location"
-            value={user?.work_location}
-            onChange={handleChange}
-          />
-        </Section>
+  <Section title="Education & Career" icon={<Briefcase size={16} />}>
+    <Input
+      edit={edit}
+      label="Education / கல்வி"
+      name="education"
+      value={user?.education}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Occupation / தொழில்"
+      name="occupation"
+      value={user?.occupation}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Income / வருமானம்"
+      name="income"
+      value={user?.income}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Work Location / பணியிடம்"
+      name="work_location"
+      value={user?.work_location}
+      onChange={handleChange}
+    />
+  </Section>
 
-        {/* ================= ASTROLOGY SECTION ================= */}
-        <Section title="Astrology Info" icon={<Sparkles size={16} />}>
-          <Input
-            edit={edit}
-            label="Raasi"
-            name="raasi"
-            value={user?.raasi}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="Star"
-            name="star"
-            value={user?.star}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="Dosham"
-            name="dosham"
-            value={user?.dosham}
-            onChange={handleChange}
-          />
+  {/* ================= ASTROLOGY SECTION ================= */}
+  <Section title="Astrology Info" icon={<Sparkles size={16} />}>
+    <Input
+      edit={edit}
+      label="Raasi / ராசி"
+      name="raasi"
+      value={user?.raasi}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Star / நட்சத்திரம்"
+      name="star"
+      value={user?.star}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Dosham / தோஷம்"
+      name="dosham"
+      value={user?.dosham}
+      onChange={handleChange}
+    />
 
-          <div className="col-span-1 flex flex-col gap-1">
-            <span className="text-[9px] font-black text-[#A67C52] uppercase tracking-wider">
-              Jadhagam (PDF/JPG)
-            </span>
-            {edit ? (
-              <div
-                onClick={() => horoscopeRef.current.click()}
-                className="cursor-pointer bg-[#FAF6F3] border-2 border-dashed border-[#D4C4B7] p-3 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-[#5D4037] hover:bg-[#F5F0EB] transition-all"
-              >
-                <Upload size={14} /> Update File
-                <input
-                  type="file"
-                  ref={horoscopeRef}
-                  className="hidden"
-                  onChange={handleHoroscopeUpload}
-                />
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-[11px] font-black text-[#5D4037] py-2 bg-[#FAF6F3] px-3 rounded-xl border border-[#EEEEEE]">
-                <FileText size={14} className="text-[#A67C52]" />
-                {user?.horoscope?.uploaded ? (
-                  <a
-                    href={`${import.meta.env.VITE_IMG_URL}/photos/${user.horoscope.fileUrl
-                      .split("/")
-                      .pop()}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline hover:text-[#A67C52]"
-                  >
-                    {user.horoscope.fileName || "View Horoscope"}
-                  </a>
-                ) : (
-                  <span className="text-gray-400">Not Uploaded</span>
-                )}
-              </div>
-            )}
-          </div>
-        </Section>
-
-        <Section title="Family Details" icon={<Users size={16} />}>
-          <Input
-            edit={edit}
-            label="Father Name"
-            name="father_name"
-            value={user?.father_name}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="Mother Name"
-            name="mother_name"
-            value={user?.mother_name}
-            onChange={handleChange}
-          />
-          <Input
-            edit={edit}
-            label="grandfather name"
-            name="grandfather_name"
-            value={user?.grandfather_name}
-            onChange={handleChange}
-          />
-
-          <Input
-            edit={edit}
-            label="grandmother name"
-            name="grandmother_name"
-            value={user?.grandmother_name}
-            onChange={handleChange}
-          />
-        </Section>
-
-        <Input
-          edit={edit}
-          label="Mother Side Grandfather Name"
-          name="mother_side_grandfather_name"
-          value={user?.mother_side_grandfather_name}
-          onChange={handleChange}
-        />
-
-        <Input
-          edit={edit}
-          label="Mother Side Grandmother Name"
-          name="mother_side_grandmother_name"
-          value={user?.mother_side_grandmother_name}
-          onChange={handleChange}
-        />
-
-        <Section
-          title="Location & Settings"
-          icon={<ShieldCheck size={16} />}
-          className="md:col-span-2"
+    <div className="col-span-1 flex flex-col gap-1">
+      <span className="text-[9px] font-black text-[#A67C52] uppercase tracking-wider">
+        Jadhagam (PDF/JPG) / ஜாதகம் (PDF/JPG)
+      </span>
+      {edit ? (
+        <div
+          onClick={() => horoscopeRef.current.click()}
+          className="cursor-pointer bg-[#FAF6F3] border-2 border-dashed border-[#D4C4B7] p-3 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-[#5D4037] hover:bg-[#F5F0EB] transition-all"
         >
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full">
-            <Input
-              edit={edit}
-              label="City"
-              name="city"
-              value={user?.city}
-              onChange={handleChange}
-            />
-            <Input
-              edit={edit}
-              label="Country"
-              name="country"
-              value={user?.country}
-              onChange={handleChange}
-            />
-            <Input
-              edit={edit}
-              label="Privacy Status"
-              name="privacy"
-              value={user?.privacy}
-              onChange={handleChange}
-            />
-          </div>
-        </Section>
+          <Upload size={14} /> Update File
+          <input
+            type="file"
+            ref={horoscopeRef}
+            className="hidden"
+            onChange={handleHoroscopeUpload}
+          />
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 text-[11px] font-black text-[#5D4037] py-2 bg-[#FAF6F3] px-3 rounded-xl border border-[#EEEEEE]">
+          <FileText size={14} className="text-[#A67C52]" />
+          {user?.horoscope?.uploaded ? (
+            <a
+              href={`${import.meta.env.VITE_IMG_URL}/photos/${user.horoscope.fileUrl
+                .split("/")
+                .pop()}`}
+              target="_blank"
+              rel="noreferrer"
+              className="underline hover:text-[#A67C52]"
+            >
+              {user.horoscope.fileName || "View Horoscope / ஜாதகத்தைப் பார்க்கவும்"}
+            </a>
+          ) : (
+            <span className="text-gray-400">Not Uploaded / பதிவேற்றப்படவில்லை</span>
+          )}
+        </div>
+      )}
+    </div>
+  </Section>
 
-        <Section
-          title="Remarks"
-          icon={<Sparkles size={16} />}
-          className="md:col-span-2"
-        >
-          <div className="col-span-2 flex flex-col gap-1.5">
-            <label className="text-[9px] font-black text-[#A67C52] uppercase tracking-[1.5px] px-1">
-              Remarks
-            </label>
+  <Section title="Family Details" icon={<Users size={16} />}>
+    <Input
+      edit={edit}
+      label="Father Name / தந்தை பெயர்"
+      name="father_name"
+      value={user?.father_name}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Mother Name / தாய் பெயர்"
+      name="mother_name"
+      value={user?.mother_name}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Grandfather Name / தாத்தா பெயர்"
+      name="grandfather_name"
+      value={user?.grandfather_name}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Grandmother Name / பாட்டி பெயர்"
+      name="grandmother_name"
+      value={user?.grandmother_name}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Mother Side Grandfather Name / தாய் வழி தாத்தா பெயர்"
+      name="mother_side_grandfather_name"
+      value={user?.mother_side_grandfather_name}
+      onChange={handleChange}
+    />
+    <Input
+      edit={edit}
+      label="Mother Side Grandmother Name / தாய் வழி பாட்டி பெயர்"
+      name="mother_side_grandmother_name"
+      value={user?.mother_side_grandmother_name}
+      onChange={handleChange}
+    />
+  </Section>
 
-            {edit ? (
-              <textarea
-                name="remarks"
-                value={user?.remarks || ""}
-                onChange={handleChange}
-                rows={4}
-                placeholder="Additional details / குறிப்புகள்"
-                className="w-full bg-[#FAF6F3] border border-[#EEEEEE] px-4 py-3 rounded-xl text-[11px] font-bold text-[#5D4037] focus:ring-2 focus:ring-[#A67C52]/20 outline-none"
-              />
-            ) : (
-              <div className="text-[12px] font-black text-[#5D4037] px-1 py-2">
-                {user?.remarks || "---"}
-              </div>
-            )}
-          </div>
-        </Section>
-      </div>
+  <Section
+    title="Location & Settings"
+    icon={<ShieldCheck size={16} />}
+    className="md:col-span-2"
+  >
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full">
+      <Input
+        edit={edit}
+        label="City / நகரம்"
+        name="city"
+        value={user?.city}
+        onChange={handleChange}
+      />
+      <Input
+        edit={edit}
+        label="Country / நாடு"
+        name="country"
+        value={user?.country}
+        onChange={handleChange}
+      />
+      <Input
+        edit={edit}
+        label="Privacy Status / தனியுரிமை நிலை"
+        name="privacy"
+        value={user?.privacy}
+        onChange={handleChange}
+      />
+    </div>
+  </Section>
+
+  <Section
+    title="Remarks"
+    icon={<Sparkles size={16} />}
+    className="md:col-span-2"
+  >
+    <div className="col-span-2 flex flex-col gap-1.5">
+      <label className="text-[9px] font-black text-[#A67C52] uppercase tracking-[1.5px] px-1">
+        Remarks / குறிப்புகள்
+      </label>
+
+      {edit ? (
+        <textarea
+          name="remarks"
+          value={user?.remarks || ""}
+          onChange={handleChange}
+          rows={4}
+          placeholder="Additional details / குறிப்புகள்"
+          className="w-full bg-[#FAF6F3] border border-[#EEEEEE] px-4 py-3 rounded-xl text-[11px] font-bold text-[#5D4037] focus:ring-2 focus:ring-[#A67C52]/20 outline-none"
+        />
+      ) : (
+        <div className="text-[12px] font-black text-[#5D4037] px-1 py-2">
+          {user?.remarks || "---"}
+        </div>
+      )}
+    </div>
+  </Section>
+</div>
     </div>
   );
 };
