@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { getAdminDashboard } from "../../api/adminApi";
+import PieChart from "../PieChart";
 
 /* ================= CIRCULAR STAT COMPONENT ================= */
 const CircularStat = ({ label, value, total, color1, color2 }) => {
@@ -184,6 +185,10 @@ const AdminChart = () => {
           color2="#FAEDCD"
         />
       </div>
+
+            <div className="mt-8">
+          <PieChart />
+        </div>{" "}
     </div>
   );
 };
