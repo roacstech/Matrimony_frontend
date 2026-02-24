@@ -8,6 +8,7 @@ import {
   getUserProfile,
   getAcceptedConnections,
 } from "../../api/userApi";
+import { viewProfile } from "../../api/profilesApi";
 
 const MyConnection = () => {
   const [received, setReceived] = useState([]);
@@ -98,11 +99,41 @@ useEffect(() => {
     triggerToast("Request withdrawn");
   };
 
-  const handleViewProfile = async (userId) => {
-    const res = await getUserProfile(userId);
-    if (res.success) setSelectedUser(res.data);
-    else triggerToast("Profile not found");
-  };
+  const handleViewProfile = async (userId,fuser, profileId) => {
+  console.log("Viewing Profile:", { userId,fuser, profileId });
+
+  if (!profileId) {
+    return triggerToast("Error: Profile ID is missing from data");
+  }
+
+  try {
+    // 1. Get Viewer ID from Token
+    const token = localStorage.getItem("accesstoken");
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const viewerId = payload.id;
+
+    // 2. Track the View (Starts the 24h timer)
+    const trackRes = await viewProfile(viewerId, profileId);
+    
+    if (trackRes.success) {
+      // 3. Fetch Full Data & Open Modal
+      const res = await getUserProfile(userId);
+
+      console.log("👌",res);
+      
+      if (res.success) {
+        setSelectedUser(res.data); // This opens the modal
+      } else {
+        triggerToast("Could not load profile details");
+      }
+    } else {
+      triggerToast(trackRes.message || "Failed to initialize view");
+    }
+  } catch (err) {
+    console.error("View Profile Error:", err);
+    triggerToast("An error occurred while opening the profile");
+  }
+};
 
   const allReceived = [...received, ...acceptedReceived];
 
@@ -134,8 +165,7 @@ useEffect(() => {
               return (
                 <div
                   key={c.connectionId}
-                  onClick={() => isAccepted && handleViewProfile(c.user_id || c.from_user)}
-                  className={`rounded-2xl p-5 transition-all shadow-sm 
+onClick={() => isAccepted && handleViewProfile(c.user_id, c.from_user, c.profileId)}                  className={`rounded-2xl p-5 transition-all shadow-sm 
                   ${isAccepted ? "bg-green-50/70 cursor-pointer" : expired ? "opacity-40 bg-gray-50" : "bg-white shadow-md"}`}
                 >
                   <div className="flex justify-between items-center mb-2">
