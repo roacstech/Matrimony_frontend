@@ -130,9 +130,10 @@ const ConnectionCard = () => {
       </div>
 
       {/* ================= CARD GRID ================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 justify-items-center max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-8  max-w-8xl md:max-w-6xl mx-auto">
         {connections
           .filter((u) => {
+             console.log("🦁",u )
             if (u.privacy !== activeTab) return false;
             if (!genderFilter(u.gender)) return false;
             return true;
@@ -140,7 +141,10 @@ const ConnectionCard = () => {
           .map((u) => (
             <div
               key={u.id}
-              className="group relative bg-white rounded-[32px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#A67C52]/30 transition-all duration-500 flex flex-col w-full max-w-full sm:max-w-[340px] h-fit pt-12 pb-6 px-5 sm:px-6"
+                 
+              className="group relative bg-white rounded-[32px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#A67C52]/30 transition-all duration-500 flex flex-col w-full msm:max-w-[420px]
+lg:max-w-[480px]
+xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
             >
               {/* 👁 EYE ICON */}
               {u.privacy === "Public" && (
@@ -171,26 +175,33 @@ const ConnectionCard = () => {
 
               {/* DETAILS GRID */}
 
-              <div className="grid grid-cols-2 gap-y-7 gap-x-2 sm:gap-x-6 mt-2 w-full px-2">
-                <DetailItem icon="🌙" label="Raasi" value={u.raasi} />
+                <div className=""> 
+                <DetailItem icon="🌙" label="Raasi / இராசி" value={u.raasi} />
                 <DetailItem
                   icon={u.gender === "Male" ? "👨" : "👩"}
-                  label="Gender"
+                  label="Gender / பாலினம்"
                   value={u.gender}
                 />
-                <DetailItem icon="💰" label="Salary" value={u.income} />
+                <DetailItem icon="💰" label="Salary / மாத வருமானம்" value={u.income} />
                 <DetailItem
                   icon="💼"
-                  label="Work"
+                  label="Work / தொழில்"
                   value={u.occupation}
                   isAccent
                 />
+                  <DetailItem
+                  icon="📍"
+                  label="Worklocation / வேலை இடம்"
+                  value={u.work_location}
+                  isAccent
+                />
+            
 
                 {/* Location Spanning properly */}
                 <div className="col-span-1">
-                  <DetailItem icon="📍" label="Location" value={u.city} />
+                  <DetailItem icon="📍" label=" Home Location /  வீட்டு முகவரி" value={u.city} />
                 </div>
-              </div>
+              </div> 
 
               {/* ACTION BUTTON */}
              {u.privacy === "Private" && (
