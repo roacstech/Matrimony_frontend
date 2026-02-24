@@ -7,41 +7,35 @@ import UserRoutes from "./routes/UserRoutes";
 import AdminRoutes from "./routes/AdminRoutes";
 import AdminDashboardLayout from "./layouts/AdminDashboardLayout";
 
-function App() 
-{
-  
+function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* LOGIN / PUBLIC ROUTES */}
 
-        
         <Route path="/*" element={<LoginRoutes />} />
 
-    {/* ADMIN ROUTES */}
-                 <Route path="/admin/*" element={<AdminRoutes/>} />
+        {/* ADMIN ROUTES */}
+        <Route path="/admin/*" element={<AdminRoutes />} />
 
         {/* USER ROUTES */}
         <Route path="/user/*" element={<UserRoutes />} />
-
-     
-
       </Routes>
 
-     <Toaster
-  position="top-center"
-  containerStyle={{
-    top: "50%",
-    transform: "translateY(-50%)",
-  }}
-  toastOptions={{
-    duration: 1500,
-    style: {
-      borderRadius: "12px",
-      fontWeight: "600",
-    },
-  }}
-/>
+      <Toaster
+        position="top-center"
+        containerStyle={{
+          top: "50%",
+          transform: "translateY(-50%)",
+        }}
+        toastOptions={{
+          duration: 1500,
+          style: {
+            borderRadius: "12px",
+            fontWeight: "600",
+          },
+        }}
+      />
     </BrowserRouter>
   );
 }
