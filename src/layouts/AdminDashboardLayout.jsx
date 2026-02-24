@@ -9,7 +9,8 @@ import {
   Menu,
 } from "lucide-react";
 import { performLogout } from "../Data/logout";
-import IMG from "../assets/adminprofile.jpg"
+import IMG from "../assets/adminprofile.jpg";
+import PieChart from "../components/PieChart";
 const AdminDashboardLayout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isProfileDropdown, setProfileDropdown] = useState(false);
@@ -17,7 +18,7 @@ const AdminDashboardLayout = () => {
   const closeSidebar = () => setSidebarOpen(false);
 
   const navigate = useNavigate();
-//
+  //
   const handleLogout = () => {
     toast(
       (t) => (
@@ -31,7 +32,7 @@ const AdminDashboardLayout = () => {
               onClick={() => {
                 toast.dismiss(t.id);
                 performLogout(navigate);
-                toast.success("Logged out successfully",{duration:2000});
+                toast.success("Logged out successfully", { duration: 2000 });
               }}
               className="px-4 py-2 bg-[#573D2F] text-white rounded-xl text-xs font-black uppercase tracking-widest"
             >
@@ -47,7 +48,7 @@ const AdminDashboardLayout = () => {
           </div>
         </div>
       ),
-      { duration: Infinity, position: "top-center" }
+      { duration: Infinity, position: "top-center" },
     );
   };
 
@@ -60,30 +61,43 @@ const AdminDashboardLayout = () => {
           onClick={closeSidebar}
         />
       )}
-       
 
       {/* SIDEBAR */}
       <aside
         className={`fixed lg:sticky top- left-0 z-50 h-screen bg-white border-r border-[#EEEEEE] flex flex-col transition-all duration-300
         w-[280px] ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
-      <div className="flex flex-col items-center justify-center mt-10">
-  <img
-    src={`${IMG}`}
-    alt="Admin"
-    className="w-16 h-16 rounded-full cursor-pointer border-2 border-white shadow-md"
-  />
-  <span className="mt-2 text-sm font-semibold text-gray-700">
-    Admin
-  </span>
-</div>
-
+        <div className="flex flex-col items-center justify-center mt-10">
+          <img
+            src={`${IMG}`}
+            alt="Admin"
+            className="w-16 h-16 rounded-full cursor-pointer border-2 border-white shadow-md"
+          />
+          <span className="mt-2 text-sm font-semibold text-gray-700">
+            Admin
+          </span>
+        </div>
 
         {/* Navigation Menu */}
         <nav className="flex-1 px-4 lg:px-6 py-10 space-y-3 overflow-y-auto">
-          <MenuItem to="/admin/chart" label="Dashboard" icon={<LayoutDashboard size={18} />} onClick={closeSidebar} />
-          <MenuItem to="/admin/all-users" label="All Users" icon={<Users size={18} />} onClick={closeSidebar} />
-          <MenuItem to="/admin/pending-forms" label="Pending Forms" icon={<ClipboardList size={18} />} onClick={closeSidebar} />
+          <MenuItem
+            to="/admin/chart"
+            label="Dashboard"
+            icon={<LayoutDashboard size={18} />}
+            onClick={closeSidebar}
+          />
+          <MenuItem
+            to="/admin/all-users"
+            label="All Users"
+            icon={<Users size={18} />}
+            onClick={closeSidebar}
+          />
+          <MenuItem
+            to="/admin/pending-forms"
+            label="Pending Forms"
+            icon={<ClipboardList size={18} />}
+            onClick={closeSidebar}
+          />
         </nav>
       </aside>
 
@@ -111,7 +125,7 @@ const AdminDashboardLayout = () => {
           {/* PROFILE AVATAR (TOP-RIGHT) */}
           <div className="relative">
             <img
-             src={`${IMG}`}
+              src={`${IMG}`}
               alt="Admin"
               className="w-13 h-13 rounded-full cursor-pointer border-2 border-white shadow-md"
               onClick={() => setProfileDropdown(!isProfileDropdown)}
@@ -130,9 +144,9 @@ const AdminDashboardLayout = () => {
             )}
           </div>
         </header>
-
         {/* PAGE CONTENT */}
         <main className="flex-1 px-4 lg:px-12 pb-6 lg:pb-12 overflow-y-auto">
+          
           <div className="max-w-[1400px] mx-auto">
             <div className="bg-white rounded-[32px] lg:rounded-[48px] p-5 lg:p-10 shadow-xl shadow-stone-200/40 border border-[#EEEEEE] min-h-[calc(100vh-140px)] lg:min-h-[calc(100vh-180px)]">
               <Outlet />
@@ -153,9 +167,11 @@ const MenuItem = ({ to, label, icon, onClick }) => {
       className={({ isActive }) =>
         `flex items-center gap-3 lg:gap-4 px-5 lg:px-6 py-3.5 lg:py-4 rounded-[18px] lg:rounded-[22px] text-[10px] lg:text-[11px] font-black uppercase tracking-[1.5px]
         transition-all duration-300
-        ${isActive
-          ? "bg-[#5D4037] text-white shadow-xl shadow-stone-200 lg:-translate-y-1"
-          : "text-gray-400 hover:bg-[#FAF6F3] hover:text-[#5D4037]"}`
+        ${
+          isActive
+            ? "bg-[#5D4037] text-white shadow-xl shadow-stone-200 lg:-translate-y-1"
+            : "text-gray-400 hover:bg-[#FAF6F3] hover:text-[#5D4037]"
+        }`
       }
     >
       <span className="shrink-0">{icon}</span>
