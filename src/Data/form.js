@@ -13,13 +13,14 @@ export const useMatrimonyForm = () => {
     fullName: "",
     gender: "",
     dob: "",
-     phone: "",
+    phone: "",
     birthTime: "",
+      birthPeriod: "",
     maritalStatus: "",
     education: "",
     occupation: "",
     income: "",
-    workLocation: "",
+    work_location: "",
     father: "",
     mother: "",
     grandfather: "",
@@ -83,6 +84,7 @@ export const useMatrimonyForm = () => {
   // ✅ FINAL SUBMIT (CLEAN)
   const submitForm = async () => {
     console.log("🚀 FINAL SUBMIT DATA =>", formData);
+    console.log("🫏 FINAL SUBMIT DATA =>", formData.phone);
     try {
       const token = localStorage.getItem("accesstoken");
       const res = await submitFormAPI(formData, token);
