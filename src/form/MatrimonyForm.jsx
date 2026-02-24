@@ -133,37 +133,38 @@ const MatrimonyForm = () => {
                     min="1950-01-01"
                     max={new Date().toISOString().split("T")[0]}
                   />
+ 
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="relative w-full">
-                    {!formData.birthTime && (
-                      <span className="absolute left-3 top-1 text-[#5D4037] pointer-events-none">
-                        Birth Time / பிறந்த நேரம்
-                      </span>
-                    )}
+<div className="flex items-center gap-3">
+  <div className="relative w-full">
+    {!formData.birthTime && (
+      <span className="absolute left-3 top-1 text-[#5D4037] pointer-events-none">
+        Birth Time / பிறந்த நேரம்
+      </span>
+    )}
 
-                    <input
-                      type="text" // ✅ CHANGE HERE
-                      name="birthTime"
-                      placeholder="hh:mm" // ✅ 12 hours
-                      value={formData.birthTime}
-                      onChange={handleChange}
-                      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2 focus:outline-none focus:ring-2 focus:ring-brown-500"
-                    />
-                  </div>
+    <input
+      type="time"                // ✅ AUTO + MANUAL (keyboard)
+      name="birthTime"
+      value={formData.birthTime}
+      onChange={handleChange}
+      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2
+                 focus:outline-none focus:ring-2 focus:ring-brown-500"
+    />
+  </div>
 
-                  <select
-                    name="birthPeriod"
-                    value={formData.birthPeriod}
-                    onChange={handleChange}
-                    className="w-20 rounded-md border border-gray-300 px-2 py-2 focus:outline-none focus:ring-2 focus:ring-brown-500"
-                  >
-                    <option value="">--</option>
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
-                  </select>
-                </div>
+  <select
+    name="birthPeriod"
+    value={formData.birthPeriod}
+    onChange={handleChange}
+    className="w-20 rounded-md border border-gray-300 px-2 py-2"
+  >
+    <option value="">--</option>
+    <option value="AM">AM</option>
+    <option value="PM">PM</option>
+  </select>
+</div>
 
                 <input
                   className={input}
@@ -173,6 +174,15 @@ const MatrimonyForm = () => {
                   value={formData.email}
                 />
 
+                 <input
+  className={input}
+  name="phone"
+  placeholder="Phone Number / தொலைபேசி எண்"
+  onChange={handleChange}
+  value={formData.phone}
+  type="tel"                 // ✅ phone input
+  maxLength={10}             // ✅ Indian number
+/>
                 <select
                   className={input}
                   name="maritalStatus"
@@ -503,91 +513,107 @@ const MatrimonyForm = () => {
             )}
 
             {/* STEP 6 - Summary */}
-            {currentStep === 6 && (
-              <div className="space-y-2 bg-[#EEEEEE]/50 p-6 rounded-xl border border-[#A67C52]/20 text-[#5D4037]">
-                <p>
-                  <b>Name:</b> {formData.fullName}
-                </p>
-                <p>
-                  <b>Gender:</b> {formData.gender}
-                </p>
-                <p>
-                  <b>DOB:</b> {formData.dob}
-                </p>
-                <p>
-                  <b>Birth Time:</b> {formData.birthPeriod}
-                </p>
-                <p>
-                  <b>MaritalStatus:</b> {formData.maritalStatus}
-                </p>
+{/* STEP 6 - Summary */}
+{/* STEP 6 - Summary */}
+{currentStep === 6 && (
+  <div className="bg-[#EEEEEE]/50 p-4 md:p-6 rounded-2xl border border-[#A67C52]/20 text-[#5D4037] shadow-sm max-h-[65vh] overflow-y-auto custom-scrollbar">
+    <h3 className="text-xl font-bold mb-6 border-b border-[#A67C52]/30 pb-3 flex items-center gap-2">
+      <DocumentCheckIcon className="w-6 h-6 text-[#A67C52]" />
+      Review Profile Summary / சுருக்கம்
+    </h3>
+    
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
+      
+      {/* 1. TEXT DATA SECTION */}
+      {[
+        { label: "Name", value: formData.fullName },
+        { label: "Gender", value: formData.gender },
+        { label: "DOB", value: formData.dob },
+        { label: "Birth Time", value: `${formData.birthTime} ${formData.birthPeriod}` },
+        { label: "Phone", value: formData.phone },
+        { label: "Marital Status", value: formData.maritalStatus },
+        { label: "Education", value: formData.education },
+        { label: "Occupation", value: formData.occupation },
+        { label: "Work Location", value: formData.workLocation },
+        { label: "Father", value: formData.father },
+        { label: "Mother", value: formData.mother },
+        { label: "Siblings", value: formData.siblings },
+        { label: "Raasi", value: formData.raasi },
+        { label: "Star", value: formData.star },
+        { label: "Dosham", value: formData.dosham },
+        { label: "City", value: formData.city },
+        { label: "Country", value: formData.country },
+        { label: "Account", value: formData.privacy },
+      ].map((item, index) => (
+        <div key={index} className="flex flex-col border-b border-[#A67C52]/10 pb-1">
+          <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">{item.label}</span>
+          <span className="text-sm md:text-base font-medium leading-tight truncate">{item.value || "—"}</span>
+        </div>
+      ))}
 
-                <p>
-                  <b>Education:</b> {formData.education}
-                </p>
-                <p>
-                  <b>Occupation:</b> {formData.occupation}
-                </p>
-                <p>
-                  <b>WorkLocation:</b> {formData.workLocation}
-                </p>
-                <p>
-                  <b>Father:</b> {formData.father}
-                </p>
+      {/* 2. FULL WIDTH ADDRESS */}
+      <div className="sm:col-span-2 lg:col-span-3 border-b border-[#A67C52]/10 pb-1">
+        <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">Home Address</span>
+        <p className="text-sm md:text-base font-medium leading-tight">{formData.address || "—"}</p>
+      </div>
 
-                <p>
-                  <b>Mother:</b> {formData.mother}
-                </p>
-                <p>
-                  <b>GrandFather:</b> {formData.grandfather}
-                </p>
-                <p>
-                  <b>GrandMother:</b> {formData.grandmother}
-                </p>
-                <p>
-                  <b>MotherSideGrandfather:</b> {formData.motherSideGrandfather}
-                </p>
-                <p>
-                  <b>MotherSideGrandmother:</b> {formData.motherSideGrandmother}
-                </p>
-                <p>
-                  <b>Siblings:</b> {formData.siblings}
-                </p>
-                <p>
-                  <b>Raasi:</b> {formData.raasi}
-                </p>
+      {/* 3. VISUAL MEDIA SECTION */}
+      <div className="sm:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        
+        {/* Profile Photo Card */}
+        <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-[#A67C52]/20 shadow-sm">
+          <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">Profile Photo / புகைப்படம்</span>
+          {formData.photo ? (
+            <div className="flex items-center gap-3">
+              <img 
+                src={URL.createObjectURL(formData.photo)} 
+                alt="Profile" 
+                className="w-24 h-24 object-cover rounded-lg border-2 border-[#A67C52]/20"
+                onLoad={(e) => URL.revokeObjectURL(e.target.src)} // Optional: Clean up memory
+              />
+              <span className="text-xs break-all opacity-70">{formData.photo.name}</span>
+            </div>
+          ) : (
+            <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-sm italic opacity-50">No photo</div>
+          )}
+        </div>
 
-                <p>
-                  <b>Star:</b> {formData.star}
-                </p>
-                <p>
-                  <b>Dosham:</b> {formData.dosham}
-                </p>
-                <p>
-                  <b>Horoscope:</b> {formData.horoscope.name}
-                </p>
+        {/* Horoscope Card - FIXED VISIBILITY */}
+        <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-[#A67C52]/20 shadow-sm">
+          <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">Horoscope / ஜாதகம்</span>
+          {formData.horoscope ? (
+            <div className="flex items-center gap-3">
+              {/* Check if it's an image to display it, otherwise show icon */}
+              {formData.horoscope.type?.includes("image") ? (
+                <img 
+                  src={URL.createObjectURL(formData.horoscope)} 
+                  alt="Horoscope" 
+                  className="w-24 h-24 object-cover rounded-lg border-2 border-[#A67C52]/20"
+                />
+              ) : (
+                <div className="w-24 h-24 bg-[#FAF6F3] flex flex-col items-center justify-center rounded-lg border-2 border-[#A67C52]/20 text-[#A67C52]">
+                  <DocumentCheckIcon className="w-8 h-8" />
+                  <span className="text-[8px] font-bold mt-1">DOC/PDF</span>
+                </div>
+              )}
+              <span className="text-xs break-all opacity-70">{formData.horoscope.name}</span>
+            </div>
+          ) : (
+            <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-sm italic opacity-50">No horoscope</div>
+          )}
+        </div>
 
-                <p>
-                  <b>Home address:</b> {formData.address}
-                </p>
+      </div>
 
-                <p>
-                  <b>City:</b> {formData.city}
-                </p>
-                <p>
-                  <b>Country:</b> {formData.country}
-                </p>
-                <p>
-                  <b>Account:</b> {formData.privacy}
-                </p>
+      {/* 4. REMARKS */}
+      <div className="sm:col-span-2 lg:col-span-3 pt-2">
+        <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">Remarks</span>
+        <p className="text-sm font-medium italic text-[#5D4037]/80">{formData.remarks || "No remarks"}</p>
+      </div>
 
-                <p>
-                  <b>Upload photo:</b> {formData.photo.name}
-                </p>
-                <p>
-                  <b>Remarks:</b> {formData.remarks}
-                </p>
-              </div>
-            )}
+    </div>
+  </div>
+)}
           </div>
 
           {/* BUTTONS: Using Login Button Brown #573D2F */}
@@ -603,7 +629,7 @@ const MatrimonyForm = () => {
             <button
               onClick={() => {
                 // 👉 Not last step → Next
-                if (currentStep !== 5) {
+                if (currentStep !== 6) {
                   nextStep();
                   return;
                 }
@@ -655,7 +681,7 @@ const MatrimonyForm = () => {
               }}
               className="px-8 py-3 bg-[#573D2F] text-white rounded-xl font-bold hover:bg-[#5D4037] transition-all"
             >
-              {currentStep === 5 ? "Submit" : "Next"}
+              {currentStep === 6 ? "Submit" : "Next"}
             </button>
           </div>
         </div>
