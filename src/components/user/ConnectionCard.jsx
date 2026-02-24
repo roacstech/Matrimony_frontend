@@ -71,14 +71,23 @@ const ConnectionCard = () => {
   };
 
   const handleConnect = async (toUserId) => {
-    try {
-      const res = await sendConnectionRequest(toUserId);
-      triggerToast(res.message || "Request sent");
-    } catch (err) {
-      console.error(err);
-      triggerToast("Something went wrong");
+  try {
+    const res = await sendConnectionRequest(toUserId);
+    triggerToast(res.message || "Request sent");
+
+    if (res.success) {
+      // re-fetch connections so UI updates immediately
+      const updated = await getVisibleConnections();
+      if (updated.success) setConnections(updated.data);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    triggerToast("Something went wrong");
+  }
+};
+
+
+
 
   const genderFilter = (profileGender) => {
     if (!myGender) return true;
@@ -184,16 +193,30 @@ const ConnectionCard = () => {
               </div>
 
               {/* ACTION BUTTON */}
-              {u.privacy === "Private" && (
-                <div className="mt-8 pt-5 border-t border-dashed border-[#EEEEEE]">
-                  <button
-                    onClick={() => handleConnect(u.id)}
-                    className="w-full bg-[#5D4037] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#4a332c] transition-all transform active:scale-[0.96] shadow-lg shadow-stone-200"
-                  >
-                    Connect Now
-                  </button>
-                </div>
-              )}
+             {u.privacy === "Private" && (
+  <div className="mt-8 pt-5 border-t border-dashed border-[#EEEEEE]">
+    {u.connection_status === "Not Sent" ? (
+      <button
+        onClick={() => handleConnect(u.id)}
+        className="w-full bg-[#5D4037] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#4a332c] transition-all transform active:scale-[0.96] shadow-lg shadow-stone-200"
+      >
+        Connect Now
+      </button>
+    ) : (
+      <button
+        disabled
+        className="w-full bg-gray-400 text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] cursor-not-allowed"
+      >
+        {u.connection_status === "Sent"
+          ? "Request Sent"
+          : u.connection_status === "Accepted"
+          ? "Connected"
+          : "Rejected"}
+      </button>
+    )}
+  </div>
+)}
+
             </div>
           ))}
       </div>
