@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect} from "react";
 import toast from "react-hot-toast";
 
 import {
@@ -19,7 +19,7 @@ const steps = [
 ];
 
 const MatrimonyForm = () => {
-  console.log("🔥 MATRIMONY FORM RENDERED");
+  // console.log("🔥 MATRIMONY FORM RENDERED");
   const navigate = useNavigate();
   const {
     currentStep,
@@ -30,6 +30,12 @@ const MatrimonyForm = () => {
     prevStep,
     submitForm,
   } = useMatrimonyForm();
+
+  // ✅ ADD THIS HERE (JUST BELOW HOOKS)
+  useEffect(() => {
+    console.log("🔥 FORM DATA =>", formData);
+  }, [formData]);
+
 
   // Color Patterns applied to constants
   const input =
@@ -100,6 +106,7 @@ const MatrimonyForm = () => {
                   placeholder="Full Name / முழு பெயர்"
                   onChange={handleChange}
                   value={formData.fullName}
+                  
                 />
                 <select
                   className={input}
@@ -111,56 +118,54 @@ const MatrimonyForm = () => {
                   <option value="Male">Male / ஆண்</option>
                   <option value="Female">Female / பெண்</option>
                 </select>
-                
-<div className="relative">
-  {!formData.dob && (
-    <span className="absolute left-3 top-1 text-[#5D4037]  pointer-events-none">
-      Date of Birth / பிறந்த தேதி
-    </span>
-  )}
 
-  <input
-    type="date"
-    className={`${input} pt-6`}
-    name="dob"
-    onChange={handleChange}
-    value={formData.dob}
-    min="1950-01-01"
-     max={new Date().toISOString().split("T")[0]}
-  />
-</div>
+                <div className="relative">
+                  {!formData.dob && (
+                    <span className="absolute left-3 top-1 text-[#5D4037]  pointer-events-none">
+                      Date of Birth / பிறந்த தேதி
+                    </span>
+                  )}
 
+                  <input
+                    type="date"
+                    className={`${input} pt-6`}
+                    name="dob"
+                    onChange={handleChange}
+                    value={formData.dob}
+                    min="1950-01-01"
+                    max={new Date().toISOString().split("T")[0]}
+                  />
+                </div>
 
-       
-<div className="flex items-center gap-3">
-  <div className="relative w-full">
-    {!formData.birthTime && (
-      <span className="absolute left-3 top-1 text-[#5D4037] pointer-events-none">
-        Birth Time / பிறந்த நேரம்
-      </span>
-    )}
+                <div className="flex items-center gap-3">
+                  <div className="relative w-full">
+                    {!formData.birthTime && (
+                      <span className="absolute left-3 top-1 text-[#5D4037] pointer-events-none">
+                        Birth Time / பிறந்த நேரம்
+                      </span>
+                    )}
 
-    <input
-      type="text"          // ✅ CHANGE HERE
-      name="birthTime"
-      placeholder="hh:mm"  // ✅ 12 hours
-      value={formData.birthTime}
-      onChange={handleChange}
-      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2 focus:outline-none focus:ring-2 focus:ring-brown-500"
-    />
-  </div>
+                    <input
+                      type="text" // ✅ CHANGE HERE
+                      name="birthTime"
+                      placeholder="hh:mm" // ✅ 12 hours
+                      value={formData.birthTime}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2 focus:outline-none focus:ring-2 focus:ring-brown-500"
+                    />
+                  </div>
 
-  <select
-    name="birthPeriod"
-    value={formData.birthPeriod}
-    onChange={handleChange}
-    className="w-20 rounded-md border border-gray-300 px-2 py-2 focus:outline-none focus:ring-2 focus:ring-brown-500"
-  >
-    <option value="">--</option>
-    <option value="AM">AM</option>
-    <option value="PM">PM</option>
-  </select>
-</div>
+                  <select
+                    name="birthPeriod"
+                    value={formData.birthPeriod}
+                    onChange={handleChange}
+                    className="w-20 rounded-md border border-gray-300 px-2 py-2 focus:outline-none focus:ring-2 focus:ring-brown-500"
+                  >
+                    <option value="">--</option>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                </div>
 
                 <input
                   className={input}
@@ -208,6 +213,16 @@ const MatrimonyForm = () => {
                   onChange={handleChange}
                   value={formData.income}
                 />
+
+                {/* ✅ NEW FIELD */}
+                <input
+                  className={input}
+                  name="workLocation"
+                  placeholder="Work Location / வேலை இடம்"
+                  onChange={handleChange}
+                  value={formData.workLocation}
+                />
+               
               </div>
             )}
 
@@ -244,6 +259,21 @@ const MatrimonyForm = () => {
                 />
                 <input
                   className={input}
+                  name="motherSideGrandfather"
+                  placeholder="Mother Side Grandfather Name / தாய்வழி தாத்தா பெயர்"
+                  onChange={handleChange}
+                  value={formData.motherSideGrandfather}
+                />
+
+                <input
+                  className={input}
+                  name="motherSideGrandmother"
+                  placeholder="Mother Side Grandmother Name / தாய்வழி பாட்டி பெயர்"
+                  onChange={handleChange}
+                  value={formData.motherSideGrandmother}
+                />
+                <input
+                  className={input}
                   name="siblings"
                   placeholder="Siblings / உடன்பிறப்புகள்
 "
@@ -258,80 +288,85 @@ const MatrimonyForm = () => {
             {currentStep === 3 && (
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
-<select
-  className={input}
-  name="raasi"
-  onChange={handleChange}
-  value={formData.raasi}
->
-  <option value="">Raasi / இராசி</option>
-  <option value="Aries">மேஷம் (Aries)</option>
-  <option value="Taurus">ரிஷபம் (Taurus)</option>
-  <option value="Gemini">மிதுனம் (Gemini)</option>
-  <option value="Cancer">கடகம் (Cancer)</option>
-  <option value="Leo">சிம்மம் (Leo)</option>
-  <option value="Virgo">கன்னி (Virgo)</option>
-  <option value="Libra">துலாம் (Libra)</option>
-  <option value="Scorpio">விருச்சிகம் (Scorpio)</option>
-  <option value="Sagittarius">தனுசு (Sagittarius)</option>
-  <option value="Capricorn">மகரம் (Capricorn)</option>
-  <option value="Aquarius">கும்பம் (Aquarius)</option>
-  <option value="Pisces">மீனம் (Pisces)</option>
-</select>
+                  <select
+                    className={input}
+                    name="raasi"
+                    onChange={handleChange}
+                    value={formData.raasi}
+                  >
+                    <option value="">Raasi / இராசி</option>
+                    <option value="Aries">மேஷம் (Aries)</option>
+                    <option value="Taurus">ரிஷபம் (Taurus)</option>
+                    <option value="Gemini">மிதுனம் (Gemini)</option>
+                    <option value="Cancer">கடகம் (Cancer)</option>
+                    <option value="Leo">சிம்மம் (Leo)</option>
+                    <option value="Virgo">கன்னி (Virgo)</option>
+                    <option value="Libra">துலாம் (Libra)</option>
+                    <option value="Scorpio">விருச்சிகம் (Scorpio)</option>
+                    <option value="Sagittarius">தனுசு (Sagittarius)</option>
+                    <option value="Capricorn">மகரம் (Capricorn)</option>
+                    <option value="Aquarius">கும்பம் (Aquarius)</option>
+                    <option value="Pisces">மீனம் (Pisces)</option>
+                  </select>
 
+                  <select
+                    className={input}
+                    name="star"
+                    onChange={handleChange}
+                    value={formData.star}
+                  >
+                    <option value="">Natchathiram / நட்சத்திரம்</option>
 
-              <select
-  className={input}
-  name="star"
-  onChange={handleChange}
-  value={formData.star}
->
-  <option value="">Natchathiram / நட்சத்திரம்</option>
+                    <option value="Aswini">அஸ்வினி (Aswini)</option>
+                    <option value="Bharani">பரணி (Bharani)</option>
+                    <option value="Krittigai">கிருத்திகை (Krittigai)</option>
+                    <option value="Rohini">ரோகிணி (Rohini)</option>
+                    <option value="Mirugasheeridam">
+                      மிருகசீரிடம் (Mirugasheeridam)
+                    </option>
+                    <option value="Thiruvathirai">
+                      திருவாதிரை (Thiruvathirai)
+                    </option>
+                    <option value="Punarpoosam">
+                      புனர்பூசம் (Punarpoosam)
+                    </option>
+                    <option value="Poosam">பூசம் (Poosam)</option>
+                    <option value="Aayilyam">ஆயில்யம் (Aayilyam)</option>
+                    <option value="Magam">மகம் (Magam)</option>
+                    <option value="Pooram">பூரம் (Pooram)</option>
+                    <option value="Uthiram">உத்திரம் (Uthiram)</option>
+                    <option value="Hastham">அஸ்தம் (Hastham)</option>
+                    <option value="Chithirai">சித்திரை (Chithirai)</option>
+                    <option value="Swathi">சுவாதி (Swathi)</option>
+                    <option value="Visakam">விசாகம் (Visakam)</option>
+                    <option value="Anusham">அனுஷம் (Anusham)</option>
+                    <option value="Kettai">கேட்டை (Kettai)</option>
+                    <option value="Moolam">மூலம் (Moolam)</option>
+                    <option value="Pooradam">பூராடம் (Pooradam)</option>
+                    <option value="Uthiradam">உத்திராடம் (Uthiradam)</option>
+                    <option value="Thiruvonam">திருவோணம் (Thiruvonam)</option>
+                    <option value="Avittam">அவிட்டம் (Avittam)</option>
+                    <option value="Sathayam">சதயம் (Sathayam)</option>
+                    <option value="Poorattathi">பூரட்டாதி (Poorattathi)</option>
+                    <option value="Uthirattathi">
+                      உத்திரட்டாதி (Uthirattathi)
+                    </option>
+                    <option value="Revathi">ரேவதி (Revathi)</option>
+                  </select>
 
-  <option value="Aswini">அஸ்வினி (Aswini)</option>
-  <option value="Bharani">பரணி (Bharani)</option>
-  <option value="Krittigai">கிருத்திகை (Krittigai)</option>
-  <option value="Rohini">ரோகிணி (Rohini)</option>
-  <option value="Mirugasheeridam">மிருகசீரிடம் (Mirugasheeridam)</option>
-  <option value="Thiruvathirai">திருவாதிரை (Thiruvathirai)</option>
-  <option value="Punarpoosam">புனர்பூசம் (Punarpoosam)</option>
-  <option value="Poosam">பூசம் (Poosam)</option>
-  <option value="Aayilyam">ஆயில்யம் (Aayilyam)</option>
-  <option value="Magam">மகம் (Magam)</option>
-  <option value="Pooram">பூரம் (Pooram)</option>
-  <option value="Uthiram">உத்திரம் (Uthiram)</option>
-  <option value="Hastham">அஸ்தம் (Hastham)</option>
-  <option value="Chithirai">சித்திரை (Chithirai)</option>
-  <option value="Swathi">சுவாதி (Swathi)</option>
-  <option value="Visakam">விசாகம் (Visakam)</option>
-  <option value="Anusham">அனுஷம் (Anusham)</option>
-  <option value="Kettai">கேட்டை (Kettai)</option>
-  <option value="Moolam">மூலம் (Moolam)</option>
-  <option value="Pooradam">பூராடம் (Pooradam)</option>
-  <option value="Uthiradam">உத்திராடம் (Uthiradam)</option>
-  <option value="Thiruvonam">திருவோணம் (Thiruvonam)</option>
-  <option value="Avittam">அவிட்டம் (Avittam)</option>
-  <option value="Sathayam">சதயம் (Sathayam)</option>
-  <option value="Poorattathi">பூரட்டாதி (Poorattathi)</option>
-  <option value="Uthirattathi">உத்திரட்டாதி (Uthirattathi)</option>
-  <option value="Revathi">ரேவதி (Revathi)</option>
-</select>
-
-                 <select
-  className={input}
-  name="dosham"
-  onChange={handleChange}
-  value={formData.dosham}
->
-  <option value="">Dosham / தோஷாம்</option>
-  <option value="Sevvai">Sevvai  / செவ்வாய்</option>
-  <option value="Kethu">Kethu  / கேது </option>
-    <option value="Raagu"> Raagu / ராகு</option>
-      <option value="No">No / இல்லை</option>
-
-
-</select>
-{/* 
+                  <select
+                    className={input}
+                    name="dosham"
+                    onChange={handleChange}
+                    value={formData.dosham}
+                  >
+                    <option value="">Dosham / தோஷாம்</option>
+                    <option value="Sevvai">Sevvai / செவ்வாய்</option>
+                    <option value="Kethu">Kethu / கேது </option>
+                    <option value="Raagu"> Raagu / ராகு</option>
+                    <option value="No">No / இல்லை</option>
+                  </select>
+                  {/* 
                   <input
                     className={input}
                     name="religion"
@@ -360,7 +395,7 @@ const MatrimonyForm = () => {
                       <>
                         <CloudArrowUpIcon className="w-10 h-10 text-[#A67C52]" />
                         <p className="text-xs text-center mt-2 text-[#5D4037]">
-                          Upload Horoscope / ஜாதகம் 
+                          Upload Horoscope / ஜாதகம்
                         </p>
                       </>
                     )}
@@ -414,20 +449,19 @@ const MatrimonyForm = () => {
                     onChange={handleChange}
                     className={input}
                   >
-                  <option value="">Select / தேர்வு செய்யவும்</option>
-<option value="Public">🌍 Public / பொது</option>
-<option value="Private">🔒 Private / தனிப்பட்ட</option>
-
+                    <option value="">Select / தேர்வு செய்யவும்</option>
+                    <option value="Public">🌍 Public / பொது</option>
+                    <option value="Private">🔒 Private / தனிப்பட்ட</option>
                   </select>
                 </div>
                 <div className="space-y-2">
                   <p className="text-sm font-semibold text-[#5D4037]">
-                    Upload Photo /  பதிவேற்ற புகைப்படம்
+                    Upload Photo / பதிவேற்ற புகைப்படம்
                   </p>
                   <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-[#FAF6F3] hover:bg-[#EEEEEE] border-[#A67C52]/30 transition-all">
                     <CloudArrowUpIcon className="w-8 h-8 mb-2 text-[#A67C52]" />
                     <p className="text-sm text-[#5D4037] text-center">
-                      Click to upload photo /  புகைப்படத்தை பதிவேற்ற கிளிக் செய்க
+                      Click to upload photo / புகைப்படத்தை பதிவேற்ற கிளிக் செய்க
                     </p>
                     <input
                       type="file"
@@ -436,6 +470,13 @@ const MatrimonyForm = () => {
                       onChange={handleFileChange}
                     />
                   </label>
+                  <textarea
+                    className={input}
+                    name="remarks"
+                    placeholder="Remarks / குறிப்புகள்"
+                    onChange={handleChange}
+                    value={formData.remarks}
+                  />
                 </div>
               </div>
             )}
@@ -469,67 +510,63 @@ const MatrimonyForm = () => {
             >
               Back
             </button>
-<button
-  onClick={() => {
-    // 👉 Not last step → Next
-    if (currentStep !== 5) {
-      nextStep();
-      return;
-    }
+            <button
+              onClick={() => {
+                // 👉 Not last step → Next
+                if (currentStep !== 5) {
+                  nextStep();
+                  return;
+                }
 
-    // 👉 Last step (6th) → Submit confirmation toast
-    toast(
-      (t) => (
-        <div
-          className={`
+                // 👉 Last step (6th) → Submit confirmation toast
+                toast(
+                  (t) => (
+                    <div
+                      className={`
            transform-gpu origin-center
             ${t.visible ? "scale-100 opacity-100" : "scale-75 opacity-0"}
             text-center space-y-3
           `}
-        >
-          <p className="font-bold text-[#5D4037] flex justify-center gap-4 mt-3">
-            Are you sure to submit?
-          </p>
+                    >
+                      <p className="font-bold text-[#5D4037] flex justify-center gap-4 mt-3">
+                        Are you sure to submit?
+                      </p>
 
-          <div className="flex justify-center gap-4 mt-3">
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                submitForm();
-                setTimeout(() => navigate("/"), 800);
+                      <div className="flex justify-center gap-4 mt-3">
+                        <button
+                          onClick={() => {
+                            toast.dismiss(t.id);
+                            submitForm();
+                            setTimeout(() => navigate("/"), 800);
+                          }}
+                          className="px-4 py-2 bg-[#573D2F] text-white rounded-lg font-bold"
+                        >
+                          Confirm
+                        </button>
+
+                        <button
+                          onClick={() => toast.dismiss(t.id)}
+                          className="px-4 py-2 bg-[#EEEEEE] rounded-lg font-bold"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ),
+                  {
+                    position: "top-center",
+                    style: {
+                      marginTop: "30vh",
+                      marginLeft: "55vw", // 👈 center feel
+                      zIndex: 9999, // 👈 front-la varum
+                    },
+                  },
+                );
               }}
-              className="px-4 py-2 bg-[#573D2F] text-white rounded-lg font-bold"
+              className="px-8 py-3 bg-[#573D2F] text-white rounded-xl font-bold hover:bg-[#5D4037] transition-all"
             >
-              Confirm
+              {currentStep === 5 ? "Submit" : "Next"}
             </button>
-
-            <button
-              onClick={() => toast.dismiss(t.id)}
-              className="px-4 py-2 bg-[#EEEEEE] rounded-lg font-bold"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      ),
-      {
-        
-        position: "top-center",
-        style: {
-          marginTop: "30vh",
-          marginLeft:
-          "55vw", // 👈 center feel
-          zIndex: 9999,      // 👈 front-la varum
-        },
-      }
-    );
-  }}
-  className="px-8 py-3 bg-[#573D2F] text-white rounded-xl font-bold hover:bg-[#5D4037] transition-all"
->
-  {currentStep === 5 ? "Submit" : "Next"}
-</button>
-
-
           </div>
         </div>
       </div>
@@ -538,5 +575,3 @@ const MatrimonyForm = () => {
 };
 
 export default MatrimonyForm;
-
-

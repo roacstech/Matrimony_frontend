@@ -249,6 +249,13 @@ const Profile = () => {
             value={user?.income}
             onChange={handleChange}
           />
+          <Input
+            edit={edit}
+            label="WorkLocation"
+            name="work_location"
+            value={user?.work_location}
+            onChange={handleChange}
+          />
         </Section>
 
         {/* ================= ASTROLOGY SECTION ================= */}
@@ -346,6 +353,22 @@ const Profile = () => {
           />
         </Section>
 
+        <Input
+          edit={edit}
+          label="Mother Side Grandfather Name"
+          name="mother_side_grandfather_name"
+          value={user?.mother_side_grandfather_name}
+          onChange={handleChange}
+        />
+
+        <Input
+          edit={edit}
+          label="Mother Side Grandmother Name"
+          name="mother_side_grandmother_name"
+          value={user?.mother_side_grandmother_name}
+          onChange={handleChange}
+        />
+
         <Section
           title="Location & Settings"
           icon={<ShieldCheck size={16} />}
@@ -373,6 +396,33 @@ const Profile = () => {
               value={user?.privacy}
               onChange={handleChange}
             />
+          </div>
+        </Section>
+
+        <Section
+          title="Remarks"
+          icon={<Sparkles size={16} />}
+          className="md:col-span-2"
+        >
+          <div className="col-span-2 flex flex-col gap-1.5">
+            <label className="text-[9px] font-black text-[#A67C52] uppercase tracking-[1.5px] px-1">
+              Remarks
+            </label>
+
+            {edit ? (
+              <textarea
+                name="remarks"
+                value={user?.remarks || ""}
+                onChange={handleChange}
+                rows={4}
+                placeholder="Additional details / குறிப்புகள்"
+                className="w-full bg-[#FAF6F3] border border-[#EEEEEE] px-4 py-3 rounded-xl text-[11px] font-bold text-[#5D4037] focus:ring-2 focus:ring-[#A67C52]/20 outline-none"
+              />
+            ) : (
+              <div className="text-[12px] font-black text-[#5D4037] px-1 py-2">
+                {user?.remarks || "---"}
+              </div>
+            )}
           </div>
         </Section>
       </div>

@@ -25,6 +25,7 @@ const formatTime12h = (time) => {
 const PendingForms = () => {
   const [pending, setPending] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+
   const [loadingProfile, setLoadingProfile] = useState(false);
 
   // ================= LOAD PENDING =================
@@ -67,7 +68,9 @@ const PendingForms = () => {
   const handleView = async (item) => {
     try {
       setLoadingProfile(true);
+      
       const fullProfile = await getUserProfile(item.id);
+        console.log("👽",fullProfile)
       setSelectedUser(fullProfile);
     } catch {
       toast.error("Failed to load profile details");
@@ -75,6 +78,7 @@ const PendingForms = () => {
       setLoadingProfile(false);
     }
   };
+
 
   const closeModal = () => setSelectedUser(null);
 
@@ -223,6 +227,7 @@ const PendingForms = () => {
                 />
                 <InfoRow label="Email" value={selectedUser.email} />
                 <InfoRow label="Income" value={selectedUser.income} />
+                <InfoRow label="Work Location" value={selectedUser.workLocation} />
                 <InfoRow label="Birth Place" value={selectedUser.birthPlace} />
                 <InfoRow label="Education" value={selectedUser.education} />
               </div>
@@ -233,10 +238,22 @@ const PendingForms = () => {
                   FAMILY & ASTROLOGY
                 </h3>
 
+      
                 <InfoRow label="Father" value={selectedUser.father} />
                 <InfoRow label="Mother" value={selectedUser.mother} />
                 <InfoRow label="Grandfather" value={selectedUser.grandfather} />
                 <InfoRow label="Grandmother" value={selectedUser.grandmother} />
+
+            <InfoRow
+  label="Mother Side Grandfather"
+  value={selectedUser.motherSideGrandfather}
+/>
+
+<InfoRow
+  label="Mother Side Grandmother"
+  value={selectedUser.motherSideGrandmother}
+/>
+                
                 <InfoRow label="Siblings" value={selectedUser.siblings} />
                 <InfoRow label="Raasi" value={selectedUser.raasi} />
                 <InfoRow label="Star" value={selectedUser.star} />
