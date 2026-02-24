@@ -185,6 +185,12 @@ const ConnectionCard = () => {
                   value={u.occupation}
                   isAccent
                 />
+                  <DetailItem
+                  icon="💼"
+                  label="Worklocation"
+                  value={u.work_location}
+                  isAccent
+                />
 
                 {/* Location Spanning properly */}
                 <div className="col-span-1">

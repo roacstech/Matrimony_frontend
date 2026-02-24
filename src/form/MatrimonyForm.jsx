@@ -133,37 +133,38 @@ const MatrimonyForm = () => {
                     min="1950-01-01"
                     max={new Date().toISOString().split("T")[0]}
                   />
+ 
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="relative w-full">
-                    {!formData.birthTime && (
-                      <span className="absolute left-3 top-1 text-[#5D4037] pointer-events-none">
-                        Birth Time / பிறந்த நேரம்
-                      </span>
-                    )}
+<div className="flex items-center gap-3">
+  <div className="relative w-full">
+    {!formData.birthTime && (
+      <span className="absolute left-3 top-1 text-[#5D4037] pointer-events-none">
+        Birth Time / பிறந்த நேரம்
+      </span>
+    )}
 
-                    <input
-                      type="text" // ✅ CHANGE HERE
-                      name="birthTime"
-                      placeholder="hh:mm" // ✅ 12 hours
-                      value={formData.birthTime}
-                      onChange={handleChange}
-                      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2 focus:outline-none focus:ring-2 focus:ring-brown-500"
-                    />
-                  </div>
+    <input
+      type="time"                // ✅ AUTO + MANUAL (keyboard)
+      name="birthTime"
+      value={formData.birthTime}
+      onChange={handleChange}
+      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2
+                 focus:outline-none focus:ring-2 focus:ring-brown-500"
+    />
+  </div>
 
-                  <select
-                    name="birthPeriod"
-                    value={formData.birthPeriod}
-                    onChange={handleChange}
-                    className="w-20 rounded-md border border-gray-300 px-2 py-2 focus:outline-none focus:ring-2 focus:ring-brown-500"
-                  >
-                    <option value="">--</option>
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
-                  </select>
-                </div>
+  <select
+    name="birthPeriod"
+    value={formData.birthPeriod}
+    onChange={handleChange}
+    className="w-20 rounded-md border border-gray-300 px-2 py-2"
+  >
+    <option value="">--</option>
+    <option value="AM">AM</option>
+    <option value="PM">PM</option>
+  </select>
+</div>
 
                 <input
                   className={input}
@@ -173,6 +174,15 @@ const MatrimonyForm = () => {
                   value={formData.email}
                 />
 
+                 <input
+  className={input}
+  name="phone"
+  placeholder="Phone Number / தொலைபேசி எண்"
+  onChange={handleChange}
+  value={formData.phone}
+  type="tel"                 // ✅ phone input
+  maxLength={10}             // ✅ Indian number
+/>
                 <select
                   className={input}
                   name="maritalStatus"
@@ -514,6 +524,10 @@ const MatrimonyForm = () => {
                 <p>
                   <b>DOB:</b> {formData.dob}
                 </p>
+
+                  <p>
+                  <b>Phone:</b> {formData.phone}
+                </p>
                 <p>
                   <b>Birth Time:</b> {formData.birthPeriod}
                 </p>
@@ -603,7 +617,7 @@ const MatrimonyForm = () => {
             <button
               onClick={() => {
                 // 👉 Not last step → Next
-                if (currentStep !== 5) {
+                if (currentStep !== 6) {
                   nextStep();
                   return;
                 }
@@ -655,7 +669,7 @@ const MatrimonyForm = () => {
               }}
               className="px-8 py-3 bg-[#573D2F] text-white rounded-xl font-bold hover:bg-[#5D4037] transition-all"
             >
-              {currentStep === 5 ? "Submit" : "Next"}
+              {currentStep === 6 ? "Submit" : "Next"}
             </button>
           </div>
         </div>
