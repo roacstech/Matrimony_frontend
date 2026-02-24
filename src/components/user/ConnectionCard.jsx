@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 import {
   getVisibleConnections,
@@ -47,10 +47,7 @@ const ConnectionCard = () => {
     loadMyGender();
   }, []);
 
-  const [toast, setToast] = useState({
-    show: false,
-    msg: "",
-  });
+
 
   const handleViewProfile = async (userId) => {
     try {
@@ -65,15 +62,11 @@ const ConnectionCard = () => {
     }
   };
 
-  const triggerToast = (msg) => {
-    setToast({ show: true, msg });
-    setTimeout(() => setToast({ show: false, msg: "" }), 2000);
-  };
 
   const handleConnect = async (toUserId) => {
   try {
     const res = await sendConnectionRequest(toUserId);
-    triggerToast(res.message || "Request sent");
+    toast.success(res.message || "Request sent");
 
     if (res.success) {
       // re-fetch connections so UI updates immediately
@@ -82,7 +75,7 @@ const ConnectionCard = () => {
     }
   } catch (err) {
     console.error(err);
-    triggerToast("Something went wrong");
+    toast.error("Something went wrong");
   }
 };
 
@@ -98,7 +91,7 @@ const ConnectionCard = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-transparent space-y-6 sm:space-y-10 font-serif overflow-x-hidden">
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
 
       {/* ================= TAB HEADER ================= */}
       <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto pb-2 no-scrollbar">
