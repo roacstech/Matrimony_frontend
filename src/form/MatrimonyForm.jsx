@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 
 import {
@@ -15,7 +15,7 @@ const steps = [
   "ஜாதக விவரங்கள் / Horoscope Details",
   "முகவரி விவரங்கள் / Address Details",
   "சுயவிவர தனியுரிமை / Profile Visibility",
-  // "சுருக்கம் / Summary",
+  "சுருக்கம் / Summary",
 ];
 
 const MatrimonyForm = () => {
@@ -35,7 +35,6 @@ const MatrimonyForm = () => {
   useEffect(() => {
     console.log("🔥 FORM DATA =>", formData);
   }, [formData]);
-
 
   // Color Patterns applied to constants
   const input =
@@ -106,7 +105,6 @@ const MatrimonyForm = () => {
                   placeholder="Full Name / முழு பெயர்"
                   onChange={handleChange}
                   value={formData.fullName}
-                  
                 />
                 <select
                   className={input}
@@ -222,7 +220,6 @@ const MatrimonyForm = () => {
                   onChange={handleChange}
                   value={formData.workLocation}
                 />
-               
               </div>
             )}
 
@@ -416,7 +413,7 @@ const MatrimonyForm = () => {
                 <input
                   className={input}
                   name="address"
-                  placeholder="Address / முகவரி"
+                  placeholder=" Home Address / வீட்டு முகவரி"
                   onChange={handleChange}
                   value={formData.address}
                 />
@@ -458,46 +455,139 @@ const MatrimonyForm = () => {
                   <p className="text-sm font-semibold text-[#5D4037]">
                     Upload Photo / பதிவேற்ற புகைப்படம்
                   </p>
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-[#FAF6F3] hover:bg-[#EEEEEE] border-[#A67C52]/30 transition-all">
-                    <CloudArrowUpIcon className="w-8 h-8 mb-2 text-[#A67C52]" />
-                    <p className="text-sm text-[#5D4037] text-center">
-                      Click to upload photo / புகைப்படத்தை பதிவேற்ற கிளிக் செய்க
-                    </p>
+
+                  <label
+                    className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all 
+      ${
+        formData.photo
+          ? "bg-green-50 border-green-500 hover:bg-green-100"
+          : "bg-[#FAF6F3] hover:bg-[#EEEEEE] border-[#A67C52]/30"
+      }`}
+                  >
+                    {formData.photo ? (
+                      <>
+                        {/* Success State: Green Icon and Filename */}
+                        <DocumentCheckIcon className="w-10 h-10 text-green-600" />
+                        <p className="text-xs mt-2 text-center text-green-700 font-medium px-2 truncate w-full">
+                          {formData.photo.name}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        {/* Default State: Upload Icon */}
+                        <CloudArrowUpIcon className="w-8 h-8 mb-2 text-[#A67C52]" />
+                        <p className="text-sm text-[#5D4037] text-center">
+                          Click to upload photo / புகைப்படத்தை பதிவேற்ற கிளிக்
+                          செய்க
+                        </p>
+                      </>
+                    )}
+
                     <input
                       type="file"
                       name="photo"
                       className="hidden"
+                      accept="image/*"
                       onChange={handleFileChange}
                     />
                   </label>
-                  <textarea
-                    className={input}
-                    name="remarks"
-                    placeholder="Remarks / குறிப்புகள்"
-                    onChange={handleChange}
-                    value={formData.remarks}
-                  />
                 </div>
+                <textarea
+                  className={input}
+                  name="remarks"
+                  placeholder="Remarks / குறிப்புகள்"
+                  onChange={handleChange}
+                  value={formData.remarks}
+                />
               </div>
             )}
 
             {/* STEP 6 - Summary */}
-            {/* {currentStep === 6 && (
+            {currentStep === 6 && (
               <div className="space-y-2 bg-[#EEEEEE]/50 p-6 rounded-xl border border-[#A67C52]/20 text-[#5D4037]">
                 <p>
                   <b>Name:</b> {formData.fullName}
                 </p>
                 <p>
+                  <b>Gender:</b> {formData.gender}
+                </p>
+                <p>
+                  <b>DOB:</b> {formData.dob}
+                </p>
+                <p>
+                  <b>Birth Time:</b> {formData.birthPeriod}
+                </p>
+                <p>
+                  <b>MaritalStatus:</b> {formData.maritalStatus}
+                </p>
+
+                <p>
                   <b>Education:</b> {formData.education}
+                </p>
+                <p>
+                  <b>Occupation:</b> {formData.occupation}
+                </p>
+                <p>
+                  <b>WorkLocation:</b> {formData.workLocation}
+                </p>
+                <p>
+                  <b>Father:</b> {formData.father}
+                </p>
+
+                <p>
+                  <b>Mother:</b> {formData.mother}
+                </p>
+                <p>
+                  <b>GrandFather:</b> {formData.grandfather}
+                </p>
+                <p>
+                  <b>GrandMother:</b> {formData.grandmother}
+                </p>
+                <p>
+                  <b>MotherSideGrandfather:</b> {formData.motherSideGrandfather}
+                </p>
+                <p>
+                  <b>MotherSideGrandmother:</b> {formData.motherSideGrandmother}
+                </p>
+                <p>
+                  <b>Siblings:</b> {formData.siblings}
                 </p>
                 <p>
                   <b>Raasi:</b> {formData.raasi}
                 </p>
+
+                <p>
+                  <b>Star:</b> {formData.star}
+                </p>
+                <p>
+                  <b>Dosham:</b> {formData.dosham}
+                </p>
+                <p>
+                  <b>Horoscope:</b> {formData.horoscope.name}
+                </p>
+
+                <p>
+                  <b>Home address:</b> {formData.address}
+                </p>
+
+                <p>
+                  <b>City:</b> {formData.city}
+                </p>
+                <p>
+                  <b>Country:</b> {formData.country}
+                </p>
                 <p>
                   <b>Account:</b> {formData.privacy}
                 </p>
+
+                <p>
+                  <b>Upload photo:</b> {formData.photo.name}
+                </p>
+                <p>
+                  <b>Remarks:</b> {formData.remarks}
+                </p>
               </div>
-            )} */}
+            )}
           </div>
 
           {/* BUTTONS: Using Login Button Brown #573D2F */}
