@@ -310,7 +310,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
               {/* Right Column */}
               <div className="space-y-3">
                 <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">
-                  Family & Astrology
+                  Family & Details
                 </h4>
                 <PopupDetail
                   label="Father / தந்தை"

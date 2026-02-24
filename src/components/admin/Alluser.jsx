@@ -55,6 +55,18 @@ const AllUsers = () => {
       setTogglingUserId(null);
     }
   };
+  const formatTime12h = (time) => {
+  if (!time) return "-";
+
+  const [h, m] = time.split(":");
+  let hours = Number(h);
+  const minutes = m;
+
+  const period = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+
+  return `${hours}:${minutes} ${period}`;
+};
 
   /* ================= FILTER LOGIC ================= */
   const filteredUsers = data.filter((u) => {
@@ -149,54 +161,67 @@ const AllUsers = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-in fade-in duration-500 cursor-pointer">
           {activeTab === "personal" && (
             <>
-              <InfoBox label="Full Name" value={selectedUser.fullName} />
-              <InfoBox label="Gender" value={selectedUser.gender} />
-              <InfoBox label="Date of Birth" value={selectedUser.dob} />
-              <InfoBox label="Birth Time" value={selectedUser.birthTime} />
+              <InfoBox label="Full Name/ முழு பெயர்" value={selectedUser.fullName} />
+              <InfoBox label="Gender/ பாலினம்" value={selectedUser.gender} />
+              <InfoBox label="Date of Birth / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
+              <InfoBox label="Birth Time  / பிறந்த நேரம்" value={selectedUser.birthTime?.split("T")[0]} />
+                           <InfoBox label="Phone Number / தொலைபேசி எண்" value={selectedUser.phone} />
+
               <InfoBox
-                label="Marital Status"
+                label="Marital Status / பாலினம்"
                 value={selectedUser.maritalStatus}
               />
 
               <div className="sm:col-span-2 lg:col-span-3">
-                <InfoBox label="Full Address" value={selectedUser.address} />
+                <InfoBox label="Full Address/ வீட்டு முகவரி" value={selectedUser.address} />
               </div>
             </>
           )}
 
           {activeTab === "education" && (
             <>
-              <InfoBox label="Qualification" value={selectedUser.education} />
+              <InfoBox label="Qualification/ கல்வி" value={selectedUser.education} />
               <InfoBox
-                label="Job / Occupation"
+                label="Job / Occupation  / தொழில்"
                 value={selectedUser.occupation}
               />
-              <InfoBox label="Annual Income" value={selectedUser.income} />
+              <InfoBox label="Annual Income/மாத வருமானம்" value={selectedUser.income} />
+           
+                         <InfoBox label="Work Location / வேலை இடம்" value={selectedUser.workLocation} />
+
             </>
           )}
 
           {activeTab === "family" && (
             <>
-              <InfoBox label="Father's Name" value={selectedUser.father} />
-              <InfoBox label="Mother's Name" value={selectedUser.mother} />
+              <InfoBox label="Father's Name/ தந்தை பெயர்" value={selectedUser.father} />
+              <InfoBox label="Mother's Name/ தாய் பெயர்" value={selectedUser.mother} />
               <InfoBox
-                label="Paternal Grandfather"
+                label="Paternal Grandfather/ தாத்தா பெயர்"
                 value={selectedUser.grandfather}
               />
               <InfoBox
-                label="Paternal Grandmother"
+                label="Paternal Grandmother/ பாட்டி பெயர்"
                 value={selectedUser.grandmother}
               />
-              <InfoBox label="Siblings" value={selectedUser.siblings} />
+               <InfoBox
+                label="Mother Side Grandfather Name / தாய்வழி தாத்தா பெயர்"
+                value={selectedUser.motherSideGrandfather}
+              />
+               <InfoBox
+                label="Mother Side Grandmother Name / தாய்வழி பாட்டி பெயர்"
+                value={selectedUser.motherSideGrandmother}
+              />
+              <InfoBox label="Siblings/ உடன்பிறப்புகள்" value={selectedUser.siblings} />
             </>
           )}
 
           {activeTab === "horoscope" && (
             <>
-              <InfoBox label="Raasi" value={selectedUser.raasi} />
-              <InfoBox label="Star" value={selectedUser.star} />
-              <InfoBox label="Dosham" value={selectedUser.dosham} />
-              <InfoBox label="Birth Place" value={selectedUser.birthPlace} />
+              <InfoBox label="Raasi/ இராசி" value={selectedUser.raasi} />
+              <InfoBox label="Star/ நட்சத்திரம்" value={selectedUser.star} />
+              <InfoBox label="Dosham / தோஷாம்" value={selectedUser.dosham} />
+              {/* <InfoBox label="Birth Place" value={selectedUser.birthPlace} /> */}
 
               <div className="sm:col-span-2 lg:col-span-3 mt-4">
                 <div className="p-5 md:p-6 bg-[#FAF6F3] border border-[#EEEEEE] rounded-3xl flex flex-col md:flex-row items-center justify-between gap-4">
@@ -206,7 +231,7 @@ const AllUsers = () => {
                     </div>
                     <div>
                       <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">
-                        Jadhagam File
+                        Jadhagam File/ ஜாதகம்
                       </p>
                       <p className="text-sm font-bold text-[#5D4037] truncate max-w-[150px] sm:max-w-xs">
                         {selectedUser.horoscope?.uploaded
@@ -226,6 +251,9 @@ const AllUsers = () => {
                     </a>
                   )}{" "}
                 </div>
+
+                              <InfoBox label="Remarks / குறிப்புகள்" value={selectedUser.remarks} />
+
               </div>
             </>
           )}

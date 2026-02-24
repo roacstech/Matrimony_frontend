@@ -227,16 +227,17 @@ const PendingForms = () => {
                 />
                 <InfoRow label="Email / மின்னஞ்சல்" value={selectedUser.email} />
                     <InfoRow label="Phone / தொலைபேசி எண்" value={selectedUser.phone} />
+                 
                 <InfoRow label="Income / தொழில்" value={selectedUser.income} />
                 <InfoRow label="Work Location / வேலை இடம்" value={selectedUser.workLocation} />
-                <InfoRow label="Birth Place" value={selectedUser.birthPlace} />
+                {/* <InfoRow label="City / நகரம்" value={selectedUser.city} /> */}
                 <InfoRow label="Education / கல்வி" value={selectedUser.education} />
               </div>
 
               {/* RIGHT */}
               <div>
                 <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">
-                  FAMILY & ASTROLOGY
+                  FAMILY & DETAILS
                 </h3>
 
       
@@ -287,6 +288,8 @@ const PendingForms = () => {
                 <p className="text-sm text-gray-400">Not Uploaded</p>
               )}
             </div>
+                            <InfoRow label="Remarks / குறிப்புகள்" value={selectedUser.remarks} />
+
           </div>
         </div>
       )}
