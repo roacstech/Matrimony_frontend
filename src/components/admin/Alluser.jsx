@@ -164,7 +164,7 @@ const AllUsers = () => {
               <InfoBox label="Full Name/ முழு பெயர்" value={selectedUser.fullName} />
               <InfoBox label="Gender/ பாலினம்" value={selectedUser.gender} />
               <InfoBox label="Date of Birth / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
-              <InfoBox label="Birth Time  / பிறந்த நேரம்" value={selectedUser.birthTime?.split("T")[0]} />
+              <InfoBox label="Birth Time  / பிறந்த நேரம்" value={formatTime12h(selectedUser.birthTime)} />
                            <InfoBox label="Phone Number / தொலைபேசி எண்" value={selectedUser.phone} />
 
               <InfoBox
