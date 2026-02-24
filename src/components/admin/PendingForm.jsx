@@ -214,23 +214,23 @@ const PendingForms = () => {
                   PERSONAL INFO
                 </h3>
 
-                <InfoRow label="Gender" value={selectedUser.gender} />
-                <InfoRow label="DOB" value={selectedUser.dob?.split("T")[0]} />
+                <InfoRow label="Gender / பாலினம் " value={selectedUser.gender} />
+                <InfoRow label="DOB / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
 <InfoRow
-  label="Birth Time"
+  label="Birth Time / பிறந்த நேரம் "
   value={formatTime12h(selectedUser.birthTime)}
 />
 
                 <InfoRow
-                  label="Marital Status"
+                  label="Marital Status / திருமண நிலை"
                   value={selectedUser.maritalStatus}
                 />
-                <InfoRow label="Email" value={selectedUser.email} />
-                    <InfoRow label="Phone" value={selectedUser.phone} />
-                <InfoRow label="Income" value={selectedUser.income} />
-                <InfoRow label="Work Location" value={selectedUser.workLocation} />
+                <InfoRow label="Email / மின்னஞ்சல்" value={selectedUser.email} />
+                    <InfoRow label="Phone / தொலைபேசி எண்" value={selectedUser.phone} />
+                <InfoRow label="Income / தொழில்" value={selectedUser.income} />
+                <InfoRow label="Work Location / வேலை இடம்" value={selectedUser.workLocation} />
                 <InfoRow label="Birth Place" value={selectedUser.birthPlace} />
-                <InfoRow label="Education" value={selectedUser.education} />
+                <InfoRow label="Education / கல்வி" value={selectedUser.education} />
               </div>
 
               {/* RIGHT */}
@@ -240,32 +240,32 @@ const PendingForms = () => {
                 </h3>
 
       
-                <InfoRow label="Father" value={selectedUser.father} />
-                <InfoRow label="Mother" value={selectedUser.mother} />
-                <InfoRow label="Grandfather" value={selectedUser.grandfather} />
-                <InfoRow label="Grandmother" value={selectedUser.grandmother} />
+                <InfoRow label="Father/ தந்தை பெயர்" value={selectedUser.father} />
+                <InfoRow label="Mother / தாய் பெயர்" value={selectedUser.mother} />
+                <InfoRow label="Grandfather/ தாத்தா பெயர்" value={selectedUser.grandfather} />
+                <InfoRow label="Grandmother/ பாட்டி பெயர்" value={selectedUser.grandmother} />
 
             <InfoRow
-  label="Mother Side Grandfather"
+  label="Mother Side Grandfather/ தாய்வழி தாத்தா பெயர்"
   value={selectedUser.motherSideGrandfather}
 />
 
 <InfoRow
-  label="Mother Side Grandmother"
+  label="Mother Side Grandmother/ தாய்வழி பாட்டி பெயர்"
   value={selectedUser.motherSideGrandmother}
 />
                 
-                <InfoRow label="Siblings" value={selectedUser.siblings} />
-                <InfoRow label="Raasi" value={selectedUser.raasi} />
-                <InfoRow label="Star" value={selectedUser.star} />
-                <InfoRow label="Dosham" value={selectedUser.dosham} />
+                <InfoRow label="Siblings/ உடன்பிறப்புகள்" value={selectedUser.siblings} />
+                <InfoRow label="Raasi/ இராசி" value={selectedUser.raasi} />
+                <InfoRow label="Star/ நட்சத்திரம்" value={selectedUser.star} />
+                <InfoRow label="Dosham/ தோஷாம்" value={selectedUser.dosham} />
               </div>
             </div>
 
             {/* HOROSCOPE SECTION (Separate Row Full Width) */}
             <div className="mt-10">
               <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-3">
-                JADHAGAM FILE
+                JADHAGAM FILE / ஜாதகம்
               </h3>
 
               {selectedUser.horoscope?.uploaded ? (
