@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { submitFormAPI } from "../services/submitFormAPI";
 
 export const useMatrimonyForm = () => {
-    console.log("🔥 useMatrimonyForm called");
+    // console.log("🔥 useMatrimonyForm called");
   const [currentStep, setCurrentStep] = useState(0);
 
   const [formData, setFormData] = useState({
@@ -18,10 +18,13 @@ export const useMatrimonyForm = () => {
     education: "",
     occupation: "",
     income: "",
+    workLocation: "",
     father: "",
     mother: "",
     grandfather: "",
     grandmother: "",
+      motherSideGrandfather: "",   // ✅
+  motherSideGrandmother: "",   // ✅
     siblings: "",
     raasi: "",
     star: "",
@@ -34,12 +37,13 @@ export const useMatrimonyForm = () => {
     country: "",
     privacy: "",
     photo: null,
+     remarks: "", 
   });
-
   const stepFields = [
     ["fullName", "gender", "dob", "birthTime", "maritalStatus"],
     ["education", "occupation", "income"],
-    ["father", "mother", "grandfather", "grandmother", "siblings"],
+    ["father", "mother", "grandfather", "grandmother",  "motherSideGrandfather",
+    "motherSideGrandmother", "siblings"],
     ["raasi", "star", "dosham"],
     ["address", "city", "country"],
     ["privacy"],
@@ -48,11 +52,13 @@ export const useMatrimonyForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
+       console.log("✏️ Changed:", name, value);
   };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     setFormData((p) => ({ ...p, [name]: files[0] }));
+    
   };
 
   const validateStep = () => {
@@ -75,6 +81,7 @@ export const useMatrimonyForm = () => {
 
   // ✅ FINAL SUBMIT (CLEAN)
   const submitForm = async () => {
+    console.log("🚀 FINAL SUBMIT DATA =>", formData);
     try {
       const token = localStorage.getItem("accesstoken");
       const res = await submitFormAPI(formData, token);
