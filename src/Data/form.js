@@ -13,6 +13,7 @@ export const useMatrimonyForm = () => {
     fullName: "",
     gender: "",
     dob: "",
+     phone: "",
     birthTime: "",
     maritalStatus: "",
     education: "",
@@ -40,7 +41,7 @@ export const useMatrimonyForm = () => {
      remarks: "", 
   });
   const stepFields = [
-    ["fullName", "gender", "dob", "birthTime", "maritalStatus"],
+    ["fullName", "gender", "dob","phone","birthTime", "maritalStatus"],
     ["education", "occupation", "income"],
     ["father", "mother", "grandfather", "grandmother",  "motherSideGrandfather",
     "motherSideGrandmother", "siblings"],

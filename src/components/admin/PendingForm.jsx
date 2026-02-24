@@ -226,6 +226,7 @@ const PendingForms = () => {
                   value={selectedUser.maritalStatus}
                 />
                 <InfoRow label="Email" value={selectedUser.email} />
+                    <InfoRow label="Phone" value={selectedUser.phone} />
                 <InfoRow label="Income" value={selectedUser.income} />
                 <InfoRow label="Work Location" value={selectedUser.workLocation} />
                 <InfoRow label="Birth Place" value={selectedUser.birthPlace} />

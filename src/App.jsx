@@ -28,16 +28,20 @@ function App()
 
       </Routes>
 
-      <Toaster
-        position="top"
-        toastOptions={{
-          duration: 1500,
-          style: {
-            borderRadius: "12px",
-            fontWeight: "600",
-          },
-        }}
-      />
+     <Toaster
+  position="top-center"
+  containerStyle={{
+    top: "50%",
+    transform: "translateY(-50%)",
+  }}
+  toastOptions={{
+    duration: 1500,
+    style: {
+      borderRadius: "12px",
+      fontWeight: "600",
+    },
+  }}
+/>
     </BrowserRouter>
   );
 }
