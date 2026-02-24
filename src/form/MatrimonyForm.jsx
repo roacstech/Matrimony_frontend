@@ -526,24 +526,29 @@ const MatrimonyForm = () => {
       
       {/* 1. TEXT DATA SECTION */}
       {[
-        { label: "Name", value: formData.fullName },
-        { label: "Gender", value: formData.gender },
-        { label: "DOB", value: formData.dob },
-        { label: "Birth Time", value: `${formData.birthTime} ${formData.birthPeriod}` },
-        { label: "Phone", value: formData.phone },
-        { label: "Marital Status", value: formData.maritalStatus },
-        { label: "Education", value: formData.education },
-        { label: "Occupation", value: formData.occupation },
-        { label: "Work Location", value: formData.workLocation },
-        { label: "Father", value: formData.father },
-        { label: "Mother", value: formData.mother },
-        { label: "Siblings", value: formData.siblings },
-        { label: "Raasi", value: formData.raasi },
-        { label: "Star", value: formData.star },
-        { label: "Dosham", value: formData.dosham },
-        { label: "City", value: formData.city },
-        { label: "Country", value: formData.country },
-        { label: "Account", value: formData.privacy },
+       
+  { label: "முழு பெயர் / Full Name", value: formData.fullName },
+  { label: "பாலினம் / Gender", value: formData.gender },
+  { label: "பிறந்த தேதி / Date of Birth", value: formData.dob },
+  {
+    label: "பிறந்த நேரம் / Birth Time",
+    value: `${formData.birthTime} ${formData.birthPeriod || ""}`.trim(),
+  },
+  { label: "தொலைபேசி எண் / Phone Number", value: formData.phone },
+  { label: "திருமண நிலை / Marital Status", value: formData.maritalStatus },
+  { label: "கல்வி / Education", value: formData.education },
+  { label: "தொழில் / Occupation", value: formData.occupation },
+  { label: "வேலை இடம் / Work Location", value: formData.workLocation },
+  { label: "தந்தை பெயர் / Father Name", value: formData.father },
+  { label: "தாய் பெயர் / Mother Name", value: formData.mother },
+  { label: "உடன்பிறப்புகள் / Siblings", value: formData.siblings },
+  { label: "இராசி / Raasi", value: formData.raasi },
+  { label: "நட்சத்திரம் / Star", value: formData.star },
+  { label: "தோஷம் / Dosham", value: formData.dosham },
+  { label: "நகரம் / City", value: formData.city },
+  { label: "நாடு / Country", value: formData.country },
+  { label: "கணக்கு தனியுரிமை / Account Privacy", value: formData.privacy },
+
       ].map((item, index) => (
         <div key={index} className="flex flex-col border-b border-[#A67C52]/10 pb-1">
           <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">{item.label}</span>
