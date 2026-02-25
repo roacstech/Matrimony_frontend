@@ -7,7 +7,12 @@ const Register = ({ onNavigate }) => {
 
   return (
     // Background updated to White/95 with shadow using Brown #5D4037 tone
-    <div className="w-full bg-white/95 backdrop-blur-xl rounded-[30px] md:rounded-[40px] p-8 md:p-10 shadow-[0_20px_50px_rgba(93,64,55,0.1)] border border-[#EEEEEE] transition-all duration-300">
+    <div className="
+    w-full
+  sm:w-[90%] 
+  md:w-[70%] 
+  lg:w-[800px]
+    bg-white/95 backdrop-blur-xl rounded-[30px] md:rounded-[40px] p-8 md:p-10 shadow-[0_20px_50px_rgba(93,64,55,0.1)] border border-[#EEEEEE] transition-all duration-300">
       <div className="mb-6">
         {/* Text color updated to #5D4037 */}
         <p className="font-bold text-xl md:text-2xl text-[#5D4037]">பதிவு செய்க / Register</p>
