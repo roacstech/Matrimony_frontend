@@ -185,7 +185,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                   <DetailItem
                   icon="📍"
                   label="Worklocation / வேலை இடம்"
-                  value={u.work_location}
+                  value={u.workLocation}
                   isAccent
                 />
             
@@ -269,9 +269,15 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                   label="Gender / பாலினம்"
                   value={selectedUser.gender}
                 />
-                <PopupDetail
+                {/* <PopupDetail
                   label="DOB / பிறந்த தேதி"
                   value={selectedUser.dob}
+                   min="1950-01-01"
+                    max={new Date().toISOString().split("T")[0]}
+                /> */}
+                   <PopupDetail
+                  label="Birth Time / பிறந்த நேரம்"
+                  value={selectedUser.birthTime}
                 />
                 <PopupDetail
                   label="Marital Status / திருமண நிலை"
@@ -281,9 +287,21 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                   label="Email / மின்னஞ்சல்"
                   value={selectedUser.email}
                 />
+                    <PopupDetail
+                  label="Phone Number / தொலைபேசி எண்"
+                  value={selectedUser.phone}
+                />
+                    <PopupDetail
+                  label="Occupation / தொழில்"
+                  value={selectedUser.occupation}
+                />
                 <PopupDetail
                   label="Income / வருமானம்"
                   value={selectedUser.income}
+                />
+                  <PopupDetail
+                  label="Work Location / வேலை இடம்"
+                  value={selectedUser.work_location}
                 />
                 <PopupDetail
                   label="Birth Place / பிறந்த இடம்"
@@ -320,6 +338,15 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                 <PopupDetail
                   label="Grandmother / பாட்டி"
                   value={selectedUser.grandmother_name}
+                />
+                
+                    <PopupDetail
+                  label="Mother Side Grandfather Name / தாய்வழி தாத்தா பெயர்"
+                  value={selectedUser.mother_side_grandfather_name}
+                />
+                     <PopupDetail
+                  label="Mother Side Grandmother Name / தாய்வழி பாட்டி பெயர்"
+                  value={selectedUser.mother_side_grandmother_name}
                 />
                 <PopupDetail
                   label="Siblings / உடன்பிறப்புகள்"

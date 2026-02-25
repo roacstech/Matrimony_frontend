@@ -388,6 +388,7 @@ const MatrimonyForm = () => {
                     onChange={handleChange}
                     value={formData.caste}
                   /> */}
+                  
                 </div>
                 <div className={uploadBox}>
                   <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
