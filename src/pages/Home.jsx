@@ -16,17 +16,33 @@ const Home = () => {
         
         {/* LEFT: Title + Form */}
         <div className="w-full lg:w-[50%] flex flex-col items-center lg:items-start justify-center space-y-8 lg:space-y-10 text-center lg:text-left">
-          <div className="space-y-4 md:space-y-6">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-[#5D4037]">
-              ದಕ್ಷಿಣ ಭಾರತೀಯ <br />
-              <span className="text-[#A67C52]">ದಾಸಪಾಲಂಜಿಕ ಮಹಾಜನ ಸಂಗಮ</span>
-            </h1>
-            <div className="lg:border-l-4 border-[#A67C52] lg:pl-6 inline-block lg:inline">
-              <p className="font-bold text-xl sm:text-2xl text-[#5D4037]/80">
-                “ವಿವಾಹ ಮಾಹಿತಿ ಕೇಂದ್ರ”
-              </p>
-            </div>
-          </div>
+       <div className="space-y-6 md:space-y-8 overflow-hidden">
+  {/* Tamil Section - Appears First */}
+  <div className="space-y-3">
+    <h1 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight text-[#5D4037]">
+      தென்னிந்திய <br />
+      <span className="text-[#A67C52]">தாசபளஞ்சிக மஹாஜன சங்கம்</span>
+    </h1>
+    <div className="lg:border-l-4 border-[#A67C52] lg:pl-6">
+      <p className="font-bold text-lg sm:text-xl text-[#5D4037]/80">
+        “திருமண தகவல் மையம்”
+      </p>
+    </div>
+  </div>
+
+  {/* Kannada Section - Appears Second */}
+  <div className="space-y-3">
+    <h1 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight text-[#5D4037]">
+      ದಕ್ಷಿಣ ಭಾರತೀಯ <br />
+      <span className="text-[#A67C52]">ದಾಸಪಾಲಂಜಿಕ ಮಹಾಜನ ಸಂಗಮ</span>
+    </h1>
+    <div className="lg:border-l-4 border-[#A67C52] lg:pl-6">
+      <p className="font-bold text-lg sm:text-xl  text-[#5D4037]/80">
+        “ವಿವಾಹ ಮಾಹಿತಿ ಕೇಂದ್ರ”
+      </p>
+    </div>
+  </div>
+</div>
 
                   {/* Mobile Image - improved size */}
         <div className="flex lg:hidden w-full justify-center mt-8 mb-10">
