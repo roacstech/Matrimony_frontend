@@ -219,20 +219,30 @@ const Profile = () => {
       value={user?.gender}
       onChange={handleChange}
     />
-    <Input
-      edit={edit}
-      label="Date of Birth / பிறந்த தேதி"
-      name="dob"
-      value={new Date(user?.dob).toLocaleDateString("en-GB")}
-      onChange={handleChange}
-    />
-    <Input
-      edit={edit}
-      label="Birth Time / பிறந்த நேரம்"
-      name="birth_time"
-      value={formatTime12h(user?.birth_time)}
-      onChange={handleChange}
-    />
+<Input
+  edit={edit}
+  label="Date of Birth / பிறந்த தேதி"
+  name="dob"
+  value={
+    edit
+      ? user?.dob?.split("T")[0]   // 👈 YYYY-MM-DD
+      : new Date(user?.dob).toLocaleDateString("en-GB")
+  }
+  onChange={handleChange}
+  type="date"
+/>
+   <Input
+  edit={edit}
+  label="Birth Time / பிறந்த நேரம்"
+  name="birth_time"
+  value={
+    edit
+      ? user?.birth_time?.slice(0, 5) // 👈 HH:mm
+      : formatTime12h(user?.birth_time)
+  }
+  onChange={handleChange}
+  type="time"
+/>
     <Input
       edit={edit}
       label="Phone Number / தொலைபேசி எண்"
@@ -279,13 +289,14 @@ const Profile = () => {
       value={user?.work_location}
       onChange={handleChange}
     />
-       <Input
-      edit={edit}
-      label="Email / மின்னஞ்சல்"
-      name="email"
-      value={user?.email}
-      onChange={handleChange}
-    />
+    <Input
+  edit={edit}
+  label="Email / மின்னஞ்சல்"
+  name="email"
+  value={user?.email}
+  onChange={handleChange}
+  className="w-[400px]"
+/>
   </Section>
 
   {/* ================= ASTROLOGY SECTION ================= */}
@@ -488,8 +499,8 @@ const Section = ({ title, icon, children, className }) => (
   </div>
 );
 
-const Input = ({ label, edit, value, ...props }) => (
-  <div className="flex flex-col gap-1.5">
+const Input = ({ label, edit, value, className = "", ...props }) => (
+  <div className={`flex flex-col gap-1.5 ${className}`}>
     <label className="text-[9px] font-black text-[#A67C52] uppercase tracking-[1.5px] px-1">
       {label}
     </label>
