@@ -24,6 +24,19 @@ export const getPendingForms = async () => {
 
 
 
+export const getRejectedCount = async () => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_APP_API_URL}admin/rejected-count`);
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+
+
 /* ===============================
    REJECT USER
 ================================ */
