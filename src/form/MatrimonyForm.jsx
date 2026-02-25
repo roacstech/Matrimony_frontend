@@ -5,6 +5,7 @@ import {
   CloudArrowUpIcon,
   DocumentCheckIcon,
 } from "@heroicons/react/24/outline";
+import { ShieldCheck } from "lucide-react"; // Required for the Privacy Notice Icon
 import { useMatrimonyForm } from "../Data/form";
 import { useNavigate } from "react-router-dom";
 
@@ -87,7 +88,7 @@ const MatrimonyForm = () => {
               ← வெளியேறு / Exit
             </button>
             <span className="text-sm text-[#5D4037]/70 font-bold">
-              படி {currentStep + 1} / Step {currentStep + 1} of 6
+              படி {currentStep + 1} / Step {currentStep + 1} of 7
             </span>
           </div>
 
@@ -133,38 +134,37 @@ const MatrimonyForm = () => {
                     min="1950-01-01"
                     max={new Date().toISOString().split("T")[0]}
                   />
- 
                 </div>
 
-<div className="flex items-center gap-3">
-  <div className="relative w-full">
-    {!formData.birthTime && (
-      <span className="absolute left-3 top-1 text-[#5D4037] pointer-events-none">
-        Birth Time / பிறந்த நேரம்
-      </span>
-    )}
+                <div className="flex items-center gap-3">
+                  <div className="relative w-full">
+                    {!formData.birthTime && (
+                      <span className="absolute left-3 top-1 text-[#5D4037] pointer-events-none">
+                        Birth Time / பிறந்த நேரம்
+                      </span>
+                    )}
 
-    <input
-      type="time"                // ✅ AUTO + MANUAL (keyboard)
-      name="birthTime"
-      value={formData.birthTime}
-      onChange={handleChange}
-      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2
-                 focus:outline-none focus:ring-2 focus:ring-brown-500"
-    />
-  </div>
+                    <input
+                      type="time" // ✅ AUTO + MANUAL (keyboard)
+                      name="birthTime"
+                      value={formData.birthTime}
+                      onChange={handleChange}
+                      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2
+                                 focus:outline-none focus:ring-2 focus:ring-brown-500"
+                    />
+                  </div>
 
-  <select
-    name="birthPeriod"
-    value={formData.birthPeriod}
-    onChange={handleChange}
-    className="w-20 rounded-md border border-gray-300 px-2 py-2"
-  >
-    <option value="">--</option>
-    <option value="AM">AM</option>
-    <option value="PM">PM</option>
-  </select>
-</div>
+                  <select
+                    name="birthPeriod"
+                    value={formData.birthPeriod}
+                    onChange={handleChange}
+                    className="w-20 rounded-md border border-gray-300 px-2 py-2"
+                  >
+                    <option value="">--</option>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                </div>
 
                 <input
                   className={input}
@@ -174,15 +174,15 @@ const MatrimonyForm = () => {
                   value={formData.email}
                 />
 
-                 <input
-  className={input}
-  name="phone"
-  placeholder="Phone Number / தொலைபேசி எண்"
-  onChange={handleChange}
-  value={formData.phone}
-  type="tel"                 // ✅ phone input
-  maxLength={10}             // ✅ Indian number
-/>
+                <input
+                  className={input}
+                  name="phone"
+                  placeholder="Phone Number / தொலைபேசி எண்"
+                  onChange={handleChange}
+                  value={formData.phone}
+                  type="tel" // ✅ phone input
+                  maxLength={10} // ✅ Indian number
+                />
                 <select
                   className={input}
                   name="maritalStatus"
@@ -282,8 +282,7 @@ const MatrimonyForm = () => {
                 <input
                   className={input}
                   name="siblings"
-                  placeholder="Siblings / உடன்பிறப்புகள்
-"
+                  placeholder="Siblings / உடன்பிறப்புகள்"
                   type="number"
                   onChange={handleChange}
                   value={formData.siblings}
@@ -373,22 +372,6 @@ const MatrimonyForm = () => {
                     <option value="Raagu"> Raagu / ராகு</option>
                     <option value="No">No / இல்லை</option>
                   </select>
-                  {/* 
-                  <input
-                    className={input}
-                    name="religion"
-                    placeholder="Religion"
-                    onChange={handleChange}
-                    value={formData.religion}
-                  /> */}
-                  {/* <input
-                    className={input}
-                    name="caste"
-                    placeholder="Caste"
-                    onChange={handleChange}
-                    value={formData.caste}
-                  /> */}
-                  
                 </div>
                 <div className={uploadBox}>
                   <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
@@ -514,112 +497,165 @@ const MatrimonyForm = () => {
             )}
 
             {/* STEP 6 - Summary */}
-{/* STEP 6 - Summary */}
-{/* STEP 6 - Summary */}
-{currentStep === 6 && (
-  <div className="bg-[#EEEEEE]/50 p-4 md:p-6 rounded-2xl border border-[#A67C52]/20 text-[#5D4037] shadow-sm max-h-[65vh] overflow-y-auto custom-scrollbar">
-    <h3 className="text-xl font-bold mb-6 border-b border-[#A67C52]/30 pb-3 flex items-center gap-2">
-      <DocumentCheckIcon className="w-6 h-6 text-[#A67C52]" />
-      Review Profile Summary / சுருக்கம்
-    </h3>
-    
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
-      
-      {/* 1. TEXT DATA SECTION */}
-      {[
-       
-  { label: "முழு பெயர் / Full Name", value: formData.fullName },
-  { label: "பாலினம் / Gender", value: formData.gender },
-  { label: "பிறந்த தேதி / Date of Birth", value: formData.dob },
-  {
-    label: "பிறந்த நேரம் / Birth Time",
-    value: `${formData.birthTime} ${formData.birthPeriod || ""}`.trim(),
-  },
-  { label: "தொலைபேசி எண் / Phone Number", value: formData.phone },
-  { label: "திருமண நிலை / Marital Status", value: formData.maritalStatus },
-  { label: "கல்வி / Education", value: formData.education },
-  { label: "தொழில் / Occupation", value: formData.occupation },
-  { label: "வேலை இடம் / Work Location", value: formData.workLocation },
-  { label: "தந்தை பெயர் / Father Name", value: formData.father },
-  { label: "தாய் பெயர் / Mother Name", value: formData.mother },
-  { label: "உடன்பிறப்புகள் / Siblings", value: formData.siblings },
-  { label: "இராசி / Raasi", value: formData.raasi },
-  { label: "நட்சத்திரம் / Star", value: formData.star },
-  { label: "தோஷம் / Dosham", value: formData.dosham },
-  { label: "நகரம் / City", value: formData.city },
-  { label: "நாடு / Country", value: formData.country },
-  { label: "கணக்கு தனியுரிமை / Account Privacy", value: formData.privacy },
+            {currentStep === 6 && (
+              <div className="bg-[#EEEEEE]/50 p-4 md:p-6 rounded-2xl border border-[#A67C52]/20 text-[#5D4037] shadow-sm max-h-[65vh] overflow-y-auto custom-scrollbar">
+                <h3 className="text-xl font-bold mb-6 border-b border-[#A67C52]/30 pb-3 flex items-center gap-2">
+                  <DocumentCheckIcon className="w-6 h-6 text-[#A67C52]" />
+                  Review Profile Summary / சுருக்கம்
+                </h3>
 
-      ].map((item, index) => (
-        <div key={index} className="flex flex-col border-b border-[#A67C52]/10 pb-1">
-          <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">{item.label}</span>
-          <span className="text-sm md:text-base font-medium leading-tight truncate">{item.value || "—"}</span>
-        </div>
-      ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
+                  {/* 1. TEXT DATA SECTION */}
+                  {[
+                    { label: "முழு பெயர் / Full Name", value: formData.fullName },
+                    { label: "பாலினம் / Gender", value: formData.gender },
+                    { label: "பிறந்த தேதி / Date of Birth", value: formData.dob },
+                    {
+                      label: "பிறந்த நேரம் / Birth Time",
+                      value: `${formData.birthTime} ${
+                        formData.birthPeriod || ""
+                      }`.trim(),
+                    },
+                    {
+                      label: "தொலைபேசி எண் / Phone Number",
+                      value: formData.phone,
+                    },
+                    {
+                      label: "திருமண நிலை / Marital Status",
+                      value: formData.maritalStatus,
+                    },
+                    { label: "கல்வி / Education", value: formData.education },
+                    { label: "தொழில் / Occupation", value: formData.occupation },
+                    {
+                      label: "வேலை இடம் / Work Location",
+                      value: formData.workLocation,
+                    },
+                    { label: "தந்தை பெயர் / Father Name", value: formData.father },
+                    { label: "தாய் பெயர் / Mother Name", value: formData.mother },
+                    { label: "உடன்பிறப்புகள் / Siblings", value: formData.siblings },
+                    { label: "இராசி / Raasi", value: formData.raasi },
+                    { label: "நட்சத்திரம் / Star", value: formData.star },
+                    { label: "தோஷம் / Dosham", value: formData.dosham },
+                    { label: "நகரம் / City", value: formData.city },
+                    { label: "நாடு / Country", value: formData.country },
+                    {
+                      label: "கணக்கு தனியுரிமை / Account Privacy",
+                      value: formData.privacy,
+                    },
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-col border-b border-[#A67C52]/10 pb-1"
+                    >
+                      <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                        {item.label}
+                      </span>
+                      <span className="text-sm md:text-base font-medium leading-tight truncate">
+                        {item.value || "—"}
+                      </span>
+                    </div>
+                  ))}
 
-      {/* 2. FULL WIDTH ADDRESS */}
-      <div className="sm:col-span-2 lg:col-span-3 border-b border-[#A67C52]/10 pb-1">
-        <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">Home Address</span>
-        <p className="text-sm md:text-base font-medium leading-tight">{formData.address || "—"}</p>
-      </div>
+                  {/* 2. FULL WIDTH ADDRESS */}
+                  <div className="sm:col-span-2 lg:col-span-3 border-b border-[#A67C52]/10 pb-1">
+                    <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                      Home Address
+                    </span>
+                    <p className="text-sm md:text-base font-medium leading-tight">
+                      {formData.address || "—"}
+                    </p>
+                  </div>
 
-      {/* 3. VISUAL MEDIA SECTION */}
-      <div className="sm:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-        
-        {/* Profile Photo Card */}
-        <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-[#A67C52]/20 shadow-sm">
-          <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">Profile Photo / புகைப்படம்</span>
-          {formData.photo ? (
-            <div className="flex items-center gap-3">
-              <img 
-                src={URL.createObjectURL(formData.photo)} 
-                alt="Profile" 
-                className="w-24 h-24 object-cover rounded-lg border-2 border-[#A67C52]/20"
-                onLoad={(e) => URL.revokeObjectURL(e.target.src)} // Optional: Clean up memory
-              />
-              <span className="text-xs break-all opacity-70">{formData.photo.name}</span>
-            </div>
-          ) : (
-            <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-sm italic opacity-50">No photo</div>
-          )}
-        </div>
+                  {/* 3. VISUAL MEDIA SECTION */}
+                  <div className="sm:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    {/* Profile Photo Card */}
+                    <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-[#A67C52]/20 shadow-sm">
+                      <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                        Profile Photo / புகைப்படம்
+                      </span>
+                      {formData.photo ? (
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={URL.createObjectURL(formData.photo)}
+                            alt="Profile"
+                            className="w-24 h-24 object-cover rounded-lg border-2 border-[#A67C52]/20"
+                            onLoad={(e) => URL.revokeObjectURL(e.target.src)}
+                          />
+                          <span className="text-xs break-all opacity-70">
+                            {formData.photo.name}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-sm italic opacity-50">
+                          No photo
+                        </div>
+                      )}
+                    </div>
 
-        {/* Horoscope Card - FIXED VISIBILITY */}
-        <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-[#A67C52]/20 shadow-sm">
-          <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">Horoscope / ஜாதகம்</span>
-          {formData.horoscope ? (
-            <div className="flex items-center gap-3">
-              {/* Check if it's an image to display it, otherwise show icon */}
-              {formData.horoscope.type?.includes("image") ? (
-                <img 
-                  src={URL.createObjectURL(formData.horoscope)} 
-                  alt="Horoscope" 
-                  className="w-24 h-24 object-cover rounded-lg border-2 border-[#A67C52]/20"
-                />
-              ) : (
-                <div className="w-24 h-24 bg-[#FAF6F3] flex flex-col items-center justify-center rounded-lg border-2 border-[#A67C52]/20 text-[#A67C52]">
-                  <DocumentCheckIcon className="w-8 h-8" />
-                  <span className="text-[8px] font-bold mt-1">DOC/PDF</span>
+                    {/* Horoscope Card */}
+                    <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-[#A67C52]/20 shadow-sm">
+                      <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                        Horoscope / ஜாதகம்
+                      </span>
+                      {formData.horoscope ? (
+                        <div className="flex items-center gap-3">
+                          {formData.horoscope.type?.includes("image") ? (
+                            <img
+                              src={URL.createObjectURL(formData.horoscope)}
+                              alt="Horoscope"
+                              className="w-24 h-24 object-cover rounded-lg border-2 border-[#A67C52]/20"
+                            />
+                          ) : (
+                            <div className="w-24 h-24 bg-[#FAF6F3] flex flex-col items-center justify-center rounded-lg border-2 border-[#A67C52]/20 text-[#A67C52]">
+                              <DocumentCheckIcon className="w-8 h-8" />
+                              <span className="text-[8px] font-bold mt-1">
+                                DOC/PDF
+                              </span>
+                            </div>
+                          )}
+                          <span className="text-xs break-all opacity-70">
+                            {formData.horoscope.name}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-sm italic opacity-50">
+                          No horoscope
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* ✅ NEW MERGED PRIVACY NOTICE SECTION (Strictly Summary Page) */}
+                  <div className="col-span-1 sm:col-span-2 lg:col-span-3 mt-4">
+                    <p className="w-full flex items-start gap-4 bg-[#FAF6F3] border border-[#A67C52]/20 p-4 md:p-5 rounded-2xl shadow-sm">
+                      <span className="flex-shrink-0 bg-[#A67C52]/10 p-2.5 rounded-xl">
+                        <ShieldCheck size={16} className="text-[#A67C52]" />
+                      </span>
+                      <span className="flex flex-col gap-1">
+                        <span className="text-[12px] md:text-[13px] font-black text-[#5D4037] leading-relaxed">
+                          நீங்கள் பதிவிடும் விபரங்கள், நீங்கள் அனுமதித்த பின்னரே,
+                          மற்ற வரன்கள் பார்க்க முடியும்
+                        </span>
+                        <span className="text-[10px] uppercase tracking-wider font-bold text-[#A67C52]/80">
+                          Your details will be visible to others only after your
+                          approval.
+                        </span>
+                      </span>
+                    </p>
+                  </div>
+
+                  {/* 4. REMARKS */}
+                  <div className="sm:col-span-2 lg:col-span-3 pt-2">
+                    <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                      Remarks
+                    </span>
+                    <p className="text-sm font-medium italic text-[#5D4037]/80">
+                      {formData.remarks || "No remarks"}
+                    </p>
+                  </div>
                 </div>
-              )}
-              <span className="text-xs break-all opacity-70">{formData.horoscope.name}</span>
-            </div>
-          ) : (
-            <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-sm italic opacity-50">No horoscope</div>
-          )}
-        </div>
-
-      </div>
-
-      {/* 4. REMARKS */}
-      <div className="sm:col-span-2 lg:col-span-3 pt-2">
-        <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">Remarks</span>
-        <p className="text-sm font-medium italic text-[#5D4037]/80">{formData.remarks || "No remarks"}</p>
-      </div>
-
-    </div>
-  </div>
-)}
+              </div>
+            )}
           </div>
 
           {/* BUTTONS: Using Login Button Brown #573D2F */}
@@ -682,7 +718,7 @@ const MatrimonyForm = () => {
                       marginLeft: "55vw", // 👈 center feel
                       zIndex: 9999, // 👈 front-la varum
                     },
-                  },
+                  }
                 );
               }}
               className="px-8 py-3 bg-[#573D2F] text-white rounded-xl font-bold hover:bg-[#5D4037] transition-all"

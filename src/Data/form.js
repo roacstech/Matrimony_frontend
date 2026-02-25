@@ -1,51 +1,66 @@
-
-
-
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { submitFormAPI } from "../services/submitFormAPI";
 
 export const useMatrimonyForm = () => {
-    // console.log("🔥 useMatrimonyForm called");
   const [currentStep, setCurrentStep] = useState(0);
 
   const [formData, setFormData] = useState({
+    // STEP 0
     fullName: "",
     gender: "",
     dob: "",
-    phone: "",
     birthTime: "",
-      birthPeriod: "",
+    birthPeriod: "",
+    email: "",
+    phone: "",
     maritalStatus: "",
+
+    // STEP 1
     education: "",
     occupation: "",
     income: "",
-    work_location: "",
+    workLocation: "",
+
+    // STEP 2
     father: "",
-    mothername: "",
+    mother: "",
     grandfather: "",
     grandmother: "",
-      motherSideGrandfather: "",   // ✅
-  motherSideGrandmother: "",   // ✅
+    motherSideGrandfather: "",
+    motherSideGrandmother: "",
     siblings: "",
+
+    // STEP 3
     raasi: "",
     star: "",
     dosham: "",
-    religion: "",
-    caste: "",
     horoscope: null,
+
+    // STEP 4
     address: "",
     city: "",
     country: "",
+
+    // STEP 5
     privacy: "",
     photo: null,
-     remarks: "", 
+    remarks: "",
   });
+
+  // ✅ FIXED FIELD MAP
   const stepFields = [
-    ["fullName", "gender", "dob","phone","birthTime", "maritalStatus"],
-    ["education", "occupation", "income"],
-    ["fathername", "mothername", "grandfather", "grandmother",  "motherSideGrandfather",
-    "motherSideGrandmother", "siblings"],
+    ["fullName", "gender", "dob", "birthTime", "email", "phone", "maritalStatus"],
+    ["education", "occupation", "income", "workLocation"],
+    [
+      "father",
+      "mother",
+      "grandfather",
+      "grandmother",
+      "motherSideGrandfather",
+      "motherSideGrandmother",
+      "siblings",
+    ],
     ["raasi", "star", "dosham"],
     ["address", "city", "country"],
     ["privacy"],
@@ -54,26 +69,30 @@ export const useMatrimonyForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
-       console.log("✏️ Changed:", name, value);
   };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     setFormData((p) => ({ ...p, [name]: files[0] }));
-    
   };
 
   const validateStep = () => {
     const fields = stepFields[currentStep];
     if (!fields) return true;
-    return fields.every((f) => formData[f]);
+
+    const invalid = fields.some(
+      (f) => !formData[f] || formData[f].toString().trim() === ""
+    );
+
+    if (invalid) {
+      toast.error("Please fill all required fields");
+      return false;
+    }
+    return true;
   };
 
   const nextStep = () => {
-    if (!validateStep()) {
-      toast.error("Please fill all required fields");
-      return;
-    }
+    if (!validateStep()) return;
     setCurrentStep((p) => p + 1);
   };
 
@@ -81,14 +100,11 @@ export const useMatrimonyForm = () => {
     setCurrentStep((p) => Math.max(p - 1, 0));
   };
 
-  // ✅ FINAL SUBMIT (CLEAN)
   const submitForm = async () => {
-    console.log("🚀 FINAL SUBMIT DATA =>", formData);
-    console.log("🫏 FINAL SUBMIT DATA =>", formData.phone);
     try {
       const token = localStorage.getItem("accesstoken");
       const res = await submitFormAPI(formData, token);
-      toast.success(res.message || "Profile submitted ⏳");
+      toast.success(res.message || "Profile submitted");
     } catch (err) {
       toast.error(err.message || "Submit failed");
     }
