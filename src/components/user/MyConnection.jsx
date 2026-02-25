@@ -249,57 +249,130 @@ onClick={() => isAccepted && handleViewProfile(c.user_id, c.from_user, c.profile
             </div>
 
             {/* CONTENT SECTIONS */}
-            <div className="space-y-12">
-              <Section title="Personal Information">
-                <Row label="Gender" value={selectedUser.gender} />
-                <Row label="Date of Birth" value={selectedUser.dob?.split("T")[0]} />
-                <Row label="Birth Time" value={selectedUser.birth_time} />
-                <Row label="Birth Place" value={selectedUser.birth_place} />
-                <Row label="Marital Status" value={selectedUser.marital_status} />
-              </Section>
+          {/* CONTENT SECTIONS */}
+<div className="space-y-12">
+  {/* ================= PERSONAL ================= */}
+  <Section title="Personal Information / தனிப்பட்ட விவரங்கள்">
+    <Row label="Gender / பாலினம்" value={selectedUser.gender} />
+    <Row
+      label="Date of Birth / பிறந்த தேதி"
+      value={selectedUser.dob?.split("T")[0]}
+    />
+    <Row
+      label="Birth Time / பிறந்த நேரம்"
+      value={selectedUser.birth_time}
+    />
+    <Row
+      label="Birth Place / பிறந்த இடம்"
+      value={selectedUser.birth_place}
+    />
+    <Row
+      label="Marital Status / திருமண நிலை"
+      value={selectedUser.marital_status}
+    />
+    <Row
+      label="Email / மின்னஞ்சல்"
+      value={selectedUser.email}
+    />
+    <Row
+      label="Phone Number / தொலைபேசி எண்"
+      value={selectedUser.phone}
+    />
+  </Section>
 
-              <Section title="Education & Career">
-                <Row label="Education" value={selectedUser.education} />
-                <Row label="Occupation" value={selectedUser.occupation} />
-                <Row label="Income" value={selectedUser.income} />
-              </Section>
+  {/* ================= EDUCATION & CAREER ================= */}
+  <Section title="Education & Career / கல்வி & தொழில்">
+    <Row label="Education / கல்வி" value={selectedUser.education} />
+    <Row label="Occupation / தொழில்" value={selectedUser.occupation} />
+    <Row label="Income / வருமானம்" value={selectedUser.income} />
+    <Row
+      label="Work Location / வேலை இடம்"
+      value={selectedUser.workLocation || selectedUser.work_location}
+    />
+  </Section>
 
-              <Section title="Family Details">
-                <Row label="Father Name" value={selectedUser.father_name} />
-                <Row label="Mother Name" value={selectedUser.mother_name} />
-                <Row label="Grandparents" value={`${selectedUser.grandfather_name || '-'} / ${selectedUser.grandmother_name || '-'}`} />
-                <Row label="Siblings" value={selectedUser.siblings} />
-              </Section>
+  {/* ================= FAMILY ================= */}
+  <Section title="Family Details / குடும்ப விவரங்கள்">
+    <Row
+      label="Father Name / தந்தை பெயர்"
+      value={selectedUser.father_name}
+    />
+    <Row
+      label="Mother Name / தாய் பெயர்"
+      value={selectedUser.mother_name}
+    />
+    <Row
+      label="Grandfather / தாத்தா"
+      value={selectedUser.grandfather_name}
+    />
+    <Row
+      label="Grandmother / பாட்டி"
+      value={selectedUser.grandmother_name}
+    />
+    <Row
+      label="Mother Side Grandfather / தாய்வழி தாத்தா"
+      value={
+        selectedUser.motherSideGrandfather ||
+        selectedUser.mother_side_grandfather_name
+      }
+    />
+    <Row
+      label="Mother Side Grandmother / தாய்வழி பாட்டி"
+      value={
+        selectedUser.motherSideGrandmother ||
+        selectedUser.mother_side_grandmother_name
+      }
+    />
+    <Row
+      label="Siblings / உடன்பிறப்புகள்"
+      value={selectedUser.siblings}
+    />
+  </Section>
 
-              <Section title="Astrology & Religion">
-                <Row label="Raasi" value={selectedUser.raasi} />
-                <Row label="Star" value={selectedUser.star} />
-                <Row label="Dosham" value={selectedUser.dosham} />
-              </Section>
+  {/* ================= ASTROLOGY ================= */}
+  <Section title="Astrology & Religion / ஜாதகம் & மதம்">
+    <Row label="Raasi / இராசி" value={selectedUser.raasi} />
+    <Row label="Star / நட்சத்திரம்" value={selectedUser.star} />
+    <Row label="Dosham / தோஷம்" value={selectedUser.dosham} />
+    {/* <Row label="Religion / மதம்" value={selectedUser.religion} />
+    <Row label="Caste / ஜாதி" value={selectedUser.caste} /> */}
+  </Section>
 
-              <Section title="Address">
-                <div className="col-span-full">
-                  <Row label="Residential Address" value={selectedUser.address} />
-                </div>
-              </Section>
+  {/* ================= ADDRESS ================= */}
+  <Section title="Address / முகவரி">
+    <Row
+      label="Residential Address / வீட்டு முகவரி"
+      value={selectedUser.address}
+    />
+    <Row label="City / நகரம்" value={selectedUser.city} />
+    <Row label="Country / நாடு" value={selectedUser.country} />
+        <Row label="Remarks / குறிப்புகள்" value={selectedUser.remarks} />
 
-              <Section title="Horoscope">
-                <div className="pt-2">
-                  {selectedUser.horoscope_uploaded ? (
-                    <button
-                      onClick={() => window.open(`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope_file_name}`, "_blank")}
-                      className="bg-[#3B1E54] text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md hover:bg-[#2A153D] transition-all"
-                    >
-                      View   Horoscope
-                    </button>
-                  ) : (
-                    <div className="bg-[#FFF5F7] text-[#852D3E] px-6 py-2 rounded-full text-xs font-bold italic w-fit">
-                      Document Not Shared
-                    </div>
-                  )}
-                </div>
-              </Section>
-            </div>
+  </Section>
+
+  {/* ================= HOROSCOPE ================= */}
+  <Section title="Horoscope / ஜாதகம்">
+    <div className="pt-2">
+      {selectedUser.horoscope_uploaded ? (
+        <button
+          onClick={() =>
+            window.open(
+              `${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope_file_name}`,
+              "_blank"
+            )
+          }
+          className="bg-[#3B1E54] text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md hover:bg-[#2A153D] transition-all"
+        >
+          View Horoscope / ஜாதகம் பார்க்க
+        </button>
+      ) : (
+        <div className="bg-[#FFF5F7] text-[#852D3E] px-6 py-2 rounded-full text-xs font-bold italic w-fit">
+          Document Not Shared / பதிவேற்றம் இல்லை
+        </div>
+      )}
+    </div>
+  </Section>
+</div>
           </div>
         </div>
       )}

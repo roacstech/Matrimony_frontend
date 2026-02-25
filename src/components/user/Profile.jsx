@@ -172,6 +172,7 @@ const Profile = () => {
             <p className="text-[10px] font-black text-[#A67C52] uppercase tracking-[3px] flex items-center gap-2 mt-1">
               <MapPin size={14} /> {user?.city}, {user?.country}
             </p>
+            {user?.email}
           </div>
         </div>
 
@@ -263,6 +264,7 @@ const Profile = () => {
       value={user?.occupation}
       onChange={handleChange}
     />
+  
     <Input
       edit={edit}
       label="Income / வருமானம்"
@@ -275,6 +277,13 @@ const Profile = () => {
       label="Work Location / பணியிடம்"
       name="work_location"
       value={user?.work_location}
+      onChange={handleChange}
+    />
+       <Input
+      edit={edit}
+      label="Email / மின்னஞ்சல்"
+      name="email"
+      value={user?.email}
       onChange={handleChange}
     />
   </Section>
@@ -385,6 +394,14 @@ const Profile = () => {
       value={user?.mother_side_grandmother_name}
       onChange={handleChange}
     />
+   <Input
+      edit={edit}
+      label="Siblings / உடன்பிறப்புகள்"
+      name="siblings"
+      value={user?.siblings}
+      onChange={handleChange}
+    />
+
   </Section>
 
   <Section
@@ -414,9 +431,17 @@ const Profile = () => {
         value={user?.privacy}
         onChange={handleChange}
       />
+      
+       <Input
+        edit={edit}
+        label="Home Address / வீட்டு முகவரி"
+        name="address"
+        value={user?.address}
+        onChange={handleChange}
+      />
     </div>
   </Section>
-
+ 
   <Section
     title="Remarks"
     icon={<Sparkles size={16} />}
