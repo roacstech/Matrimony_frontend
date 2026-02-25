@@ -3,6 +3,7 @@ import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import { useAuthForm } from '../Data/LoginRegister';   // adjust path if needed
 
 const Login = ({ onNavigate }) => {
+
   const { formData, handleChange, handleLoginSubmit } = useAuthForm();
   const [loading, setLoading] = useState(false);
 
@@ -52,7 +53,13 @@ const Login = ({ onNavigate }) => {
             required
           />
         </div>
-
+<button
+  type="button"
+  onClick={() => onNavigate("forgot")}
+  className="hover:text-[#5D4037] hover:underline"
+>
+  Forgot Password?
+</button>
         {/* Submit Button */}
         <button
           type="submit"
@@ -73,6 +80,7 @@ const Login = ({ onNavigate }) => {
           Register
         </button>
       </p>
+      
     </div>
   );
 };
