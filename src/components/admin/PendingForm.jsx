@@ -27,6 +27,7 @@ const PendingForms = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const displayMode = "both"; // or "tamil"
+
   // ================= LOAD PENDING =================
   useEffect(() => {
     const loadPending = async () => {
@@ -79,8 +80,8 @@ const PendingForms = () => {
 
   if (!pending.length) {
     return (
-      <div className="p-10 text-center bg-white rounded-[30px] border border-[#EEEEEE] shadow-sm">
-        <p className="text-[10px] font-black text-stone-400 uppercase tracking-widest">
+      <div className="p-10 text-center bg-white rounded-[30px] border border-gray-100 shadow-sm">
+        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
           No Pending Requests
         </p>
       </div>
@@ -91,43 +92,40 @@ const PendingForms = () => {
     <div className="space-y-6 cursor-pointer px-2 md:px-0">
       {/* ================= HEADER ================= */}
       <div className="flex flex-col gap-1 ml-2">
-        <h2 className="text-xl md:text-2xl font-black text-[#5D4037]">
+        <h2 className="text-xl md:text-2xl font-black text-black">
           Pending User Requests
         </h2>
-        {/* <p className="text-[10px] font-bold text-[#A67C52] uppercase tracking-widest">
-          Review new profile submissions
-        </p> */}
       </div>
 
-      {/* ================= TABLE LIST (Replicating AllUsers Head) ================= */}
-      <div className="bg-white rounded-[30px] md:rounded-[40px] shadow-sm border border-[#EEEEEE] overflow-hidden">
+      {/* ================= TABLE LIST ================= */}
+      <div className="bg-white rounded-[30px] md:rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left min-w-[800px]">
             <thead>
-              <tr className="bg-[#FAF6F3]/50 border-b border-[#EEEEEE]">
-                <th className="px-8 py-6 text-[10px] font-black text-stone-400 uppercase tracking-widest">
+              <tr className="bg-blue-50/50 border-b border-gray-100">
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                   Profile Details
                 </th>
-                <th className="px-8 py-6 text-[10px] font-black text-stone-400 uppercase tracking-widest">
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                   Contact Info
                 </th>
-                <th className="px-8 py-6 text-[10px] font-black text-stone-400 uppercase tracking-widest text-center">
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">
                   Review Details
                 </th>
-                <th className="px-8 py-6 text-[10px] font-black text-stone-400 uppercase tracking-widest text-center">
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#EEEEEE]">
+            <tbody className="divide-y divide-gray-50">
               {pending.map((item) => (
                 <tr
                   key={item.id}
-                  className="group hover:bg-[#FAF6F3]/30 transition-all"
+                  className="group hover:bg-blue-50/20 transition-all"
                 >
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#5D4037] overflow-hidden flex-shrink-0 flex items-center justify-center border border-stone-100 shadow-sm">
+                      <div className="w-12 h-12 rounded-2xl bg-[#1A5AF0] overflow-hidden flex-shrink-0 flex items-center justify-center border border-blue-50 shadow-sm">
                         {item.photo ? (
                           <img
                             src={`${import.meta.env.VITE_IMG_URL}/photos/${item.photo}`}
@@ -139,10 +137,10 @@ const PendingForms = () => {
                         )}
                       </div>
                       <div>
-                        <p className="text-[14px] font-black text-[#5D4037] leading-tight">
+                        <p className="text-[14px] font-black text-black leading-tight">
                           {item.profile?.fullName || item.name || "N/A"}
                         </p>
-                        <p className="text-[9px] text-[#A67C52] font-bold uppercase tracking-widest mt-1">
+                        <p className="text-[9px] text-[#1A5AF0] font-bold uppercase tracking-widest mt-1">
                           <MapPin size={10} className="inline mr-1" />{" "}
                           {item.country || "India"}
                         </p>
@@ -150,15 +148,15 @@ const PendingForms = () => {
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    <p className="text-xs font-bold text-[#5D4037] truncate max-w-[200px]">
-                      <Mail size={12} className="inline mr-1 text-stone-400" />{" "}
+                    {/* <p className="text-xs font-bold text-black truncate max-w-[200px]">
+                      <Mail size={18} className="inline mr-1 text-gray-400" />{" "}
                       {item.email}
-                    </p>
+                    </p> */}
                   </td>
                   <td className="px-8 py-5 text-center">
                     <button
                       onClick={() => handleView(item)}
-                      className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#5D4037] bg-[#FAF6F3] border border-[#A67C52]/20 hover:bg-[#5D4037] hover:text-white rounded-xl transition-all shadow-sm mx-auto flex items-center justify-center"
+                      className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#1A5AF0] bg-white border border-[#1A5AF0] hover:bg-[#1A5AF0] hover:text-white rounded-xl transition-all shadow-sm mx-auto flex items-center justify-center"
                     >
                       View Profile
                     </button>
@@ -167,7 +165,7 @@ const PendingForms = () => {
                     <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={() => handleApprove(item.id)}
-                        className="px-4 py-2 bg-[#5D4037] text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:opacity-90 transition-all flex items-center gap-1.5"
+                        className="px-4 py-2 bg-[#1A5AF0] text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:opacity-90 transition-all flex items-center gap-1.5 shadow-sm"
                       >
                         <Check size={14} /> Accept
                       </button>
@@ -186,13 +184,13 @@ const PendingForms = () => {
         </div>
       </div>
 
-      {/* ================= MODAL (KEEPING ORIGINAL DESIGN) ================= */}
+      {/* ================= MODAL ================= */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 md:p-6">
-          <div className="bg-[#FDFBF9] w-[900px] max-w-full max-h-[90vh] overflow-y-auto rounded-3xl shadow-xl p-6 md:p-10 relative">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 md:p-6">
+          <div className="bg-white w-[900px] max-w-full max-h-[90vh] overflow-y-auto rounded-[30px] shadow-2xl p-6 md:p-10 relative border border-gray-100">
             <button
               onClick={closeModal}
-              className="absolute top-6 right-6 text-[#5D4037] text-lg z-10"
+              className="absolute top-6 right-6 text-black font-black text-lg z-10 hover:text-[#1A5AF0]"
             >
               ✕
             </button>
@@ -200,65 +198,53 @@ const PendingForms = () => {
               {selectedUser.photo ? (
                 <img
                   src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`}
-                  className="w-20 h-20 rounded-2xl object-cover shadow-sm"
+                  className="w-20 h-20 rounded-2xl object-cover shadow-md border-2 border-blue-50"
                   alt="user"
                 />
               ) : (
-                <div className="w-20 h-20 rounded-2xl bg-[#FAF6F3] flex items-center justify-center">
-                  <User size={28} />
+                <div className="w-20 h-20 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center">
+                  <User size={28} className="text-[#1A5AF0]" />
                 </div>
               )}
             </div>
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-semibold text-[#5D4037]">
+              <h2 className="text-3xl font-black text-black">
                 {selectedUser.fullName}
               </h2>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm font-bold text-gray-400 mt-1 uppercase tracking-widest">
                 {selectedUser.city}, {selectedUser.country}
               </p>
-              <p className="text-sm text-gray-500 mt-1">{selectedUser.email}</p>
+              <p className="text-sm font-bold text-[#1A5AF0] mt-1">{selectedUser.email}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
               <div>
-                <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">
+                <h3 className="text-xs tracking-widest text-gray-400 font-black mb-4 uppercase border-b border-gray-100 pb-2">
                   PERSONAL INFO
                 </h3>
                 <InfoRow
                   label="Gender / பாலினம்"
-                  value={getEnumLabel(
-                    "gender",
-                    selectedUser.gender,
-                    displayMode,
-                  )}
-                />{" "}
+                  value={getEnumLabel("gender", selectedUser.gender, displayMode)}
+                />
                 <InfoRow
                   label="DOB / பிறந்த தேதி"
                   value={selectedUser.dob?.split("T")[0]}
                 />
-                   <InfoRow
+                <InfoRow
                   label="Age / வயது"
-                  value={
-    selectedUser?.dob
-      ? `${calculateAge(selectedUser.dob)} Years`
-      : "—"
-  }
+                  value={selectedUser?.dob ? `${calculateAge(selectedUser.dob)} Years` : "—"}
                 />
                 <InfoRow
                   label="Birth Place / பிறந்த இடம் "
                   value={selectedUser.birthPlace}
                 />
-                   <InfoRow
+                <InfoRow
                   label="Birth Time / பிறந்த நேரம் "
                   value={formatTime12h(selectedUser.birthTime)}
                 />
                 <InfoRow
                   label="Marital Status / திருமண நிலை"
-                  value={getEnumLabel(
-                    "maritalStatus",
-                    selectedUser.maritalStatus,
-                    displayMode,
-                  )}
-                />{" "}
+                  value={getEnumLabel("maritalStatus", selectedUser.maritalStatus, displayMode)}
+                />
                 <InfoRow
                   label="Email / மின்னஞ்சல்"
                   value={selectedUser.email}
@@ -278,7 +264,7 @@ const PendingForms = () => {
                 />
               </div>
               <div>
-                <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">
+                <h3 className="text-xs tracking-widest text-gray-400 font-black mb-4 uppercase border-b border-gray-100 pb-2">
                   FAMILY & DETAILS
                 </h3>
                 <InfoRow
@@ -319,34 +305,30 @@ const PendingForms = () => {
                 />
                 <InfoRow
                   label="Dosham / தோஷாம்"
-                  value={getEnumLabel(
-                    "dosham",
-                    selectedUser.dosham,
-                    displayMode,
-                  )}
-                />{" "}
+                  value={getEnumLabel("dosham", selectedUser.dosham, displayMode)}
+                />
               </div>
             </div>
             <div className="mt-10">
-              <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-3">
+              <h3 className="text-xs tracking-widest text-gray-400 font-black mb-3 uppercase">
                 JADHAGAM FILE / ஜாதகம்
               </h3>
               {selectedUser.horoscope?.uploaded ? (
-                <div className="flex items-center justify-between bg-[#FAF6F3] px-5 py-3 rounded-2xl">
-                  <span className="text-sm text-[#5D4037] truncate">
+                <div className="flex items-center justify-between bg-blue-50/50 px-5 py-3 rounded-2xl border border-blue-100">
+                  <span className="text-sm font-bold text-black truncate">
                     {selectedUser.horoscope.fileName}
                   </span>
                   <a
                     href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope.fileName}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-4 py-2 bg-[#5D4037] text-white text-xs rounded-xl font-semibold hover:opacity-90 transition"
+                    className="px-4 py-2 bg-[#1A5AF0] text-white text-xs rounded-xl font-black uppercase tracking-widest hover:bg-blue-700 transition"
                   >
                     View
                   </a>
                 </div>
               ) : (
-                <p className="text-sm text-gray-400">Not Uploaded</p>
+                <p className="text-sm text-gray-400 font-bold">Not Uploaded</p>
               )}
             </div>
             <InfoRow
@@ -361,11 +343,11 @@ const PendingForms = () => {
 };
 
 const InfoRow = ({ label, value }) => (
-  <div className="flex justify-between py-2 border-b border-[#E6DFD8] text-sm">
-    <span className="text-gray-400 uppercase text-[11px] tracking-wide pr-4">
+  <div className="flex justify-between py-2 border-b border-gray-100 text-sm hover:bg-blue-50/10 transition-colors px-1">
+    <span className="text-gray-400 uppercase text-[10px] font-black tracking-widest pr-4">
       {label}
     </span>
-    <span className="text-[#5D4037] font-medium text-right max-w-[55%]">
+    <span className="text-black font-bold text-right max-w-[55%]">
       {value || "-"}
     </span>
   </div>
