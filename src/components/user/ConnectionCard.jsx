@@ -291,102 +291,85 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
               <h3 className="text-center font-black text-xl sm:text-2xl text-[#111827] tracking-tight px-2">
                 {selectedUser.full_name}
               </h3>
-              <p className="text-center text-[9px] sm:text-[10px] text-[#1A5AF0] font-black uppercase tracking-[2px] sm:tracking-[3px] mt-1">
+              {/* <p className="text-center text-[9px] sm:text-[10px] text-[#1A5AF0] font-black uppercase tracking-[2px] sm:tracking-[3px] mt-1">
                 {selectedUser.occupation}
-              </p>
-              <p className="text-center text-[10px] text-gray-400 mt-2 uppercase tracking-widest flex items-center justify-center gap-1">
-                <MapPin size={12} /> {selectedUser.city}, {selectedUser.country}
+              </p> */}
+             <p className="text-center text-[10px] text-[#1A5AF0] mt-2 uppercase tracking-widest flex items-center justify-center gap-1">
+  <MapPin size={12} /> {selectedUser.city}, {selectedUser.country}
+</p>
+ <p className="text-center font-black  sm:text-1xl text-gray-400 tracking-tight px-2">
+                {selectedUser.email}
               </p>
             </div>
+              
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
               {/* Left Column */}
-              <div className="space-y-3">
-                <h4 className="text-[10px] font-black text-[#1A5AF0] uppercase tracking-[2px] mb-4 border-b border-[#F8FAFC] pb-1">
-                  Personal Info
-                </h4>
-             <PopupDetail
-  label="Gender / பாலினம்"
-  value={getEnumLabel("gender", selectedUser.gender, displayMode)}
-/>
-             <PopupDetail
-  label="DOB / பிறந்த தேதி"
-  value={
-    selectedUser?.dob
-      ? new Date(selectedUser.dob).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        })
-      : "—"
-  }
-/>
-<PopupDetail
-  label="Age / வயது"
-  value={
-    selectedUser?.dob
-      ? `${calculateAge(selectedUser.dob)} Years`
-      : "—"
-  }
-/>
+              <div className="space-y-6 w-full"> {/* Parent Container */}
+  <div>
+    <h4 className="text-[10px] font-black text-[#1A5AF0] uppercase tracking-[2px] mb-4 border-b border-[#F8FAFC] pb-1">
+      Personal Info
+    </h4>
 
-     <PopupDetail
-                  label="Birth Place / பிறந்த இடம்"
-                  value={selectedUser.birth_place}
-                />
+    {/* This is the magic part: 1 column on mobile, 2 columns on large screens */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+      <PopupDetail
+        label="Gender / பாலினம்"
+        value={getEnumLabel("gender", selectedUser.gender, displayMode)}
+      />
+      <PopupDetail
+        label="DOB / பிறந்த தேதி"
+        value={selectedUser?.dob ? new Date(selectedUser.dob).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—"}
+      />
+      <PopupDetail
+        label="Age / வயது"
+        value={selectedUser?.dob ? `${calculateAge(selectedUser.dob)} Years` : "—"}
+      />
+      <PopupDetail
+        label="Birth Place / பிறந்த இடம்"
+        value={selectedUser.birth_place}
+      />
+      <PopupDetail
+        label="Birth Time / பிறந்த நேரம்"
+        value={selectedUser?.birth_time ? new Date(`1970-01-01T${selectedUser.birth_time}`).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) : "—"}
+      />
+      <PopupDetail
+        label="Marital Status / திருமண நிலை"
+        value={getEnumLabel("maritalStatus", selectedUser.marital_status, displayMode)}
+      />
+      <PopupDetail
+        label="Email / மின்னஞ்சல்"
+        value={selectedUser.email}
+      />
+      <PopupDetail
+        label="Phone Number / தொலைபேசி எண்"
+        value={selectedUser.phone}
+      />
+      <PopupDetail
+        label="Occupation / தொழில்"
+        value={selectedUser.occupation}
+      />
+      <PopupDetail
+        label="Income / வருமானம்"
+        value={selectedUser.income}
+      />
+      <PopupDetail
+        label="Work Location / வேலை இடம்"
+        value={selectedUser.work_location}
+      />
+    </div>
+  </div>
 
-                  <PopupDetail
-  label="Birth Time / பிறந்த நேரம்"
-  value={
-    selectedUser?.birth_time
-      ? new Date(`1970-01-01T${selectedUser.birth_time}`)
-          .toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true,
-          })
-      : "—"
-  }
-/>
-            <PopupDetail
-  label="Marital Status / திருமண நிலை"
-  value={getEnumLabel(
-    "maritalStatus",
-    selectedUser.marital_status,
-    displayMode
-  )}
-/>
-                <PopupDetail
-                  label="Email / மின்னஞ்சல்"
-                  value={selectedUser.email}
-                />
-                    <PopupDetail
-                  label="Phone Number / தொலைபேசி எண்"
-                  value={selectedUser.phone}
-                />
-                    <PopupDetail
-                  label="Occupation / தொழில்"
-                  value={selectedUser.occupation}
-                />
-                <PopupDetail
-                  label="Income / வருமானம்"
-                  value={selectedUser.income}
-                />
-                  <PopupDetail
-                  label="Work Location / வேலை இடம்"
-                  value={selectedUser.work_location}
-                />
-         
-
-                <div className="mt-4 pt-4 border-t border-[#F8FAFC]">
-                  <p className="text-[10px] font-black text-[#111827] uppercase mb-1 flex items-center gap-2">
-                    <GraduationCap size={14} /> Education / கல்வி
-                  </p>
-                  <p className="text-xs text-gray-500 font-medium leading-relaxed">
-                    {selectedUser.education}
-                  </p>
-                </div>
-              </div>
+  {/* Education Section */}
+  <div className="mt-4 pt-4 border-t border-[#F8FAFC]">
+    <p className="text-[10px] font-black text-[#111827] uppercase mb-1 flex items-center gap-2">
+      <GraduationCap size={14} /> Education / கல்வி
+    </p>
+    <p className="text-xs text-gray-500 font-medium leading-relaxed">
+      {selectedUser.education}
+    </p>
+  </div>
+</div>
 
               {/* Right Column */}
               <div className="space-y-3">
