@@ -19,57 +19,59 @@ import {
   uploadProfilePhoto,
 } from "../../api/userApi";
 
-export const RAASI_OPTIONS = [
-  { value: "Aries", label: "மேஷம் (Aries)" },
-  { value: "Taurus", label: "ரிஷபம் (Taurus)" },
-  { value: "Gemini", label: "மிதுனம் (Gemini)" },
-  { value: "Cancer", label: "கடகம் (Cancer)" },
-  { value: "Leo", label: "சிம்மம் (Leo)" },
-  { value: "Virgo", label: "கன்னி (Virgo)" },
-  { value: "Libra", label: "துலாம் (Libra)" },
-  { value: "Scorpio", label: "விருச்சிகம் (Scorpio)" },
-  { value: "Sagittarius", label: "தனுசு (Sagittarius)" },
-  { value: "Capricorn", label: "மகரம் (Capricorn)" },
-  { value: "Aquarius", label: "கும்பம் (Aquarius)" },
-  { value: "Pisces", label: "மீனம் (Pisces)" },
-];
+import { getEnumOptions, getEnumLabel } from "../../utils/convertHelper";
 
-export const STAR_OPTIONS = [
-  { value: "Aswini", label: "அஸ்வினி (Aswini)" },
-  { value: "Bharani", label: "பரணி (Bharani)" },
-  { value: "Krittigai", label: "கிருத்திகை (Krittigai)" },
-  { value: "Rohini", label: "ரோகிணி (Rohini)" },
-  { value: "Mirugasheeridam", label: "மிருகசீரிடம்" },
-  { value: "Thiruvathirai", label: "திருவாதிரை" },
-  { value: "Punarpoosam", label: "புனர்பூசம்" },
-  { value: "Poosam", label: "பூசம்" },
-  { value: "Aayilyam", label: "ஆயில்யம்" },
-  { value: "Magam", label: "மகம்" },
-  { value: "Pooram", label: "பூரம்" },
-  { value: "Uthiram", label: "உத்திரம்" },
-  { value: "Hastham", label: "அஸ்தம்" },
-  { value: "Chithirai", label: "சித்திரை" },
-  { value: "Swathi", label: "சுவாதி" },
-  { value: "Visakam", label: "விசாகம்" },
-  { value: "Anusham", label: "அனுஷம்" },
-  { value: "Kettai", label: "கேட்டை" },
-  { value: "Moolam", label: "மூலம்" },
-  { value: "Pooradam", label: "பூராடம்" },
-  { value: "Uthiradam", label: "உத்திராடம்" },
-  { value: "Thiruvonam", label: "திருவோணம்" },
-  { value: "Avittam", label: "அவிட்டம்" },
-  { value: "Sathayam", label: "சதயம்" },
-  { value: "Poorattathi", label: "பூரட்டாதி" },
-  { value: "Uthirattathi", label: "உத்திரட்டாதி" },
-  { value: "Revathi", label: "ரேவதி (Revathi)" },
-];
+// export const RAASI_OPTIONS = [
+//   { value: "Aries", label: "மேஷம் (Aries)" },
+//   { value: "Taurus", label: "ரிஷபம் (Taurus)" },
+//   { value: "Gemini", label: "மிதுனம் (Gemini)" },
+//   { value: "Cancer", label: "கடகம் (Cancer)" },
+//   { value: "Leo", label: "சிம்மம் (Leo)" },
+//   { value: "Virgo", label: "கன்னி (Virgo)" },
+//   { value: "Libra", label: "துலாம் (Libra)" },
+//   { value: "Scorpio", label: "விருச்சிகம் (Scorpio)" },
+//   { value: "Sagittarius", label: "தனுசு (Sagittarius)" },
+//   { value: "Capricorn", label: "மகரம் (Capricorn)" },
+//   { value: "Aquarius", label: "கும்பம் (Aquarius)" },
+//   { value: "Pisces", label: "மீனம் (Pisces)" },
+// ];
 
-export const DOSHAM_OPTIONS = [
-  { value: "Sevvai", label: "செவ்வாய் (Sevvai)" },
-  { value: "Raagu", label: "ராகு (Raagu)" },
-  { value: "Kethu", label: "கேது (Kethu)" },
-  { value: "No", label: "இல்லை (No Dosham)" },
-];
+// export const STAR_OPTIONS = [
+//   { value: "Aswini", label: "அஸ்வினி (Aswini)" },
+//   { value: "Bharani", label: "பரணி (Bharani)" },
+//   { value: "Krittigai", label: "கிருத்திகை (Krittigai)" },
+//   { value: "Rohini", label: "ரோகிணி (Rohini)" },
+//   { value: "Mirugasheeridam", label: "மிருகசீரிடம்" },
+//   { value: "Thiruvathirai", label: "திருவாதிரை" },
+//   { value: "Punarpoosam", label: "புனர்பூசம்" },
+//   { value: "Poosam", label: "பூசம்" },
+//   { value: "Aayilyam", label: "ஆயில்யம்" },
+//   { value: "Magam", label: "மகம்" },
+//   { value: "Pooram", label: "பூரம்" },
+//   { value: "Uthiram", label: "உத்திரம்" },
+//   { value: "Hastham", label: "அஸ்தம்" },
+//   { value: "Chithirai", label: "சித்திரை" },
+//   { value: "Swathi", label: "சுவாதி" },
+//   { value: "Visakam", label: "விசாகம்" },
+//   { value: "Anusham", label: "அனுஷம்" },
+//   { value: "Kettai", label: "கேட்டை" },
+//   { value: "Moolam", label: "மூலம்" },
+//   { value: "Pooradam", label: "பூராடம்" },
+//   { value: "Uthiradam", label: "உத்திராடம்" },
+//   { value: "Thiruvonam", label: "திருவோணம்" },
+//   { value: "Avittam", label: "அவிட்டம்" },
+//   { value: "Sathayam", label: "சதயம்" },
+//   { value: "Poorattathi", label: "பூரட்டாதி" },
+//   { value: "Uthirattathi", label: "உத்திரட்டாதி" },
+//   { value: "Revathi", label: "ரேவதி (Revathi)" },
+// ];
+
+// export const DOSHAM_OPTIONS = [
+//   { value: "Sevvai", label: "செவ்வாய் (Sevvai)" },
+//   { value: "Raagu", label: "ராகு (Raagu)" },
+//   { value: "Kethu", label: "கேது (Kethu)" },
+//   { value: "No", label: "இல்லை (No Dosham)" },
+// ];
 
 export const PRIVACY_OPTIONS = [
   { value: "Public", label: "🌍 Public / பொது" },
@@ -93,7 +95,8 @@ const Profile = () => {
     hours = hours % 12 || 12;
     return `${hours}:${minutes} ${period}`;
   };
-
+  const displayMode = "both";
+  // "tamil" or "both"
   useEffect(() => {
     getUserProfile(userId)
       .then((res) => {
@@ -147,26 +150,26 @@ const Profile = () => {
     }
   };
 
-const handleSave = async () => {
-  try {
-    const { horoscope, ...cleanUser } = user;
-    const res = await updateUserProfile(cleanUser);
-    if (res.success) {
-      toast.success("Profile Updated!");
-      setEdit(false);
-      // ✅ Re-fetch fresh data from DB after save
-      const updated = await getUserProfile(userId);
-      if (updated?.success) {
-        setUser(updated.data);
+  const handleSave = async () => {
+    try {
+      const { horoscope, ...cleanUser } = user;
+      const res = await updateUserProfile(cleanUser);
+      if (res.success) {
+        toast.success("Profile Updated!");
+        setEdit(false);
+        // ✅ Re-fetch fresh data from DB after save
+        const updated = await getUserProfile(userId);
+        if (updated?.success) {
+          setUser(updated.data);
+        }
+      } else {
+        toast.error(res.message || "Update failed");
       }
-    } else {
-      toast.error(res.message || "Update failed");
+    } catch (err) {
+      toast.error("Something went wrong");
+      console.error(err);
     }
-  } catch (err) {
-    toast.error("Something went wrong");
-    console.error(err);
-  }
-};
+  };
 
   const formatTimeAMPM = (timeStr) => {
     if (!timeStr) return "";
@@ -273,12 +276,13 @@ const handleSave = async () => {
             edit={edit}
             label="Gender / பாலினம்"
             name="gender"
-            value={user?.gender}
+            value={
+              edit
+                ? user?.gender
+                : getEnumLabel("gender", user?.gender, displayMode)
+            }
             onChange={handleChange}
-            options={[
-              { value: "Male", label: "Male / ஆண்" },
-              { value: "Female", label: "Female / பெண்" },
-            ]}
+            options={getEnumOptions("gender", displayMode)}
           />
           <Input
             edit={edit}
@@ -287,11 +291,22 @@ const handleSave = async () => {
             value={
               edit
                 ? user?.dob?.split("T")[0]
-                : user?.dob ? new Date(user?.dob).toLocaleDateString("en-GB") : ""
+                : user?.dob
+                  ? new Date(user?.dob).toLocaleDateString("en-GB")
+                  : ""
             }
             onChange={handleChange}
             type="date"
           />
+<Input
+  edit={edit}
+  label="Birth Place / பிறந்த இடம்"
+  name="birth_place"
+  value={user?.birth_place || ""}
+  onChange={handleChange}
+  type="text"
+/>
+
           <Input
             edit={edit}
             label="Birth Time / பிறந்த நேரம்"
@@ -315,13 +330,17 @@ const handleSave = async () => {
             edit={edit}
             label="Marital Status / திருமண நிலை"
             name="marital_status"
-            value={user?.marital_status}
+            value={
+              edit
+                ? user?.marital_status
+                : getEnumLabel(
+                    "maritalStatus",
+                    user?.marital_status,
+                    displayMode,
+                  )
+            }
             onChange={handleChange}
-            options={[
-              { value: "Unmarried", label: "Unmarried" },
-              { value: "Divorced", label: "Divorced" },
-              { value: "Widowed", label: "Widowed" },
-            ]}
+            options={getEnumOptions("maritalStatus", displayMode)}
           />
         </Section>
 
@@ -370,28 +389,37 @@ const handleSave = async () => {
             edit={edit}
             label="Raasi / ராசி"
             name="raasi"
-            value={user?.raasi}
+            value={
+              edit
+                ? user?.raasi
+                : getEnumLabel("raasi", user?.raasi, displayMode)
+            }
             onChange={handleChange}
-            options={RAASI_OPTIONS}
+            options={getEnumOptions("raasi", displayMode)}
           />
           <Input
             edit={edit}
             label="Star / நட்சத்திரம்"
             name="star"
-            value={user?.star}
+            value={
+              edit ? user?.star : getEnumLabel("star", user?.star, displayMode)
+            }
             onChange={handleChange}
-            options={STAR_OPTIONS}
+            options={getEnumOptions("star", displayMode)}
           />
           <Input
             edit={edit}
             label="Dosham / தோஷம்"
             name="dosham"
-            value={user?.dosham}
+            value={
+              edit
+                ? user?.dosham
+                : getEnumLabel("dosham", user?.dosham, displayMode)
+            }
             onChange={handleChange}
-            options={DOSHAM_OPTIONS}
+            options={getEnumOptions("dosham", displayMode)}
             className="md:col-span-2"
           />
-
           <div className="col-span-1 sm:col-span-2 flex flex-col gap-1">
             <span className="text-[9px] font-black text-[#A67C52] uppercase tracking-wider">
               Jadhagam (PDF/JPG) / ஜாதகம் (PDF/JPG)
@@ -413,13 +441,14 @@ const handleSave = async () => {
             ) : (
               <div className="flex items-center gap-2 text-[11px] font-black text-[#5D4037] py-2 bg-[#FAF6F3] px-3 rounded-xl border border-[#EEEEEE] overflow-hidden">
                 <FileText size={14} className="text-[#A67C52] shrink-0" />
-                {user?.horoscope?.uploaded || user?.horoscope_uploaded ?  (
+                {user?.horoscope?.uploaded || user?.horoscope_uploaded ? (
                   <a
-href={`${import.meta.env.VITE_IMG_URL}/photos/${(user?.horoscope?.fileUrl || user?.horoscope_file_url)?.split("/").pop()}`}                    target="_blank"
+                    href={`${import.meta.env.VITE_IMG_URL}/photos/${(user?.horoscope?.fileUrl || user?.horoscope_file_url)?.split("/").pop()}`}
+                    target="_blank"
                     rel="noreferrer"
                     className="underline hover:text-[#A67C52] truncate"
                   >
-                    {user?.horoscope?.fileName|| user?.horoscope_file_name}
+                    {user?.horoscope?.fileName || user?.horoscope_file_name}
                   </a>
                 ) : (
                   <span className="text-gray-400">Not Uploaded</span>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Check, X, MapPin, Mail, User, Eye } from "lucide-react";
+import { getEnumLabel } from "../../utils/convertHelper";
 
 // ✅ API functions import
 import {
@@ -24,7 +25,7 @@ const PendingForms = () => {
   const [pending, setPending] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
-
+  const displayMode = "both"; // or "tamil"
   // ================= LOAD PENDING =================
   useEffect(() => {
     const loadPending = async () => {
@@ -119,7 +120,10 @@ const PendingForms = () => {
             </thead>
             <tbody className="divide-y divide-[#EEEEEE]">
               {pending.map((item) => (
-                <tr key={item.id} className="group hover:bg-[#FAF6F3]/30 transition-all">
+                <tr
+                  key={item.id}
+                  className="group hover:bg-[#FAF6F3]/30 transition-all"
+                >
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-2xl bg-[#5D4037] overflow-hidden flex-shrink-0 flex items-center justify-center border border-stone-100 shadow-sm">
@@ -138,24 +142,26 @@ const PendingForms = () => {
                           {item.profile?.fullName || item.name || "N/A"}
                         </p>
                         <p className="text-[9px] text-[#A67C52] font-bold uppercase tracking-widest mt-1">
-                          <MapPin size={10} className="inline mr-1" /> {item.country || "India"}
+                          <MapPin size={10} className="inline mr-1" />{" "}
+                          {item.country || "India"}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="px-8 py-5">
                     <p className="text-xs font-bold text-[#5D4037] truncate max-w-[200px]">
-                      <Mail size={12} className="inline mr-1 text-stone-400" /> {item.email}
+                      <Mail size={12} className="inline mr-1 text-stone-400" />{" "}
+                      {item.email}
                     </p>
                   </td>
-                <td className="px-8 py-5 text-center">
-  <button
-    onClick={() => handleView(item)}
-    className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#5D4037] bg-[#FAF6F3] border border-[#A67C52]/20 hover:bg-[#5D4037] hover:text-white rounded-xl transition-all shadow-sm mx-auto flex items-center justify-center"
-  >
-    View Profile
-  </button>
-</td>
+                  <td className="px-8 py-5 text-center">
+                    <button
+                      onClick={() => handleView(item)}
+                      className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#5D4037] bg-[#FAF6F3] border border-[#A67C52]/20 hover:bg-[#5D4037] hover:text-white rounded-xl transition-all shadow-sm mx-auto flex items-center justify-center"
+                    >
+                      View Profile
+                    </button>
+                  </td>
                   <td className="px-8 py-5">
                     <div className="flex items-center justify-center gap-2">
                       <button
@@ -183,56 +189,161 @@ const PendingForms = () => {
       {selectedUser && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 md:p-6">
           <div className="bg-[#FDFBF9] w-[900px] max-w-full max-h-[90vh] overflow-y-auto rounded-3xl shadow-xl p-6 md:p-10 relative">
-            <button onClick={closeModal} className="absolute top-6 right-6 text-[#5D4037] text-lg z-10">✕</button>
+            <button
+              onClick={closeModal}
+              className="absolute top-6 right-6 text-[#5D4037] text-lg z-10"
+            >
+              ✕
+            </button>
             <div className="flex justify-center mb-6">
               {selectedUser.photo ? (
-                <img src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`} className="w-20 h-20 rounded-2xl object-cover shadow-sm" alt="user" />
+                <img
+                  src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`}
+                  className="w-20 h-20 rounded-2xl object-cover shadow-sm"
+                  alt="user"
+                />
               ) : (
-                <div className="w-20 h-20 rounded-2xl bg-[#FAF6F3] flex items-center justify-center"><User size={28} /></div>
+                <div className="w-20 h-20 rounded-2xl bg-[#FAF6F3] flex items-center justify-center">
+                  <User size={28} />
+                </div>
               )}
             </div>
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-semibold text-[#5D4037]">{selectedUser.fullName}</h2>
-              <p className="text-sm text-gray-500 mt-1">{selectedUser.city}, {selectedUser.country}</p>
+              <h2 className="text-3xl font-semibold text-[#5D4037]">
+                {selectedUser.fullName}
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                {selectedUser.city}, {selectedUser.country}
+              </p>
               <p className="text-sm text-gray-500 mt-1">{selectedUser.email}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
               <div>
-                <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">PERSONAL INFO</h3>
-                <InfoRow label="Gender / பாலினம் " value={selectedUser.gender} />
-                <InfoRow label="DOB / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
-                <InfoRow label="Birth Time / பிறந்த நேரம் " value={formatTime12h(selectedUser.birthTime)} />
-                <InfoRow label="Marital Status / திருமண நிலை" value={selectedUser.maritalStatus} />
-                <InfoRow label="Email / மின்னஞ்சல்" value={selectedUser.email} />
-                <InfoRow label="Phone / தொலைபேசி எண்" value={selectedUser.phone} />
+                <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">
+                  PERSONAL INFO
+                </h3>
+                <InfoRow
+                  label="Gender / பாலினம்"
+                  value={getEnumLabel(
+                    "gender",
+                    selectedUser.gender,
+                    displayMode,
+                  )}
+                />{" "}
+                <InfoRow
+                  label="DOB / பிறந்த தேதி"
+                  value={selectedUser.dob?.split("T")[0]}
+                />
+                <InfoRow
+                  label="Birth Place / பிறந்த இடம் "
+                  value={selectedUser.birth_place}
+                />
+                   <InfoRow
+                  label="Birth Time / பிறந்த நேரம் "
+                  value={formatTime12h(selectedUser.birthTime)}
+                />
+                <InfoRow
+                  label="Marital Status / திருமண நிலை"
+                  value={getEnumLabel(
+                    "maritalStatus",
+                    selectedUser.maritalStatus,
+                    displayMode,
+                  )}
+                />{" "}
+                <InfoRow
+                  label="Email / மின்னஞ்சல்"
+                  value={selectedUser.email}
+                />
+                <InfoRow
+                  label="Phone / தொலைபேசி எண்"
+                  value={selectedUser.phone}
+                />
                 <InfoRow label="Income / தொழில்" value={selectedUser.income} />
-                <InfoRow label="Work Location / வேலை இடம்" value={selectedUser.workLocation} />
-                <InfoRow label="Education / கல்வி" value={selectedUser.education} />
+                <InfoRow
+                  label="Work Location / வேலை இடம்"
+                  value={selectedUser.workLocation}
+                />
+                <InfoRow
+                  label="Education / கல்வி"
+                  value={selectedUser.education}
+                />
               </div>
               <div>
-                <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">FAMILY & DETAILS</h3>
-                <InfoRow label="Father/ தந்தை பெயர்" value={selectedUser.father} />
-                <InfoRow label="Mother / தாய் பெயர்" value={selectedUser.mother} />
-                <InfoRow label="Grandfather/ தாத்தா பெயர்" value={selectedUser.grandfather} />
-                <InfoRow label="Grandmother/ பாட்டி பெயர்" value={selectedUser.grandmother} />
-                <InfoRow label="Mother Side GF / தாய்வழி தாத்தா பெயர்" value={selectedUser.motherSideGrandfather} />
-                <InfoRow label="Mother Side GM / தாய்வழி பாட்டி பெயர்" value={selectedUser.motherSideGrandmother} />
-                <InfoRow label="Siblings/ உடன்பிறப்புகள்" value={selectedUser.siblings} />
-                <InfoRow label="Raasi/ இராசி" value={selectedUser.raasi} />
-                <InfoRow label="Star/ நட்சத்திரம்" value={selectedUser.star} />
-                <InfoRow label="Dosham/ தோஷாம்" value={selectedUser.dosham} />
+                <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">
+                  FAMILY & DETAILS
+                </h3>
+                <InfoRow
+                  label="Father/ தந்தை பெயர்"
+                  value={selectedUser.father}
+                />
+                <InfoRow
+                  label="Mother / தாய் பெயர்"
+                  value={selectedUser.mother}
+                />
+                <InfoRow
+                  label="Grandfather/ தாத்தா பெயர்"
+                  value={selectedUser.grandfather}
+                />
+                <InfoRow
+                  label="Grandmother/ பாட்டி பெயர்"
+                  value={selectedUser.grandmother}
+                />
+                <InfoRow
+                  label="Mother Side GF / தாய்வழி தாத்தா பெயர்"
+                  value={selectedUser.motherSideGrandfather}
+                />
+                <InfoRow
+                  label="Mother Side GM / தாய்வழி பாட்டி பெயர்"
+                  value={selectedUser.motherSideGrandmother}
+                />
+                <InfoRow
+                  label="Siblings/ உடன்பிறப்புகள்"
+                  value={selectedUser.siblings}
+                />
+                <InfoRow
+                  label="Raasi / இராசி"
+                  value={getEnumLabel("raasi", selectedUser.raasi, displayMode)}
+                />
+                <InfoRow
+                  label="Star / நட்சத்திரம்"
+                  value={getEnumLabel("star", selectedUser.star, displayMode)}
+                />
+                <InfoRow
+                  label="Dosham / தோஷாம்"
+                  value={getEnumLabel(
+                    "dosham",
+                    selectedUser.dosham,
+                    displayMode,
+                  )}
+                />{" "}
               </div>
             </div>
             <div className="mt-10">
-              <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-3">JADHAGAM FILE / ஜாதகம்</h3>
+              <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-3">
+                JADHAGAM FILE / ஜாதகம்
+              </h3>
               {selectedUser.horoscope?.uploaded ? (
                 <div className="flex items-center justify-between bg-[#FAF6F3] px-5 py-3 rounded-2xl">
-                  <span className="text-sm text-[#5D4037] truncate">{selectedUser.horoscope.fileName}</span>
-                  <a href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope.fileName}`} target="_blank" rel="noreferrer" className="px-4 py-2 bg-[#5D4037] text-white text-xs rounded-xl font-semibold hover:opacity-90 transition">View</a>
+                  <span className="text-sm text-[#5D4037] truncate">
+                    {selectedUser.horoscope.fileName}
+                  </span>
+                  <a
+                    href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope.fileName}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-4 py-2 bg-[#5D4037] text-white text-xs rounded-xl font-semibold hover:opacity-90 transition"
+                  >
+                    View
+                  </a>
                 </div>
-              ) : ( <p className="text-sm text-gray-400">Not Uploaded</p> )}
+              ) : (
+                <p className="text-sm text-gray-400">Not Uploaded</p>
+              )}
             </div>
-            <InfoRow label="Remarks / குறிப்புகள்" value={selectedUser.remarks} />
+            <InfoRow
+              label="Remarks / குறிப்புகள்"
+              value={selectedUser.remarks}
+            />
           </div>
         </div>
       )}
@@ -242,8 +353,12 @@ const PendingForms = () => {
 
 const InfoRow = ({ label, value }) => (
   <div className="flex justify-between py-2 border-b border-[#E6DFD8] text-sm">
-    <span className="text-gray-400 uppercase text-[11px] tracking-wide pr-4">{label}</span>
-    <span className="text-[#5D4037] font-medium text-right max-w-[55%]">{value || "-"}</span>
+    <span className="text-gray-400 uppercase text-[11px] tracking-wide pr-4">
+      {label}
+    </span>
+    <span className="text-[#5D4037] font-medium text-right max-w-[55%]">
+      {value || "-"}
+    </span>
   </div>
 );
 

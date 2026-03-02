@@ -18,6 +18,7 @@ import {
   Globe,
   Lock,
 } from "lucide-react";
+import { getEnumLabel } from "../../utils/convertHelper";
 
 const Img_Url = import.meta.env.VITE_IMG_URL;
 
@@ -27,6 +28,9 @@ const ConnectionCard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [myGender, setMyGender] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
+
+  const displayMode = "both"; 
+// "tamil" or "both"
 
   // Load connections
   useEffect(() => {
@@ -140,15 +144,7 @@ lg:max-w-[480px]
 xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
             >
               {/* 👁 EYE ICON */}
-              {u.privacy === "Public" && (
-                <button
-                  onClick={() => handleViewProfile(u.user_id)}
-                  className="absolute top-4 right-4 p-2.5 rounded-xl bg-[#FAF6F3] text-[#5D4037] shadow-sm 
-                             hover:bg-[#5D4037] hover:text-white transition-all duration-300"
-                >
-                  <Eye size={16} />
-                </button>
-              )}
+            
 
               {/* FLOATING STATUS BADGE */}
               <div
@@ -169,12 +165,17 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
               {/* DETAILS GRID */}
 
                 <div className=""> 
-                <DetailItem icon="🌙" label="Raasi / இராசி" value={u.raasi} />
-                <DetailItem
-                  icon={u.gender === "Male" ? "👨" : "👩"}
-                  label="Gender / பாலினம்"
-                  value={u.gender}
-                />
+               <DetailItem
+  icon="🌙"
+  label="Raasi / இராசி"
+  value={getEnumLabel("raasi", u.raasi, displayMode)}
+/>
+
+<DetailItem
+  icon={u.gender === "Male" ? "👨" : "👩"}
+  label="Gender / பாலினம்"
+  value={getEnumLabel("gender", u.gender, displayMode)}
+/>
                 <DetailItem icon="💰" label="Salary / மாத வருமானம்" value={u.income} />
                 <DetailItem
                   icon="💼"
@@ -196,6 +197,15 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                 </div>
               </div> 
 
+
+{u.privacy === "Public" && (
+  <button
+    onClick={() => handleViewProfile(u.user_id)}
+    className="mt-6 w-full py-4 bg-[#5D4037] text-white text-[12px] font-black uppercase tracking-[2px] rounded-[24px] hover:opacity-90 transition-all shadow-md block"
+  >
+    View Profile
+  </button>
+)}
               {/* ACTION BUTTON */}
              {u.privacy === "Private" && (
   <div className="mt-8 pt-5 border-t border-dashed border-[#EEEEEE]">
@@ -265,24 +275,49 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                 <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">
                   Personal Info
                 </h4>
-                <PopupDetail
-                  label="Gender / பாலினம்"
-                  value={selectedUser.gender}
+             <PopupDetail
+  label="Gender / பாலினம்"
+  value={getEnumLabel("gender", selectedUser.gender, displayMode)}
+/>
+             <PopupDetail
+  label="DOB / பிறந்த தேதி"
+  value={
+    selectedUser?.dob
+      ? new Date(selectedUser.dob).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })
+      : "—"
+  }
+/>
+
+     <PopupDetail
+                  label="Birth Place / பிறந்த இடம்"
+                  value={selectedUser.birth_place}
                 />
-                {/* <PopupDetail
-                  label="DOB / பிறந்த தேதி"
-                  value={selectedUser.dob}
-                   min="1950-01-01"
-                    max={new Date().toISOString().split("T")[0]}
-                /> */}
-                   <PopupDetail
-                  label="Birth Time / பிறந்த நேரம்"
-                  value={selectedUser.birthTime}
-                />
-                <PopupDetail
-                  label="Marital Status / திருமண நிலை"
-                  value={selectedUser.marital_status}
-                />
+
+                  <PopupDetail
+  label="Birth Time / பிறந்த நேரம்"
+  value={
+    selectedUser?.birth_time
+      ? new Date(`1970-01-01T${selectedUser.birth_time}`)
+          .toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })
+      : "—"
+  }
+/>
+            <PopupDetail
+  label="Marital Status / திருமண நிலை"
+  value={getEnumLabel(
+    "maritalStatus",
+    selectedUser.marital_status,
+    displayMode
+  )}
+/>
                 <PopupDetail
                   label="Email / மின்னஞ்சல்"
                   value={selectedUser.email}
@@ -303,10 +338,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                   label="Work Location / வேலை இடம்"
                   value={selectedUser.work_location}
                 />
-                <PopupDetail
-                  label="Birth Place / பிறந்த இடம்"
-                  value={selectedUser.birth_place}
-                />
+         
 
                 <div className="mt-4 pt-4 border-t border-[#FAF6F3]">
                   <p className="text-[10px] font-black text-[#5D4037] uppercase mb-1 flex items-center gap-2">
@@ -359,7 +391,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                       Raasi
                     </p>
                     <p className="text-[11px] font-bold text-[#5D4037]">
-                      {selectedUser.raasi}
+                      {getEnumLabel("raasi", selectedUser.raasi, displayMode)}
                     </p>
                   </div>
                   <div>
@@ -367,7 +399,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                       Star
                     </p>
                     <p className="text-[11px] font-bold text-[#5D4037]">
-                      {selectedUser.star}
+                      {getEnumLabel("star", selectedUser.star, displayMode)}
                     </p>
                   </div>
                   <div className="col-span-2 mt-1">
@@ -375,7 +407,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                       Dosham
                     </p>
                     <p className="text-[11px] font-bold text-[#5D4037]">
-                      {selectedUser.dosham}
+                      {getEnumLabel("dosham", selectedUser.dosham, displayMode)}
                     </p>
                   </div>
                 </div>
