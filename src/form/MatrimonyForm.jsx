@@ -41,18 +41,18 @@ const MatrimonyForm = () => {
     console.log("🔥 FORM DATA =>", formData);
   }, [formData]);
 
-  // Color Patterns applied to constants
+  // Color Patterns updated: Primary #1A5AF0, Text Black
   const input =
-    "w-full px-4 py-3 rounded-xl border border-[#EEEEEE] bg-white text-[#5D4037] focus:outline-none focus:ring-2 focus:ring-[#A67C52]";
+    "w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-black focus:outline-none focus:ring-2 focus:ring-[#1A5AF0]";
   const uploadBox =
-    "relative w-40 h-40 rounded-2xl bg-[#EEEEEE]/50 flex items-center justify-center overflow-hidden shadow-md cursor-pointer mx-auto mt-4 border-2 border-dashed border-[#A67C52]/30";
+    "relative w-40 h-40 rounded-2xl bg-gray-50 flex items-center justify-center overflow-hidden shadow-md cursor-pointer mx-auto mt-4 border-2 border-dashed border-[#1A5AF0]/30";
 
   return (
-    // Outer Background: Cream #FAF6F3
-    <div className="min-h-screen bg-[#FAF6F3] flex items-center justify-center p-6">
+    // Outer Background: #B3CCFB
+    <div className="min-h-screen bg-[#B3CCFB] flex items-center justify-center p-6">
       <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl grid md:grid-cols-3 overflow-hidden min-h-[600px]">
-        {/* LEFT STEPPER: Using Brown tones #5D4037 & Soft Grey #EEEEEE */}
-        <div className="bg-[#EEEEEE] p-8 text-[#5D4037]">
+        {/* LEFT STEPPER */}
+        <div className="bg-gray-100 p-8 text-black">
           <h2 className="text-2xl font-bold mb-10">
             சுயவிவரம் உருவாக்கவும் / Create Profile
           </h2>
@@ -62,8 +62,8 @@ const MatrimonyForm = () => {
                 <div
                   className={`w-9 h-9 rounded-full flex items-center justify-center font-bold transition-colors ${
                     i <= currentStep
-                      ? "bg-[#5D4037] text-white" // Active step Brown
-                      : "border border-[#5D4037]/40 text-[#5D4037]/50"
+                      ? "bg-[#1A5AF0] text-white" // Active step Blue
+                      : "border border-black/30 text-black/40"
                   }`}
                 >
                   {i + 1}
@@ -71,7 +71,7 @@ const MatrimonyForm = () => {
                 <span
                   className={
                     i === currentStep
-                      ? "font-bold text-[#5D4037]"
+                      ? "font-bold text-black"
                       : "opacity-70 text-sm"
                   }
                 >
@@ -87,16 +87,16 @@ const MatrimonyForm = () => {
           <div className="flex justify-between items-center mb-6">
             <button
               onClick={() => navigate(-1)}
-              className="font-semibold text-[#5D4037] hover:text-[#A67C52] transition-colors"
+              className="font-semibold text-black hover:text-[#1A5AF0] transition-colors"
             >
               ← வெளியேறு / Exit
             </button>
-            <span className="text-sm text-[#5D4037]/70 font-bold">
+            <span className="text-sm text-black/70 font-bold">
               படி {currentStep + 1} / Step {currentStep + 1} of 7
             </span>
           </div>
 
-          <h3 className="text-2xl font-bold text-[#5D4037] mb-8 border-b border-[#EEEEEE] pb-2">
+          <h3 className="text-2xl font-bold text-black mb-8 border-b border-gray-100 pb-2">
             {steps[currentStep]}
           </h3>
 
@@ -127,7 +127,7 @@ const MatrimonyForm = () => {
 
                 <div className="relative">
                   {!formData.dob && (
-                    <span className="absolute left-3 top-1 text-[#5D4037]  pointer-events-none">
+                    <span className="absolute left-3 top-1 text-black/60 pointer-events-none">
                       Date of Birth / பிறந்த தேதி
                     </span>
                   )}
@@ -146,18 +146,18 @@ const MatrimonyForm = () => {
                 <div className="flex items-center gap-3">
                   <div className="relative w-full">
                     {!formData.birthTime && (
-                      <span className="absolute left-3 top-1 text-[#5D4037] pointer-events-none">
+                      <span className="absolute left-3 top-1 text-black/60 pointer-events-none">
                         Birth Time / பிறந்த நேரம்
                       </span>
                     )}
 
                     <input
-                      type="time" // ✅ AUTO + MANUAL (keyboard)
+                      type="time" 
                       name="birthTime"
                       value={formData.birthTime}
                       onChange={handleChange}
-                      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2
-                                 focus:outline-none focus:ring-2 focus:ring-brown-500"
+                      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2 text-black
+                                 focus:outline-none focus:ring-2 focus:ring-[#1A5AF0]"
                     />
                   </div>
 
@@ -165,20 +165,20 @@ const MatrimonyForm = () => {
                     name="birthPeriod"
                     value={formData.birthPeriod}
                     onChange={handleChange}
-                    className="w-20 rounded-md border border-gray-300 px-2 py-2"
+                    className="w-20 rounded-md border border-gray-300 px-2 py-2 text-black"
                   >
                     <option value="">--</option>
                     <option value="AM">AM</option>
                     <option value="PM">PM</option>
                   </select>
                 </div>
-<input
-  className={input}
-  name="birthPlace"
-  placeholder="Birth Place / பிறந்த இடம்"
-  onChange={handleChange}
-  value={formData.birthPlace}
-/>
+                <input
+                  className={input}
+                  name="birthPlace"
+                  placeholder="Birth Place / பிறந்த இடம்"
+                  onChange={handleChange}
+                  value={formData.birthPlace}
+                />
                 <input
                   className={input}
                   name="email"
@@ -193,8 +193,8 @@ const MatrimonyForm = () => {
                   placeholder="Phone Number / தொலைபேசி எண்"
                   onChange={handleChange}
                   value={formData.phone}
-                  type="tel" // ✅ phone input
-                  maxLength={10} // ✅ Indian number
+                  type="tel" 
+                  maxLength={10} 
                 />
                 <select
                   className={input}
@@ -237,7 +237,6 @@ const MatrimonyForm = () => {
                   value={formData.income}
                 />
 
-                {/* ✅ NEW FIELD */}
                 <input
                   className={input}
                   name="workLocation"
@@ -356,14 +355,14 @@ const MatrimonyForm = () => {
                     {formData.horoscope ? (
                       <>
                         <DocumentCheckIcon className="w-10 h-10 text-green-600" />
-                        <p className="text-xs mt-2 text-center text-[#5D4037]">
+                        <p className="text-xs mt-2 text-center text-black">
                           {formData.horoscope.name}
                         </p>
                       </>
                     ) : (
                       <>
-                        <CloudArrowUpIcon className="w-10 h-10 text-[#A67C52]" />
-                        <p className="text-xs text-center mt-2 text-[#5D4037]">
+                        <CloudArrowUpIcon className="w-10 h-10 text-[#1A5AF0]" />
+                        <p className="text-xs text-center mt-2 text-black">
                           Upload Horoscope / ஜாதகம்
                         </p>
                       </>
@@ -408,9 +407,9 @@ const MatrimonyForm = () => {
 
             {/* STEP 5 - Visibility */}
             {currentStep === 5 && (
-              <div className="max-w-md p-6 bg-white rounded-xl shadow-md space-y-6 border border-[#EEEEEE]">
+              <div className="max-w-md p-6 bg-white rounded-xl shadow-md space-y-6 border border-gray-100">
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-[#5D4037]">
+                  <label className="block text-sm font-semibold text-black">
                     Account Settings / கணக்கு அமைப்புகள்
                   </label>
                   <select
@@ -424,7 +423,7 @@ const MatrimonyForm = () => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm font-semibold text-[#5D4037]">
+                  <p className="text-sm font-semibold text-black">
                     Upload Photo / பதிவேற்ற புகைப்படம்
                   </p>
 
@@ -432,13 +431,12 @@ const MatrimonyForm = () => {
                     className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all 
       ${
         formData.photo
-          ? "bg-green-50 border-green-500 hover:bg-green-100"
-          : "bg-[#FAF6F3] hover:bg-[#EEEEEE] border-[#A67C52]/30"
+          ? "bg-green-50 border-green-500"
+          : "bg-gray-50 border-[#1A5AF0]/30"
       }`}
                   >
                     {formData.photo ? (
                       <>
-                        {/* Success State: Green Icon and Filename */}
                         <DocumentCheckIcon className="w-10 h-10 text-green-600" />
                         <p className="text-xs mt-2 text-center text-green-700 font-medium px-2 truncate w-full">
                           {formData.photo.name}
@@ -446,9 +444,8 @@ const MatrimonyForm = () => {
                       </>
                     ) : (
                       <>
-                        {/* Default State: Upload Icon */}
-                        <CloudArrowUpIcon className="w-8 h-8 mb-2 text-[#A67C52]" />
-                        <p className="text-sm text-[#5D4037] text-center">
+                        <CloudArrowUpIcon className="w-8 h-8 mb-2 text-[#1A5AF0]" />
+                        <p className="text-sm text-black text-center">
                           Click to upload photo / புகைப்படத்தை பதிவேற்ற கிளிக்
                           செய்க
                         </p>
@@ -476,9 +473,9 @@ const MatrimonyForm = () => {
 
             {/* STEP 6 - Summary */}
             {currentStep === 6 && (
-              <div className="bg-[#EEEEEE]/50 p-4 md:p-6 rounded-2xl border border-[#A67C52]/20 text-[#5D4037] shadow-sm max-h-[65vh] overflow-y-auto custom-scrollbar">
-                <h3 className="text-xl font-bold mb-6 border-b border-[#A67C52]/30 pb-3 flex items-center gap-2">
-                  <DocumentCheckIcon className="w-6 h-6 text-[#A67C52]" />
+              <div className="bg-gray-50 p-4 md:p-6 rounded-2xl border border-gray-200 text-black shadow-sm max-h-[65vh] overflow-y-auto custom-scrollbar">
+                <h3 className="text-xl font-bold mb-6 border-b border-gray-200 pb-3 flex items-center gap-2">
+                  <DocumentCheckIcon className="w-6 h-6 text-[#1A5AF0]" />
                   Review Profile Summary / சுருக்கம்
                 </h3>
 
@@ -508,9 +505,9 @@ const MatrimonyForm = () => {
                       }`.trim(),
                     },
                     {
-  label: "பிறந்த இடம் / Birth Place",
-  value: formData.birthPlace,
-},
+                      label: "பிறந்த இடம் / Birth Place",
+                      value: formData.birthPlace,
+                    },
                     {
                       label: "தொலைபேசி எண் / Phone Number",
                       value: formData.phone,
@@ -569,9 +566,9 @@ const MatrimonyForm = () => {
                   ].map((item, index) => (
                     <div
                       key={index}
-                      className="flex flex-col border-b border-[#A67C52]/10 pb-1"
+                      className="flex flex-col border-b border-gray-200 pb-1"
                     >
-                      <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
                         {item.label}
                       </span>
                       <span className="text-sm md:text-base font-medium leading-tight truncate">
@@ -581,8 +578,8 @@ const MatrimonyForm = () => {
                   ))}
 
                   {/* 2. FULL WIDTH ADDRESS */}
-                  <div className="sm:col-span-2 lg:col-span-3 border-b border-[#A67C52]/10 pb-1">
-                    <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                  <div className="sm:col-span-2 lg:col-span-3 border-b border-gray-200 pb-1">
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
                       Home Address
                     </span>
                     <p className="text-sm md:text-base font-medium leading-tight">
@@ -593,8 +590,8 @@ const MatrimonyForm = () => {
                   {/* 3. VISUAL MEDIA SECTION */}
                   <div className="sm:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                     {/* Profile Photo Card */}
-                    <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-[#A67C52]/20 shadow-sm">
-                      <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                    <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
                         Profile Photo / புகைப்படம்
                       </span>
                       {formData.photo ? (
@@ -602,7 +599,7 @@ const MatrimonyForm = () => {
                           <img
                             src={URL.createObjectURL(formData.photo)}
                             alt="Profile"
-                            className="w-24 h-24 object-cover rounded-lg border-2 border-[#A67C52]/20"
+                            className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100"
                             onLoad={(e) => URL.revokeObjectURL(e.target.src)}
                           />
                           <span className="text-xs break-all opacity-70">
@@ -617,8 +614,8 @@ const MatrimonyForm = () => {
                     </div>
 
                     {/* Horoscope Card */}
-                    <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-[#A67C52]/20 shadow-sm">
-                      <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                    <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
                         Horoscope / ஜாதகம்
                       </span>
                       {formData.horoscope ? (
@@ -627,10 +624,10 @@ const MatrimonyForm = () => {
                             <img
                               src={URL.createObjectURL(formData.horoscope)}
                               alt="Horoscope"
-                              className="w-24 h-24 object-cover rounded-lg border-2 border-[#A67C52]/20"
+                              className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100"
                             />
                           ) : (
-                            <div className="w-24 h-24 bg-[#FAF6F3] flex flex-col items-center justify-center rounded-lg border-2 border-[#A67C52]/20 text-[#A67C52]">
+                            <div className="w-24 h-24 bg-gray-50 flex flex-col items-center justify-center rounded-lg border-2 border-gray-100 text-[#1A5AF0]">
                               <DocumentCheckIcon className="w-8 h-8" />
                               <span className="text-[8px] font-bold mt-1">
                                 DOC/PDF
@@ -649,18 +646,18 @@ const MatrimonyForm = () => {
                     </div>
                   </div>
 
-                  {/* ✅ NEW MERGED PRIVACY NOTICE SECTION (Strictly Summary Page) */}
+                  {/* ✅ PRIVACY NOTICE SECTION */}
                   <div className="col-span-1 sm:col-span-2 lg:col-span-3 mt-4">
-                    <p className="w-full flex items-start gap-4 bg-[#FAF6F3] border border-[#A67C52]/20 p-4 md:p-5 rounded-2xl shadow-sm">
-                      <span className="flex-shrink-0 bg-[#A67C52]/10 p-2.5 rounded-xl">
-                        <ShieldCheck size={16} className="text-[#A67C52]" />
+                    <p className="w-full flex items-start gap-4 bg-blue-50 border border-blue-100 p-4 md:p-5 rounded-2xl shadow-sm">
+                      <span className="flex-shrink-0 bg-white p-2.5 rounded-xl">
+                        <ShieldCheck size={16} className="text-[#1A5AF0]" />
                       </span>
                       <span className="flex flex-col gap-1">
-                        <span className="text-[12px] md:text-[13px] font-black text-[#5D4037] leading-relaxed">
+                        <span className="text-[12px] md:text-[13px] font-black text-black leading-relaxed">
                           நீங்கள் பதிவிடும் விபரங்கள், நீங்கள் அனுமதித்த
                           பின்னரே, மற்ற வரன்கள் பார்க்க முடியும்
                         </span>
-                        <span className="text-[10px] uppercase tracking-wider font-bold text-[#A67C52]/80">
+                        <span className="text-[10px] uppercase tracking-wider font-bold text-[#1A5AF0]">
                           Your details will be visible to others only after your
                           approval.
                         </span>
@@ -670,10 +667,10 @@ const MatrimonyForm = () => {
 
                   {/* 4. REMARKS */}
                   <div className="sm:col-span-2 lg:col-span-3 pt-2">
-                    <span className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
                       Remarks
                     </span>
-                    <p className="text-sm font-medium italic text-[#5D4037]/80">
+                    <p className="text-sm font-medium italic text-black/80">
                       {formData.remarks || "No remarks"}
                     </p>
                   </div>
@@ -682,35 +679,33 @@ const MatrimonyForm = () => {
             )}
           </div>
 
-          {/* BUTTONS: Using Login Button Brown #573D2F */}
-          <div className="flex justify-between mt-8 border-t border-[#EEEEEE] pt-6">
+          {/* BUTTONS: Using Primary Blue #1A5AF0 */}
+          <div className="flex justify-between mt-8 border-t border-gray-100 pt-6">
             <button
               onClick={prevStep}
               className={`${
                 currentStep === 0 ? "invisible" : "flex items-center gap-2"
-              } px-5 py-2.5 bg-[#EEEEEE] text-[#5D4037] rounded-xl font-bold hover:bg-[#A67C52] hover:text-white transition-all`}
+              } px-5 py-2.5 bg-gray-100 text-black rounded-xl font-bold hover:bg-gray-200 transition-all`}
             >
               Back
             </button>
             <button
               onClick={() => {
-                // 👉 Not last step → Next
                 if (currentStep !== 6) {
                   nextStep();
                   return;
                 }
 
-                // 👉 Last step (6th) → Submit confirmation toast
                 toast(
                   (t) => (
                     <div
                       className={`
-           transform-gpu origin-center
-            ${t.visible ? "scale-100 opacity-100" : "scale-75 opacity-0"}
-            text-center space-y-3
-          `}
+            transform-gpu origin-center
+             ${t.visible ? "scale-100 opacity-100" : "scale-75 opacity-0"}
+             text-center space-y-3
+           `}
                     >
-                      <p className="font-bold text-[#5D4037] flex justify-center gap-4 mt-3">
+                      <p className="font-bold text-black flex justify-center gap-4 mt-3">
                         Are you sure to submit?
                       </p>
 
@@ -721,14 +716,14 @@ const MatrimonyForm = () => {
                             submitForm();
                             setTimeout(() => navigate("/"), 800);
                           }}
-                          className="px-4 py-2 bg-[#573D2F] text-white rounded-lg font-bold"
+                          className="px-4 py-2 bg-[#1A5AF0] text-white rounded-lg font-bold"
                         >
                           Confirm
                         </button>
 
                         <button
                           onClick={() => toast.dismiss(t.id)}
-                          className="px-4 py-2 bg-[#EEEEEE] rounded-lg font-bold"
+                          className="px-4 py-2 bg-gray-100 text-black rounded-lg font-bold"
                         >
                           Cancel
                         </button>
@@ -739,13 +734,12 @@ const MatrimonyForm = () => {
                     position: "top-center",
                     style: {
                       marginTop: "30vh",
-                      marginLeft: "55vw", // 👈 center feel
-                      zIndex: 9999, // 👈 front-la varum
+                      zIndex: 9999,
                     },
                   },
                 );
               }}
-              className="px-8 py-3 bg-[#573D2F] text-white rounded-xl font-bold hover:bg-[#5D4037] transition-all"
+              className="px-8 py-3 bg-[#1A5AF0] text-white rounded-xl font-bold hover:bg-blue-700 transition-all"
             >
               {currentStep === 6 ? "Submit" : "Next"}
             </button>
