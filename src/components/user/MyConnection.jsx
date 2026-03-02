@@ -9,6 +9,7 @@ import {
   getAcceptedConnections,
 } from "../../api/userApi";
 import { viewProfile } from "../../api/profilesApi";
+import { getEnumOptions, getEnumLabel } from "../../utils/convertHelper";
 
 const MyConnection = () => {
   const [received, setReceived] = useState([]);
@@ -23,6 +24,8 @@ const MyConnection = () => {
     setToast({ show: true, msg });
     setTimeout(() => setToast({ show: false, msg: "" }), 2000);
   };
+  const displayMode = "both";
+  // "tamil" or "both"
 
   /* ================= LOAD CONNECTIONS ================= */
   useEffect(() => {
@@ -278,22 +281,33 @@ const MyConnection = () => {
             <div className="space-y-12">
               {/* ================= PERSONAL ================= */}
               <Section title="Personal Information / தனிப்பட்ட விவரங்கள்">
-                <Row label="Gender / பாலினம்" value={selectedUser.gender} />
+                <Row
+                  label="Gender / பாலினம்"
+                  value={getEnumLabel(
+                    "gender",
+                    selectedUser.gender,
+                    displayMode,
+                  )}
+                />{" "}
                 <Row
                   label="Date of Birth / பிறந்த தேதி"
                   value={selectedUser.dob?.split("T")[0]}
-                />
-                <Row
-                  label="Birth Time / பிறந்த நேரம்"
-                  value={selectedUser.birth_time}
                 />
                 <Row
                   label="Birth Place / பிறந்த இடம்"
                   value={selectedUser.birth_place}
                 />
                 <Row
+                  label="Birth Time / பிறந்த நேரம்"
+                  value={selectedUser.birth_time}
+                />
+                <Row
                   label="Marital Status / திருமண நிலை"
-                  value={selectedUser.marital_status}
+                  value={getEnumLabel(
+                    "maritalStatus",
+                    selectedUser.marital_status,
+                    displayMode,
+                  )}
                 />
                 <Row label="Email / மின்னஞ்சல்" value={selectedUser.email} />
                 <Row
@@ -358,9 +372,22 @@ const MyConnection = () => {
 
               {/* ================= ASTROLOGY ================= */}
               <Section title="Astrology & Religion / ஜாதகம் & மதம்">
-                <Row label="Raasi / இராசி" value={selectedUser.raasi} />
-                <Row label="Star / நட்சத்திரம்" value={selectedUser.star} />
-                <Row label="Dosham / தோஷம்" value={selectedUser.dosham} />
+                <Row
+                  label="Raasi / இராசி"
+                  value={getEnumLabel("raasi", selectedUser.raasi, displayMode)}
+                />
+                <Row
+                  label="Star / நட்சத்திரம்"
+                  value={getEnumLabel("star", selectedUser.star, displayMode)}
+                />
+                <Row
+                  label="Dosham / தோஷம்"
+                  value={getEnumLabel(
+                    "dosham",
+                    selectedUser.dosham,
+                    displayMode,
+                  )}
+                />{" "}
                 {/* <Row label="Religion / மதம்" value={selectedUser.religion} />
     <Row label="Caste / ஜாதி" value={selectedUser.caste} /> */}
               </Section>

@@ -9,6 +9,8 @@ import { ShieldCheck } from "lucide-react"; // Required for the Privacy Notice I
 import { useMatrimonyForm } from "../Data/form";
 import { useNavigate } from "react-router-dom";
 
+import { getEnumOptions, getEnumLabel } from "../utils/convertHelper";
+
 const steps = [
   "தனிப்பட்ட விவரங்கள் / Personal Details",
   "கல்வி & தொழில் / Education & Career",
@@ -114,8 +116,11 @@ const MatrimonyForm = () => {
                   value={formData.gender}
                 >
                   <option value="">Gender / பாலினம்</option>
-                  <option value="Male">Male / ஆண்</option>
-                  <option value="Female">Female / பெண்</option>
+                  {getEnumOptions("gender", displayMode).map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
                 </select>
 
                 <div className="relative">
@@ -165,7 +170,13 @@ const MatrimonyForm = () => {
                     <option value="PM">PM</option>
                   </select>
                 </div>
-
+<input
+  className={input}
+  name="birthPlace"
+  placeholder="Birth Place / பிறந்த இடம்"
+  onChange={handleChange}
+  value={formData.birthPlace}
+/>
                 <input
                   className={input}
                   name="email"
@@ -190,9 +201,11 @@ const MatrimonyForm = () => {
                   value={formData.maritalStatus}
                 >
                   <option value="">Marital Status / திருமண நிலை</option>
-                  <option value="Unmarried">Unmarried / திருமணமாகாதவர்</option>
-                  <option value="Divorced">Divorced / விவாகரத்து </option>
-                  <option value="Widowed">Widowed / விதவை </option>
+                  {getEnumOptions("maritalStatus", displayMode).map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
                 </select>
               </div>
             )}
@@ -301,18 +314,11 @@ const MatrimonyForm = () => {
                     value={formData.raasi}
                   >
                     <option value="">Raasi / இராசி</option>
-                    <option value="Aries">மேஷம் (Aries)</option>
-                    <option value="Taurus">ரிஷபம் (Taurus)</option>
-                    <option value="Gemini">மிதுனம் (Gemini)</option>
-                    <option value="Cancer">கடகம் (Cancer)</option>
-                    <option value="Leo">சிம்மம் (Leo)</option>
-                    <option value="Virgo">கன்னி (Virgo)</option>
-                    <option value="Libra">துலாம் (Libra)</option>
-                    <option value="Scorpio">விருச்சிகம் (Scorpio)</option>
-                    <option value="Sagittarius">தனுசு (Sagittarius)</option>
-                    <option value="Capricorn">மகரம் (Capricorn)</option>
-                    <option value="Aquarius">கும்பம் (Aquarius)</option>
-                    <option value="Pisces">மீனம் (Pisces)</option>
+                    {getEnumOptions("raasi", displayMode).map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
                   </select>
 
                   <select
@@ -322,42 +328,11 @@ const MatrimonyForm = () => {
                     value={formData.star}
                   >
                     <option value="">Natchathiram / நட்சத்திரம்</option>
-
-                    <option value="Aswini">அஸ்வினி (Aswini)</option>
-                    <option value="Bharani">பரணி (Bharani)</option>
-                    <option value="Krittigai">கிருத்திகை (Krittigai)</option>
-                    <option value="Rohini">ரோகிணி (Rohini)</option>
-                    <option value="Mirugasheeridam">
-                      மிருகசீரிடம் (Mirugasheeridam)
-                    </option>
-                    <option value="Thiruvathirai">
-                      திருவாதிரை (Thiruvathirai)
-                    </option>
-                    <option value="Punarpoosam">
-                      புனர்பூசம் (Punarpoosam)
-                    </option>
-                    <option value="Poosam">பூசம் (Poosam)</option>
-                    <option value="Aayilyam">ஆயில்யம் (Aayilyam)</option>
-                    <option value="Magam">மகம் (Magam)</option>
-                    <option value="Pooram">பூரம் (Pooram)</option>
-                    <option value="Uthiram">உத்திரம் (Uthiram)</option>
-                    <option value="Hastham">அஸ்தம் (Hastham)</option>
-                    <option value="Chithirai">சித்திரை (Chithirai)</option>
-                    <option value="Swathi">சுவாதி (Swathi)</option>
-                    <option value="Visakam">விசாகம் (Visakam)</option>
-                    <option value="Anusham">அனுஷம் (Anusham)</option>
-                    <option value="Kettai">கேட்டை (Kettai)</option>
-                    <option value="Moolam">மூலம் (Moolam)</option>
-                    <option value="Pooradam">பூராடம் (Pooradam)</option>
-                    <option value="Uthiradam">உத்திராடம் (Uthiradam)</option>
-                    <option value="Thiruvonam">திருவோணம் (Thiruvonam)</option>
-                    <option value="Avittam">அவிட்டம் (Avittam)</option>
-                    <option value="Sathayam">சதயம் (Sathayam)</option>
-                    <option value="Poorattathi">பூரட்டாதி (Poorattathi)</option>
-                    <option value="Uthirattathi">
-                      உத்திரட்டாதி (Uthirattathi)
-                    </option>
-                    <option value="Revathi">ரேவதி (Revathi)</option>
+                    {getEnumOptions("star", displayMode).map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
                   </select>
 
                   <select
@@ -367,10 +342,11 @@ const MatrimonyForm = () => {
                     value={formData.dosham}
                   >
                     <option value="">Dosham / தோஷாம்</option>
-                    <option value="Sevvai">Sevvai / செவ்வாய்</option>
-                    <option value="Kethu">Kethu / கேது </option>
-                    <option value="Raagu"> Raagu / ராகு</option>
-                    <option value="No">No / இல்லை</option>
+                    {getEnumOptions("dosham", displayMode).map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className={uploadBox}>
@@ -507,9 +483,22 @@ const MatrimonyForm = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
                   {/* 1. TEXT DATA SECTION */}
                   {[
-                    { label: "முழு பெயர் / Full Name", value: formData.fullName },
-                    { label: "பாலினம் / Gender", value: formData.gender },
-                    { label: "பிறந்த தேதி / Date of Birth", value: formData.dob },
+                    {
+                      label: "முழு பெயர் / Full Name",
+                      value: formData.fullName,
+                    },
+                    {
+                      label: "பாலினம் / Gender",
+                      value: getEnumLabel(
+                        "gender",
+                        formData.gender,
+                        displayMode,
+                      ),
+                    },
+                    {
+                      label: "பிறந்த தேதி / Date of Birth",
+                      value: formData.dob,
+                    },
                     {
                       label: "பிறந்த நேரம் / Birth Time",
                       value: `${formData.birthTime} ${
@@ -517,25 +506,58 @@ const MatrimonyForm = () => {
                       }`.trim(),
                     },
                     {
+  label: "பிறந்த இடம் / Birth Place",
+  value: formData.birthPlace,
+},
+                    {
                       label: "தொலைபேசி எண் / Phone Number",
                       value: formData.phone,
                     },
                     {
                       label: "திருமண நிலை / Marital Status",
-                      value: formData.maritalStatus,
+                      value: getEnumLabel(
+                        "maritalStatus",
+                        formData.maritalStatus,
+                        displayMode,
+                      ),
                     },
                     { label: "கல்வி / Education", value: formData.education },
-                    { label: "தொழில் / Occupation", value: formData.occupation },
+                    {
+                      label: "தொழில் / Occupation",
+                      value: formData.occupation,
+                    },
                     {
                       label: "வேலை இடம் / Work Location",
                       value: formData.workLocation,
                     },
-                    { label: "தந்தை பெயர் / Father Name", value: formData.father },
-                    { label: "தாய் பெயர் / Mother Name", value: formData.mother },
-                    { label: "உடன்பிறப்புகள் / Siblings", value: formData.siblings },
-                    { label: "இராசி / Raasi", value: formData.raasi },
-                    { label: "நட்சத்திரம் / Star", value: formData.star },
-                    { label: "தோஷம் / Dosham", value: formData.dosham },
+                    {
+                      label: "தந்தை பெயர் / Father Name",
+                      value: formData.father,
+                    },
+                    {
+                      label: "தாய் பெயர் / Mother Name",
+                      value: formData.mother,
+                    },
+                    {
+                      label: "உடன்பிறப்புகள் / Siblings",
+                      value: formData.siblings,
+                    },
+                    {
+                      label: "இராசி / Raasi",
+                      value: getEnumLabel("raasi", formData.raasi, displayMode),
+                    },
+                    {
+                      label: "நட்சத்திரம் / Star",
+                      value: getEnumLabel("star", formData.star, displayMode),
+                    },
+                    {
+                      label: "தோஷம் / Dosham",
+                      value: getEnumLabel(
+                        "dosham",
+                        formData.dosham,
+                        displayMode,
+                      ),
+                    },
                     { label: "நகரம் / City", value: formData.city },
                     { label: "நாடு / Country", value: formData.country },
                     {
@@ -633,8 +655,8 @@ const MatrimonyForm = () => {
                       </span>
                       <span className="flex flex-col gap-1">
                         <span className="text-[12px] md:text-[13px] font-black text-[#5D4037] leading-relaxed">
-                          நீங்கள் பதிவிடும் விபரங்கள், நீங்கள் அனுமதித்த பின்னரே,
-                          மற்ற வரன்கள் பார்க்க முடியும்
+                          நீங்கள் பதிவிடும் விபரங்கள், நீங்கள் அனுமதித்த
+                          பின்னரே, மற்ற வரன்கள் பார்க்க முடியும்
                         </span>
                         <span className="text-[10px] uppercase tracking-wider font-bold text-[#A67C52]/80">
                           Your details will be visible to others only after your
@@ -718,7 +740,7 @@ const MatrimonyForm = () => {
                       marginLeft: "55vw", // 👈 center feel
                       zIndex: 9999, // 👈 front-la varum
                     },
-                  }
+                  },
                 );
               }}
               className="px-8 py-3 bg-[#573D2F] text-white rounded-xl font-bold hover:bg-[#5D4037] transition-all"

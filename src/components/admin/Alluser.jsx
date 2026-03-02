@@ -10,13 +10,17 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { getAllUsers, adminToggleVisibility } from "../../api/adminApi";
-
+import { getEnumLabel } from "../../utils/convertHelper";
 const AllUsers = () => {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState(null);
   const [activeTab, setActiveTab] = useState("personal");
   const [togglingUserId, setTogglingUserId] = useState(null);
+
+
+  const displayMode = "both"; 
+// or "tamil"
 
   /* ================= FETCH USERS ================= */
   useEffect(() => {
@@ -162,15 +166,19 @@ const AllUsers = () => {
           {activeTab === "personal" && (
             <>
               <InfoBox label="Full Name/ முழு பெயர்" value={selectedUser.fullName} />
-              <InfoBox label="Gender/ பாலினம்" value={selectedUser.gender} />
-              <InfoBox label="Date of Birth / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
+<InfoBox
+  label="Gender/ பாலினம்"
+  value={getEnumLabel("gender", selectedUser.gender, displayMode)}
+/> 
+             <InfoBox label="Date of Birth / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
+              <InfoBox label="Birth Place  / பிறந்த இடம்" value={selectedUser.birth_place} />
               <InfoBox label="Birth Time  / பிறந்த நேரம்" value={formatTime12h(selectedUser.birthTime)} />
                            <InfoBox label="Phone Number / தொலைபேசி எண்" value={selectedUser.phone} />
 
-              <InfoBox
-                label="Marital Status / பாலினம்"
-                value={selectedUser.maritalStatus}
-              />
+             <InfoBox
+  label="Marital Status / திருமண நிலை"
+  value={getEnumLabel("maritalStatus", selectedUser.maritalStatus, displayMode)}
+/>
 
               <div className="sm:col-span-2 lg:col-span-3">
                 <InfoBox label="Full Address/ வீட்டு முகவரி" value={selectedUser.address} />
@@ -218,9 +226,20 @@ const AllUsers = () => {
 
           {activeTab === "horoscope" && (
             <>
-              <InfoBox label="Raasi/ இராசி" value={selectedUser.raasi} />
-              <InfoBox label="Star/ நட்சத்திரம்" value={selectedUser.star} />
-              <InfoBox label="Dosham / தோஷாம்" value={selectedUser.dosham} />
+<InfoBox
+  label="Raasi / இராசி"
+  value={getEnumLabel("raasi", selectedUser.raasi, displayMode)}
+/>
+
+<InfoBox
+  label="Star / நட்சத்திரம்"
+  value={getEnumLabel("star", selectedUser.star, displayMode)}
+/>
+
+<InfoBox
+  label="Dosham / தோஷாம்"
+  value={getEnumLabel("dosham", selectedUser.dosham, displayMode)}
+/>
               {/* <InfoBox label="Birth Place" value={selectedUser.birthPlace} /> */}
 
               <div className="sm:col-span-2 lg:col-span-3 mt-4">
