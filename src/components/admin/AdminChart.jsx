@@ -147,12 +147,7 @@ const AdminChart = () => {
     <div className="bg-white p-4 sm:p-6 md:p-8 rounded-[40px] border border-gray-100 shadow-sm">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-<<<<<<< HEAD
-        <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-[#EEEEEE] flex items-center gap-3">
-          <div className="w-2 h-2 bg-[#A67C52] rounded-full animate-pulse"></div>
-          <span className="text-[#5D4037] font-black text-xs uppercase tracking-widest">
-=======
-        {/* <h2 className="text-xl font-black text-black uppercase tracking-tight">Platform Analytics</h2> */}
+        {/* <h2 className="text-xl font-black text-black uppercase tracking-tight">Platform Analytis</h2> */}
 
         <div className="bg-[#B3CCFB]/20 px-6 py-3 rounded-2xl border border-blue-100 flex items-center gap-3">
           <div className="w-2 h-2 bg-[#1A5AF0] rounded-full animate-pulse"></div>
