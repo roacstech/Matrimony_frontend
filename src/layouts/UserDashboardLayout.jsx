@@ -127,7 +127,7 @@ const UserDashboardLayout = ({
             <button className="lg:hidden p-2.5 bg-white shadow-sm border border-[#EEEEEE] rounded-xl text-[#5D4037]" onClick={() => setIsSidebarOpen(true)}>
               <Menu size={20} />
             </button>
-            <h2 className="text-xl lg:text-2xl font-black text-[#5D4037] tracking-tight">User Dashboard</h2>
+            <h2 className="text-xl lg:text-2xl font-black text-[#5D4037] tracking-tight">தாசபளஞ்சிக கல்யாணமாலை</h2>
           </div>
 
           <div className="flex items-center gap-3 relative" ref={menuRef}>

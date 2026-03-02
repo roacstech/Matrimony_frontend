@@ -270,9 +270,9 @@ const AllUsers = () => {
           <h2 className="text-xl md:text-2xl font-black text-[#5D4037] tracking-tight">
             User Records
           </h2>
-          <p className="text-[10px] font-bold text-[#A67C52] uppercase tracking-widest mt-1">
+          {/* <p className="text-[10px] font-bold text-[#A67C52] uppercase tracking-widest mt-1">
             Manage profiles and visibility
-          </p>
+          </p> */}
         </div>
         <div className="flex bg-[#FAF6F3] p-1.5 rounded-[22px] border border-[#EEEEEE] overflow-x-auto no-scrollbar max-w-full">
           {["all", "male", "female", "active", "inactive"].map((f) => (
