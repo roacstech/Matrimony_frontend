@@ -18,9 +18,9 @@ const Login = ({ onNavigate }) => {
     <div className="w-full
   sm:w-[90%] 
   md:w-[70%] 
-  lg:w-[800px] bg-white/95 backdrop-blur-xl rounded-[30px] md:rounded-[40px] p-8 md:p-10 shadow-[0_20px_50px_rgba(93,64,55,0.1)] border border-[#EEEEEE] transition-all duration-300">
+  lg:w-[800px] bg-[#F6F7F8] backdrop-blur-xl rounded-[30px] md:rounded-[40px] p-8 md:p-10 shadow-[0_20px_50px_rgba(93,64,55,0.1)] border border-[#EEEEEE] transition-all duration-300">
       <div className="mb-6">
-        <p className="font-bold text-xl md:text-2xl text-[#5D4037]">
+        <p className="font-bold text-xl md:text-2xl text-[#000000]">
           உள்நுழைக / Log In
         </p>
       </div>
@@ -28,35 +28,35 @@ const Login = ({ onNavigate }) => {
       <form className="space-y-4" onSubmit={handleSubmit}>
         {/* Email / Mobile Input */}
         <div className="group relative">
-          <EnvelopeIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A67C52] group-focus-within:text-[#5D4037]" />
+          <EnvelopeIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#000000] group-focus-within:text-[#000000]" />
           <input
             name="email"
             value={formData.email}
             onChange={handleChange}
             type="text"
             placeholder="Email Address / Mobile No"
-            className="w-full pl-10 pr-4 py-3.5 bg-[#EEEEEE]/30 border border-[#EEEEEE] rounded-xl focus:bg-white focus:border-[#5D4037] focus:outline-none transition-all text-sm"
+            className="w-full pl-10 pr-4 py-3.5 bg-[#EEEEEE]/30 border border-[#9ca3af] rounded-xl focus:bg-white focus:border-[#000000] focus:outline-none transition-all text-sm"
             required
           />
         </div>
 
         {/* Password Input */}
         <div className="group relative">
-          <LockClosedIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A67C52] group-focus-within:text-[#5D4037]" />
+          <LockClosedIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#000000] group-focus-within:text-[#000000]" />
           <input
             name="password"
             value={formData.password}
             onChange={handleChange}
             type="password"
             placeholder="Password"
-            className="w-full pl-10 pr-4 py-3.5 bg-[#EEEEEE]/30 border border-[#EEEEEE] rounded-xl focus:bg-white focus:border-[#5D4037] focus:outline-none transition-all text-sm"
+            className="w-full pl-10 pr-4 py-3.5 bg-[#EEEEEE]/30 border border-[#9ca3af] rounded-xl focus:bg-white focus:border-[#000000] focus:outline-none transition-all text-sm"
             required
           />
         </div>
 <button
   type="button"
   onClick={() => onNavigate("forgot")}
-  className="hover:text-[#5D4037] hover:underline"
+  className="hover:text-[#000000] hover:underline"
 >
   Forgot Password?
 </button>
@@ -64,7 +64,7 @@ const Login = ({ onNavigate }) => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full bg-[#573D2F] text-white py-3.5 rounded-xl font-bold shadow-lg hover:bg-[#5D4037] hover:-translate-y-0.5 transition-all active:scale-95 mt-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`w-full bg-[#1A5AF0] text-white py-3.5 rounded-xl font-bold shadow-lg  hover:-translate-y-0.5 transition-all active:scale-95 mt-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           {loading ? "Processing..." : "Log In"}
         </button>
@@ -75,7 +75,7 @@ const Login = ({ onNavigate }) => {
         <button
           type="button"
           onClick={onNavigate}
-          className="text-[#A67C52] font-bold hover:text-[#5D4037] hover:underline ml-1"
+          className="text-[#000000] font-bold  hover:underline ml-1"
         >
           Register
         </button>
