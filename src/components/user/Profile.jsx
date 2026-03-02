@@ -19,57 +19,11 @@ import {
   uploadProfilePhoto,
 } from "../../api/userApi";
 
-export const RAASI_OPTIONS = [
-  { value: "Aries", label: "மேஷம் (Aries)" },
-  { value: "Taurus", label: "ரிஷபம் (Taurus)" },
-  { value: "Gemini", label: "மிதுனம் (Gemini)" },
-  { value: "Cancer", label: "கடகம் (Cancer)" },
-  { value: "Leo", label: "சிம்மம் (Leo)" },
-  { value: "Virgo", label: "கன்னி (Virgo)" },
-  { value: "Libra", label: "துலாம் (Libra)" },
-  { value: "Scorpio", label: "விருச்சிகம் (Scorpio)" },
-  { value: "Sagittarius", label: "தனுசு (Sagittarius)" },
-  { value: "Capricorn", label: "மகரம் (Capricorn)" },
-  { value: "Aquarius", label: "கும்பம் (Aquarius)" },
-  { value: "Pisces", label: "மீனம் (Pisces)" },
-];
-
-export const STAR_OPTIONS = [
-  { value: "Aswini", label: "அஸ்வினி (Aswini)" },
-  { value: "Bharani", label: "பரணி (Bharani)" },
-  { value: "Krittigai", label: "கிருத்திகை (Krittigai)" },
-  { value: "Rohini", label: "ரோகிணி (Rohini)" },
-  { value: "Mirugasheeridam", label: "மிருகசீரிடம்" },
-  { value: "Thiruvathirai", label: "திருவாதிரை" },
-  { value: "Punarpoosam", label: "புனர்பூசம்" },
-  { value: "Poosam", label: "பூசம்" },
-  { value: "Aayilyam", label: "ஆயில்யம்" },
-  { value: "Magam", label: "மகம்" },
-  { value: "Pooram", label: "பூரம்" },
-  { value: "Uthiram", label: "உத்திரம்" },
-  { value: "Hastham", label: "அஸ்தம்" },
-  { value: "Chithirai", label: "சித்திரை" },
-  { value: "Swathi", label: "சுவாதி" },
-  { value: "Visakam", label: "விசாகம்" },
-  { value: "Anusham", label: "அனுஷம்" },
-  { value: "Kettai", label: "கேட்டை" },
-  { value: "Moolam", label: "மூலம்" },
-  { value: "Pooradam", label: "பூராடம்" },
-  { value: "Uthiradam", label: "உத்திராடம்" },
-  { value: "Thiruvonam", label: "திருவோணம்" },
-  { value: "Avittam", label: "அவிட்டம்" },
-  { value: "Sathayam", label: "சதயம்" },
-  { value: "Poorattathi", label: "பூரட்டாதி" },
-  { value: "Uthirattathi", label: "உத்திரட்டாதி" },
-  { value: "Revathi", label: "ரேவதி (Revathi)" },
-];
-
-export const DOSHAM_OPTIONS = [
-  { value: "Sevvai", label: "செவ்வாய் (Sevvai)" },
-  { value: "Raagu", label: "ராகு (Raagu)" },
-  { value: "Kethu", label: "கேது (Kethu)" },
-  { value: "No", label: "இல்லை (No Dosham)" },
-];
+import {
+  getEnumOptions,
+  getEnumLabel,
+} from "../../utils/convertHelper";
+import { calculateAge } from "../../utils/dateHelper";
 
 export const PRIVACY_OPTIONS = [
   { value: "Public", label: "🌍 Public / பொது" },
@@ -93,7 +47,8 @@ const Profile = () => {
     hours = hours % 12 || 12;
     return `${hours}:${minutes} ${period}`;
   };
-
+  const displayMode = "both";
+  // "tamil" or "both"
   useEffect(() => {
     getUserProfile(userId)
       .then((res) => {
@@ -147,26 +102,26 @@ const Profile = () => {
     }
   };
 
-const handleSave = async () => {
-  try {
-    const { horoscope, ...cleanUser } = user;
-    const res = await updateUserProfile(cleanUser);
-    if (res.success) {
-      toast.success("Profile Updated!");
-      setEdit(false);
-      // ✅ Re-fetch fresh data from DB after save
-      const updated = await getUserProfile(userId);
-      if (updated?.success) {
-        setUser(updated.data);
+  const handleSave = async () => {
+    try {
+      const { horoscope, ...cleanUser } = user;
+      const res = await updateUserProfile(cleanUser);
+      if (res.success) {
+        toast.success("Profile Updated!");
+        setEdit(false);
+        // ✅ Re-fetch fresh data from DB after save
+        const updated = await getUserProfile(userId);
+        if (updated?.success) {
+          setUser(updated.data);
+        }
+      } else {
+        toast.error(res.message || "Update failed");
       }
-    } else {
-      toast.error(res.message || "Update failed");
+    } catch (err) {
+      toast.error("Something went wrong");
+      console.error(err);
     }
-  } catch (err) {
-    toast.error("Something went wrong");
-    console.error(err);
-  }
-};
+  };
 
   const formatTimeAMPM = (timeStr) => {
     if (!timeStr) return "";
@@ -181,19 +136,19 @@ const handleSave = async () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-3 md:p-6 bg-transparent min-h-screen font-serif">
+    <div className="max-w-5xl mx-auto p-3 md:p-6 bg-transparent min-h-screen font-sans">
       {/* ================= HEADER SECTION ================= */}
-      <div className="bg-white border border-[#EEEEEE] rounded-[30px] md:rounded-[40px] p-5 md:p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+      <div className="bg-white border border-gray-100 rounded-[30px] md:rounded-[40px] p-5 md:p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-blue-900/5">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
           <div className="relative group">
-            <div className="w-24 h-24 rounded-[30px] border-4 border-[#FAF6F3] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md">
+            <div className="w-24 h-24 rounded-[30px] border-4 border-[#F8FAFC] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md">
               {user?.photo ? (
                 <img
                   src={`${import.meta.env.VITE_IMG_URL}/photos/${user?.photo}`}
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-3xl font-black text-[#5D4037]">
+                <span className="text-3xl font-black text-[#111827]">
                   {user?.full_name?.charAt(0)}
                 </span>
               )}
@@ -202,7 +157,7 @@ const handleSave = async () => {
               className={`absolute -bottom-1 -right-1 px-3 py-1 rounded-lg text-[8px] font-black uppercase border-2 border-white shadow-md ${
                 user?.privacy === "Public"
                   ? "bg-emerald-500 text-white"
-                  : "bg-[#A67C52] text-white"
+                  : "bg-[#1A5AF0] text-white"
               }`}
             >
               {user?.privacy} Mode
@@ -210,7 +165,7 @@ const handleSave = async () => {
             {edit && (
               <button
                 onClick={() => fileInputRef.current.click()}
-                className="absolute inset-0 bg-[#5D4037]/40 rounded-[30px] flex items-center justify-center transition-all hover:bg-[#5D4037]/60"
+                className="absolute inset-0 bg-[#111827]/40 rounded-[30px] flex items-center justify-center transition-all hover:bg-[#111827]/60"
               >
                 <Camera className="text-white" size={24} />
               </button>
@@ -223,13 +178,13 @@ const handleSave = async () => {
             />
           </div>
           <div className="flex flex-col items-center md:items-start">
-            <h1 className="text-xl md:text-2xl font-black text-[#5D4037] uppercase tracking-tight">
+            <h1 className="text-xl md:text-2xl font-black text-[#111827] uppercase tracking-tight">
               {user?.full_name}
             </h1>
-            <p className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] flex items-center gap-2 mt-1">
+            <p className="text-[10px] font-black text-[#1A5AF0] uppercase tracking-[2px] flex items-center gap-2 mt-1">
               <MapPin size={14} /> {user?.city}, {user?.country}
             </p>
-            <span className="text-xs text-stone-400 mt-1">{user?.email}</span>
+            <span className="text-xs font-medium text-gray-400 mt-1">{user?.email}</span>
           </div>
         </div>
 
@@ -237,7 +192,7 @@ const handleSave = async () => {
           {!edit ? (
             <button
               onClick={() => setEdit(true)}
-              className="w-full md:w-auto bg-[#5D4037] text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[2px] hover:bg-[#4a332c] transition-all shadow-lg shadow-stone-200"
+              className="w-full md:w-auto bg-[#111827] text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[2px] hover:bg-[#1A5AF0] transition-all shadow-lg shadow-blue-100"
             >
               Edit Profile
             </button>
@@ -251,7 +206,7 @@ const handleSave = async () => {
               </button>
               <button
                 onClick={() => setEdit(false)}
-                className="w-full md:w-auto bg-white text-gray-400 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[2px] border border-[#EEEEEE] hover:bg-red-50 transition-all"
+                className="w-full md:w-auto bg-white text-gray-400 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[2px] border border-gray-100 hover:bg-rose-50 hover:text-rose-500 transition-all"
               >
                 <X size={14} /> Cancel
               </button>
@@ -273,25 +228,47 @@ const handleSave = async () => {
             edit={edit}
             label="Gender / பாலினம்"
             name="gender"
-            value={user?.gender}
+            value={
+              edit
+                ? user?.gender
+                : getEnumLabel("gender", user?.gender, displayMode)
+            }
             onChange={handleChange}
-            options={[
-              { value: "Male", label: "Male / ஆண்" },
-              { value: "Female", label: "Female / பெண்" },
-            ]}
+            options={getEnumOptions("gender", displayMode)}
           />
           <Input
             edit={edit}
             label="Date of Birth / பிறந்த தேதி"
             name="dob"
+            type="date"
+            min="1900-01-01"
+            max={new Date().toISOString().split("T")[0]}
             value={
               edit
                 ? user?.dob?.split("T")[0]
-                : user?.dob ? new Date(user?.dob).toLocaleDateString("en-GB") : ""
+                : user?.dob
+                ? new Date(user?.dob).toLocaleDateString("en-GB")
+                : ""
             }
             onChange={handleChange}
-            type="date"
           />
+
+          <Input
+            edit={false}
+            label="Age / வயது"
+            name="age"
+            value={user?.dob ? `${calculateAge(user.dob)} Years` : ""}
+            type="text"
+          />
+          <Input
+            edit={edit}
+            label="Birth Place / பிறந்த இடம்"
+            name="birth_place"
+            value={user?.birth_place || ""}
+            onChange={handleChange}
+            type="text"
+          />
+
           <Input
             edit={edit}
             label="Birth Time / பிறந்த நேரம்"
@@ -315,13 +292,17 @@ const handleSave = async () => {
             edit={edit}
             label="Marital Status / திருமண நிலை"
             name="marital_status"
-            value={user?.marital_status}
+            value={
+              edit
+                ? user?.marital_status
+                : getEnumLabel(
+                    "maritalStatus",
+                    user?.marital_status,
+                    displayMode,
+                  )
+            }
             onChange={handleChange}
-            options={[
-              { value: "Unmarried", label: "Unmarried" },
-              { value: "Divorced", label: "Divorced" },
-              { value: "Widowed", label: "Widowed" },
-            ]}
+            options={getEnumOptions("maritalStatus", displayMode)}
           />
         </Section>
 
@@ -370,37 +351,46 @@ const handleSave = async () => {
             edit={edit}
             label="Raasi / ராசி"
             name="raasi"
-            value={user?.raasi}
+            value={
+              edit
+                ? user?.raasi
+                : getEnumLabel("raasi", user?.raasi, displayMode)
+            }
             onChange={handleChange}
-            options={RAASI_OPTIONS}
+            options={getEnumOptions("raasi", displayMode)}
           />
           <Input
             edit={edit}
             label="Star / நட்சத்திரம்"
             name="star"
-            value={user?.star}
+            value={
+              edit ? user?.star : getEnumLabel("star", user?.star, displayMode)
+            }
             onChange={handleChange}
-            options={STAR_OPTIONS}
+            options={getEnumOptions("star", displayMode)}
           />
           <Input
             edit={edit}
             label="Dosham / தோஷம்"
             name="dosham"
-            value={user?.dosham}
+            value={
+              edit
+                ? user?.dosham
+                : getEnumLabel("dosham", user?.dosham, displayMode)
+            }
             onChange={handleChange}
-            options={DOSHAM_OPTIONS}
+            options={getEnumOptions("dosham", displayMode)}
             className="md:col-span-2"
           />
-
           <div className="col-span-1 sm:col-span-2 flex flex-col gap-1">
-            <span className="text-[9px] font-black text-[#A67C52] uppercase tracking-wider">
+            <span className="text-[9px] font-black text-[#1A5AF0] uppercase tracking-wider">
               Jadhagam (PDF/JPG) / ஜாதகம் (PDF/JPG)
             </span>
 
             {edit ? (
               <div
                 onClick={() => horoscopeRef.current.click()}
-                className="cursor-pointer bg-[#FAF6F3] border-2 border-dashed border-[#D4C4B7] p-3 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-[#5D4037] hover:bg-[#F5F0EB] transition-all"
+                className="cursor-pointer bg-blue-50/50 border-2 border-dashed border-blue-200 p-3 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-[#111827] hover:bg-blue-50 transition-all"
               >
                 <Upload size={14} /> Update File
                 <input
@@ -411,15 +401,16 @@ const handleSave = async () => {
                 />
               </div>
             ) : (
-              <div className="flex items-center gap-2 text-[11px] font-black text-[#5D4037] py-2 bg-[#FAF6F3] px-3 rounded-xl border border-[#EEEEEE] overflow-hidden">
-                <FileText size={14} className="text-[#A67C52] shrink-0" />
-                {user?.horoscope?.uploaded || user?.horoscope_uploaded ?  (
+              <div className="flex items-center gap-2 text-[11px] font-black text-[#111827] py-2 bg-[#F8FAFC] px-3 rounded-xl border border-gray-100 overflow-hidden">
+                <FileText size={14} className="text-[#1A5AF0] shrink-0" />
+                {user?.horoscope?.uploaded || user?.horoscope_uploaded ? (
                   <a
-href={`${import.meta.env.VITE_IMG_URL}/photos/${(user?.horoscope?.fileUrl || user?.horoscope_file_url)?.split("/").pop()}`}                    target="_blank"
+                    href={`${import.meta.env.VITE_IMG_URL}/photos/${(user?.horoscope?.fileUrl || user?.horoscope_file_url)?.split("/").pop()}`}
+                    target="_blank"
                     rel="noreferrer"
-                    className="underline hover:text-[#A67C52] truncate"
+                    className="underline hover:text-[#1A5AF0] truncate"
                   >
-                    {user?.horoscope?.fileName|| user?.horoscope_file_name}
+                    {user?.horoscope?.fileName || user?.horoscope_file_name}
                   </a>
                 ) : (
                   <span className="text-gray-400">Not Uploaded</span>
@@ -527,7 +518,7 @@ href={`${import.meta.env.VITE_IMG_URL}/photos/${(user?.horoscope?.fileUrl || use
           className="md:col-span-2"
         >
           <div className="col-span-2 flex flex-col gap-1.5">
-            <label className="text-[9px] font-black text-[#A67C52] uppercase tracking-[1.5px] px-1">
+            <label className="text-[9px] font-black text-[#1A5AF0] uppercase tracking-[1.5px] px-1">
               Remarks / குறிப்புகள்
             </label>
             {edit ? (
@@ -537,10 +528,10 @@ href={`${import.meta.env.VITE_IMG_URL}/photos/${(user?.horoscope?.fileUrl || use
                 onChange={handleChange}
                 rows={4}
                 placeholder="Additional details / குறிப்புகள்"
-                className="w-full bg-[#FAF6F3] border border-[#EEEEEE] px-4 py-3 rounded-xl text-[11px] font-bold text-[#5D4037] focus:ring-2 focus:ring-[#A67C52]/20 outline-none"
+                className="w-full bg-[#F8FAFC] border border-gray-100 px-4 py-3 rounded-xl text-[11px] font-bold text-[#111827] focus:ring-2 focus:ring-[#1A5AF0]/20 outline-none"
               />
             ) : (
-              <div className="text-[12px] font-black text-[#5D4037] px-1 py-2 break-words">
+              <div className="text-[12px] font-black text-[#111827] px-1 py-2 break-words">
                 {user?.remarks || "---"}
               </div>
             )}
@@ -554,11 +545,11 @@ href={`${import.meta.env.VITE_IMG_URL}/photos/${(user?.horoscope?.fileUrl || use
 /* HELPERS */
 const Section = ({ title, icon, children, className }) => (
   <div
-    className={`bg-white p-5 md:p-7 rounded-[30px] md:rounded-[35px] border border-[#EEEEEE] shadow-sm hover:shadow-md transition-shadow ${className}`}
+    className={`bg-white p-5 md:p-7 rounded-[30px] md:rounded-[35px] border border-gray-100 shadow-xl shadow-blue-900/5 hover:shadow-blue-900/10 transition-shadow ${className}`}
   >
     <div className="flex items-center gap-3 mb-6">
-      <span className="p-2 bg-[#FAF6F3] rounded-xl text-[#A67C52]">{icon}</span>
-      <h3 className="text-[11px] md:text-[12px] font-black text-[#5D4037] uppercase tracking-[2px]">
+      <span className="p-2 bg-blue-50/50 rounded-xl text-[#1A5AF0]">{icon}</span>
+      <h3 className="text-[11px] md:text-[12px] font-black text-[#111827] uppercase tracking-[2px]">
         {title}
       </h3>
     </div>
@@ -578,7 +569,7 @@ const Input = ({
   ...props
 }) => (
   <div className={`flex flex-col gap-1.5 ${className}`}>
-    <label className="text-[9px] font-black text-[#A67C52] uppercase tracking-[1px] px-1">
+    <label className="text-[9px] font-black text-[#1A5AF0] uppercase tracking-[1px] px-1">
       {label}
     </label>
     {edit ? (
@@ -586,7 +577,7 @@ const Input = ({
         <select
           {...props}
           value={value || ""}
-          className="w-full bg-[#FAF6F3] border border-[#EEEEEE] px-4 py-2.5 rounded-xl text-[11px] font-bold text-[#5D4037] outline-none"
+          className="w-full bg-[#F8FAFC] border border-gray-100 px-4 py-2.5 rounded-xl text-[11px] font-bold text-[#111827] outline-none focus:ring-2 focus:ring-blue-100"
         >
           <option value="">Select</option>
           {options.map((o) => (
@@ -600,11 +591,11 @@ const Input = ({
           {...props}
           type={type}
           value={value || ""}
-          className="w-full bg-[#FAF6F3] border border-[#EEEEEE] px-4 py-2.5 rounded-xl text-[11px] font-bold text-[#5D4037] outline-none"
+          className="w-full bg-[#F8FAFC] border border-gray-100 px-4 py-2.5 rounded-xl text-[11px] font-bold text-[#111827] outline-none focus:ring-2 focus:ring-blue-100"
         />
       )
     ) : (
-      <div className="text-[12px] font-black text-[#5D4037] px-1 py-1 truncate">
+      <div className="text-[12px] font-black text-[#111827] px-1 py-1 truncate">
         {value || "---"}
       </div>
     )}
