@@ -38,7 +38,7 @@ const PieChart = () => {
       {
         label: "Privacy Distribution",
         data: [privacyCounts.private, privacyCounts.public],
-        backgroundColor: ["#5D4037", "#A67C52"], // brown & gold palette
+        backgroundColor: ["#1A5AF0", "#111827"], // Blue & Black palette
         borderColor: ["#fff", "#fff"],
         borderWidth: 2,
       },

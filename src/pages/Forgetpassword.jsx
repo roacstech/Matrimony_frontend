@@ -14,7 +14,7 @@ import {
 } from "../services/authService";
 
 const ForgotPassword = ({ onNavigate }) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
 
   const [email, setEmail] = useState("");
@@ -74,15 +74,17 @@ const ForgotPassword = ({ onNavigate }) => {
         email,
         newPassword,
       });
-      onNavigate(); // ✅ Navigate first
+      
+      // Keeping your logic: Navigate first, then show toast with a delay
+      onNavigate(); 
 
-    toast.success(res.data.message || "Password reset successful", {
-  duration: 2000,
-});
+      toast.success(res.data.message || "Password reset successful", {
+        duration: 2000,
+      });
 
-setTimeout(() => {
-  onNavigate();
-}, 1200);
+      setTimeout(() => {
+        onNavigate();
+      }, 1200);
     } catch (err) {
       toast.error(err.response?.data?.message || "Reset failed");
     } finally {
@@ -96,13 +98,13 @@ setTimeout(() => {
       bg-white/95 backdrop-blur-xl
       rounded-[30px] md:rounded-[40px]
       p-8 md:p-10
-      shadow-[0_20px_50px_rgba(93,64,55,0.1)]
-      border border-[#EEEEEE]
+      shadow-[0_20px_50px_rgba(26,90,240,0.1)]
+      border border-gray-200
       transition-all duration-300"
     >
       {/* TITLE */}
       <div className="mb-6">
-        <p className="font-bold text-xl md:text-2xl text-[#5D4037]">
+        <p className="font-bold text-xl md:text-2xl text-black">
           Forgot Password
         </p>
       </div>
@@ -111,17 +113,17 @@ setTimeout(() => {
       {step === 1 && (
         <form className="space-y-4" onSubmit={handleSendOtp}>
           <div className="group relative">
-            <EnvelopeIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A67C52]" />
+            <EnvelopeIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A5AF0]" />
             <input
               type="email"
               placeholder="Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full pl-10 pr-4 py-3.5
-              bg-[#EEEEEE]/30 border border-[#EEEEEE]
+              bg-gray-100 border border-gray-200
               rounded-xl focus:bg-white
-              focus:border-[#5D4037] focus:outline-none
-              transition-all text-sm"
+              focus:border-[#1A5AF0] focus:outline-none
+              transition-all text-sm text-black"
               required
             />
           </div>
@@ -129,8 +131,8 @@ setTimeout(() => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-[#573D2F] text-white py-3.5 rounded-xl font-bold
-            shadow-lg hover:bg-[#5D4037] transition-all
+            className={`w-full bg-[#1A5AF0] text-white py-3.5 rounded-xl font-bold
+            shadow-lg hover:bg-blue-700 transition-all
             ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             {loading ? "Sending OTP..." : "Send OTP"}
@@ -142,17 +144,17 @@ setTimeout(() => {
       {step === 2 && (
         <form className="space-y-4" onSubmit={handleVerifyOtp}>
           <div className="group relative">
-            <KeyIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A67C52]" />
+            <KeyIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A5AF0]" />
             <input
               type="text"
               placeholder="Enter 6-digit OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               className="w-full pl-10 pr-4 py-3.5
-              bg-[#EEEEEE]/30 border border-[#EEEEEE]
+              bg-gray-100 border border-gray-200
               rounded-xl focus:bg-white
-              focus:border-[#5D4037] focus:outline-none
-              transition-all text-sm"
+              focus:border-[#1A5AF0] focus:outline-none
+              transition-all text-sm text-black"
               required
             />
           </div>
@@ -160,8 +162,8 @@ setTimeout(() => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-[#573D2F] text-white py-3.5 rounded-xl font-bold
-            shadow-lg hover:bg-[#5D4037] transition-all
+            className={`w-full bg-[#1A5AF0] text-white py-3.5 rounded-xl font-bold
+            shadow-lg hover:bg-blue-700 transition-all
             ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             {loading ? "Verifying..." : "Verify OTP"}
@@ -173,33 +175,33 @@ setTimeout(() => {
       {step === 3 && (
         <form className="space-y-4" onSubmit={handleResetPassword}>
           <div className="group relative">
-            <LockClosedIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A67C52]" />
+            <LockClosedIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A5AF0]" />
             <input
               type="password"
               placeholder="New Password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               className="w-full pl-10 pr-4 py-3.5
-              bg-[#EEEEEE]/30 border border-[#EEEEEE]
+              bg-gray-100 border border-gray-200
               rounded-xl focus:bg-white
-              focus:border-[#5D4037] focus:outline-none
-              transition-all text-sm"
+              focus:border-[#1A5AF0] focus:outline-none
+              transition-all text-sm text-black"
               required
             />
           </div>
 
           <div className="group relative">
-            <LockClosedIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A67C52]" />
+            <LockClosedIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A5AF0]" />
             <input
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full pl-10 pr-4 py-3.5
-              bg-[#EEEEEE]/30 border border-[#EEEEEE]
+              bg-gray-100 border border-gray-200
               rounded-xl focus:bg-white
-              focus:border-[#5D4037] focus:outline-none
-              transition-all text-sm"
+              focus:border-[#1A5AF0] focus:outline-none
+              transition-all text-sm text-black"
               required
             />
           </div>
@@ -207,8 +209,8 @@ setTimeout(() => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-[#573D2F] text-white py-3.5 rounded-xl font-bold
-            shadow-lg hover:bg-[#5D4037] transition-all
+            className={`w-full bg-[#1A5AF0] text-white py-3.5 rounded-xl font-bold
+            shadow-lg hover:bg-blue-700 transition-all
             ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             {loading ? "Resetting..." : "Reset Password"}
@@ -219,13 +221,13 @@ setTimeout(() => {
       {/* BACK TO LOGIN */}
       <p className="text-sm text-gray-500 mt-6 font-medium">
         Back to
-     <button
-  type="button"
-  onClick={onNavigate}
-  className="text-[#A67C52] font-bold hover:text-[#5D4037] hover:underline ml-1"
->
-  Login
-</button>
+        <button
+          type="button"
+          onClick={onNavigate}
+          className="text-[#1A5AF0] font-bold hover:text-blue-700 hover:underline ml-1"
+        >
+          Login
+        </button>
       </p>
     </div>
   );

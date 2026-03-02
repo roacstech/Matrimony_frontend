@@ -17,7 +17,7 @@ const CircularStat = ({ label, value, total, color1, color2 }) => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 sm:p-6 bg-white rounded-[28px] shadow-sm border border-[#EEEEEE] hover:shadow-md transition-all group ">
+    <div className="flex flex-col items-center justify-center p-4 sm:p-6 bg-white rounded-[28px] shadow-sm border border-gray-100 hover:shadow-lg hover:border-blue-200 transition-all group">
       <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 128 128">
           {/* ✅ Gradient Definition */}
@@ -28,12 +28,13 @@ const CircularStat = ({ label, value, total, color1, color2 }) => {
             </linearGradient>
           </defs>
 
-          {/* Background circle */}
+          {/* Background circle (Light Blue Tint) */}
           <circle
             cx="64"
             cy="64"
             r={radius}
-            stroke="#FAF6F3"
+            stroke="#B3CCFB"
+            strokeOpacity="0.2"
             strokeWidth="8"
             fill="transparent"
           />
@@ -58,13 +59,14 @@ const CircularStat = ({ label, value, total, color1, color2 }) => {
 
         {/* Center value */}
         <div className="absolute flex flex-col items-center animate-fade-in">
-          <span className="text-xl sm:text-2xl font-black text-[#5D4037]">
+          <span className="text-xl sm:text-2xl font-black text-black">
             {value}
           </span>
+          <span className="text-[10px] font-bold text-blue-600">{percentage}%</span>
         </div>
       </div>
 
-      <h4 className="mt-3 sm:mt-4 text-[10px] sm:text-[12px] font-black text-gray-400 uppercase tracking-widest text-center group-hover:text-[#5D4037] transition-colors">
+      <h4 className="mt-3 sm:mt-4 text-[10px] sm:text-[12px] font-black text-gray-400 uppercase tracking-widest text-center group-hover:text-[#1A5AF0] transition-colors">
         {label}
       </h4>
 
@@ -142,37 +144,54 @@ const AdminChart = () => {
   }, []);
 
   return (
-    <div className="bg-[#FAF6F3]/50 p-4 sm:p-6 md:p-8 rounded-[40px] border border-[#EEEEEE]">
+    <div className="bg-white p-4 sm:p-6 md:p-8 rounded-[40px] border border-gray-100 shadow-sm">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+<<<<<<< HEAD
         <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-[#EEEEEE] flex items-center gap-3">
           <div className="w-2 h-2 bg-[#A67C52] rounded-full animate-pulse"></div>
           <span className="text-[#5D4037] font-black text-xs uppercase tracking-widest">
+=======
+        {/* <h2 className="text-xl font-black text-black uppercase tracking-tight">Platform Analytics</h2> */}
+
+        <div className="bg-[#B3CCFB]/20 px-6 py-3 rounded-2xl border border-blue-100 flex items-center gap-3">
+          <div className="w-2 h-2 bg-[#1A5AF0] rounded-full animate-pulse"></div>
+          <span className="text-[#1A5AF0] font-black text-xs uppercase tracking-widest">
+>>>>>>> 26df326ea4314410a01e9e3976402db838ef3450
             Total Users: {stats.totalUsers}
           </span>
         </div>
       </div>
       {error && (
-        <p className="text-center text-red-500 text-sm mb-6">{error}</p>
+        <p className="text-center text-red-500 text-sm mb-6 font-bold">{error}</p>
       )}
+<<<<<<< HEAD
       {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-8">
+=======
+
+      {/* Stats grid - Using Blue Color Palettes */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
+        {/* Active: Dark Blue */}
+>>>>>>> 26df326ea4314410a01e9e3976402db838ef3450
         <CircularStat
           label="Active"
           value={stats.activeUsers}
           total={stats.totalUsers}
-          color1="#5D4037"
-          color2="#8D6E63"
+          color1="#1A5AF0"
+          color2="#60A5FA"
         />
 
+        {/* Inactive: Gray/Slate */}
         <CircularStat
           label="Inactive"
           value={stats.inactiveUsers}
           total={stats.totalUsers}
-          color1="#9E9E9E"
-          color2="#EEEEEE"
+          color1="#64748b"
+          color2="#cbd5e1"
         />
 
+        {/* Male: Cyan/Blue */}
         <CircularStat
           label="Rejected"
           value={rejectedCount.rejectedCount}
@@ -185,21 +204,29 @@ const AdminChart = () => {
           label="Male"
           value={stats.maleUsers}
           total={stats.totalUsers}
-          color1="#A67C52"
-          color2="#D7CCC8"
+          color1="#0EA5E9"
+          color2="#BAE6FD"
         />
 
+        {/* Female: Indigo/Violet */}
         <CircularStat
           label="Female"
           value={stats.femaleUsers}
           total={stats.totalUsers}
-          color1="#D4A373"
-          color2="#FAEDCD"
+          color1="#4F46E5"
+          color2="#C7D2FE"
         />
       </div>
+<<<<<<< HEAD
       <div className="mt-8">
         <PieChart />
       </div>{" "}
+=======
+
+      <div className="mt-12 bg-gray-50/50 p-6 rounded-[32px] border border-gray-100">
+        <PieChart />
+      </div>
+>>>>>>> 26df326ea4314410a01e9e3976402db838ef3450
     </div>
   );
 };

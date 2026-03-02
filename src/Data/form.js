@@ -12,6 +12,7 @@ export const useMatrimonyForm = () => {
     dob: "",
     birthTime: "",
     birthPeriod: "",
+    birthPlace: "",   // ✅ ADD THIS
     email: "",
     phone: "",
     maritalStatus: "",
@@ -50,7 +51,7 @@ export const useMatrimonyForm = () => {
 
   // ✅ FIXED FIELD MAP
   const stepFields = [
-    ["fullName", "gender", "dob", "birthTime", "email", "phone", "maritalStatus"],
+    ["fullName", "gender", "dob", "birthTime", "birthPlace", "email", "phone", "maritalStatus"],
     ["education", "occupation", "income", "workLocation"],
     [
       "father",
