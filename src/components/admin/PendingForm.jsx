@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Check, X, MapPin, Mail, User, Eye } from "lucide-react";
 import { getEnumLabel } from "../../utils/convertHelper";
+import { calculateAge } from "../../utils/dateHelper";
 
 // ✅ API functions import
 import {
@@ -234,9 +235,17 @@ const PendingForms = () => {
                   label="DOB / பிறந்த தேதி"
                   value={selectedUser.dob?.split("T")[0]}
                 />
+                   <InfoRow
+                  label="Age / வயது"
+                  value={
+    selectedUser?.dob
+      ? `${calculateAge(selectedUser.dob)} Years`
+      : "—"
+  }
+                />
                 <InfoRow
                   label="Birth Place / பிறந்த இடம் "
-                  value={selectedUser.birth_place}
+                  value={selectedUser.birthPlace}
                 />
                    <InfoRow
                   label="Birth Time / பிறந்த நேரம் "

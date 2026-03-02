@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   ShieldAlert,
 } from "lucide-react";
+import { calculateAge } from "../../utils/dateHelper";
 import { getAllUsers, adminToggleVisibility } from "../../api/adminApi";
 import { getEnumLabel } from "../../utils/convertHelper";
 const AllUsers = () => {
@@ -171,7 +172,13 @@ const AllUsers = () => {
   value={getEnumLabel("gender", selectedUser.gender, displayMode)}
 /> 
              <InfoBox label="Date of Birth / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
-              <InfoBox label="Birth Place  / பிறந்த இடம்" value={selectedUser.birth_place} />
+                         <InfoBox label="Age / வயது"   value={
+    selectedUser?.dob
+      ? `${calculateAge(selectedUser.dob)} Years`
+      : "—"
+  } />
+  
+              <InfoBox label="Birth Place  / பிறந்த இடம்" value={selectedUser.birthPlace} />
               <InfoBox label="Birth Time  / பிறந்த நேரம்" value={formatTime12h(selectedUser.birthTime)} />
                            <InfoBox label="Phone Number / தொலைபேசி எண்" value={selectedUser.phone} />
 
