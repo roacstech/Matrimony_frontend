@@ -13,6 +13,7 @@ import { calculateAge } from "../../utils/dateHelper";
 import { getAllUsers, adminToggleVisibility } from "../../api/adminApi";
 import { getEnumLabel } from "../../utils/convertHelper";
 
+//update
 const AllUsers = () => {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState("all");
@@ -22,7 +23,7 @@ const AllUsers = () => {
 
   const displayMode = "both"; 
 
-  /* ================= FETCH USERS ================= */
+  //* ================= FETCH USERS ================= */
   useEffect(() => {
     getAllUsers()
       .then((res) => {

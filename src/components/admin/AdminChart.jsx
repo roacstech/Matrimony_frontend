@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { getAdminDashboard, getRejectedCount } from "../../api/adminApi";
+import { getAdminDashboard } from "../../api/adminApi";
 import PieChart from "../PieChart";
 
 /* ================= CIRCULAR STAT COMPONENT ================= */
@@ -13,13 +13,14 @@ const CircularStat = ({ label, value, total, color1, color2 }) => {
   // ✅ Unique gradient ID (prevents collision)
   const gradientId = useMemo(
     () => `grad-${label.replace(/\s+/g, "-")}-${Math.random()}`,
-    [],
+    []
   );
 
   return (
     <div className="flex flex-col items-center justify-center p-4 sm:p-6 bg-white rounded-[28px] shadow-sm border border-gray-100 hover:shadow-lg hover:border-blue-200 transition-all group">
       <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 128 128">
+
           {/* ✅ Gradient Definition */}
           <defs>
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
@@ -111,7 +112,6 @@ const AdminChart = () => {
   });
 
   const [error, setError] = useState("");
-  const [rejectedCount, setRejectedCount] = useState([]);
 
   useEffect(() => {
     const fetchStats = () => {
@@ -135,40 +135,27 @@ const AdminChart = () => {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const fetchCount = async () => {
-      const count = await getRejectedCount();
-      setRejectedCount(count);
-    };
-    fetchCount();
-  }, []);
-
   return (
     <div className="bg-white p-4 sm:p-6 md:p-8 rounded-[40px] border border-gray-100 shadow-sm">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-        {/* <h2 className="text-xl font-black text-black uppercase tracking-tight">Platform Analytis</h2> */}
+        {/* <h2 className="text-xl font-black text-black uppercase tracking-tight">Platform Analytics</h2> */}
 
         <div className="bg-[#B3CCFB]/20 px-6 py-3 rounded-2xl border border-blue-100 flex items-center gap-3">
           <div className="w-2 h-2 bg-[#1A5AF0] rounded-full animate-pulse"></div>
           <span className="text-[#1A5AF0] font-black text-xs uppercase tracking-widest">
->>>>>>> 26df326ea4314410a01e9e3976402db838ef3450
             Total Users: {stats.totalUsers}
           </span>
         </div>
       </div>
+
       {error && (
         <p className="text-center text-red-500 text-sm mb-6 font-bold">{error}</p>
       )}
-<<<<<<< HEAD
-      {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-8">
-=======
 
       {/* Stats grid - Using Blue Color Palettes */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
         {/* Active: Dark Blue */}
->>>>>>> 26df326ea4314410a01e9e3976402db838ef3450
         <CircularStat
           label="Active"
           value={stats.activeUsers}
@@ -188,14 +175,6 @@ const AdminChart = () => {
 
         {/* Male: Cyan/Blue */}
         <CircularStat
-          label="Rejected"
-          value={rejectedCount.rejectedCount}
-          total={rejectedCount.rejectedCount}
-          color1="#9E9E9E"
-          color2="#EEEEEE"
-        />
-
-        <CircularStat
           label="Male"
           value={stats.maleUsers}
           total={stats.totalUsers}
@@ -212,16 +191,10 @@ const AdminChart = () => {
           color2="#C7D2FE"
         />
       </div>
-<<<<<<< HEAD
-      <div className="mt-8">
-        <PieChart />
-      </div>{" "}
-=======
 
       <div className="mt-12 bg-gray-50/50 p-6 rounded-[32px] border border-gray-100">
         <PieChart />
       </div>
->>>>>>> 26df326ea4314410a01e9e3976402db838ef3450
     </div>
   );
 };
