@@ -10,7 +10,7 @@ import {
 } from "../../api/userApi";
 import { viewProfile } from "../../api/profilesApi";
 import { getEnumOptions, getEnumLabel } from "../../utils/convertHelper";
-
+import { calculateAge } from "../../utils/dateHelper";
 const MyConnection = () => {
   const [received, setReceived] = useState([]);
   const [sent, setSent] = useState([]);
@@ -293,6 +293,13 @@ const MyConnection = () => {
                   label="Date of Birth / பிறந்த தேதி"
                   value={selectedUser.dob?.split("T")[0]}
                 />
+                 <Row
+                  label="Age / வயது"
+  value={
+    selectedUser?.dob
+      ? `${calculateAge(selectedUser.dob)} Years`
+      : "—"
+  }                />
                 <Row
                   label="Birth Place / பிறந்த இடம்"
                   value={selectedUser.birth_place}

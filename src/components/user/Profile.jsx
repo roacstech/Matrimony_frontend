@@ -19,8 +19,12 @@ import {
   uploadProfilePhoto,
 } from "../../api/userApi";
 
-import { getEnumOptions, getEnumLabel } from "../../utils/convertHelper";
+import {
+  getEnumOptions,
+  getEnumLabel,
 
+} from "../../utils/convertHelper";
+import { calculateAge } from "../../utils/dateHelper";
 // export const RAASI_OPTIONS = [
 //   { value: "Aries", label: "மேஷம் (Aries)" },
 //   { value: "Taurus", label: "ரிஷபம் (Taurus)" },
@@ -284,28 +288,38 @@ const Profile = () => {
             onChange={handleChange}
             options={getEnumOptions("gender", displayMode)}
           />
+     <Input
+  edit={edit}
+  label="Date of Birth / பிறந்த தேதி"
+  name="dob"
+  type="date"
+  min="1900-01-01"
+  max={new Date().toISOString().split("T")[0]}
+  value={
+    edit
+      ? user?.dob?.split("T")[0]
+      : user?.dob
+        ? new Date(user?.dob).toLocaleDateString("en-GB")
+        : ""
+  }
+  onChange={handleChange}
+/>
+
+          <Input
+            edit={false}
+            label="Age / வயது"
+            name="age"
+            value={user?.dob ? `${calculateAge(user.dob)} Years` : ""}
+            type="text"
+          />
           <Input
             edit={edit}
-            label="Date of Birth / பிறந்த தேதி"
-            name="dob"
-            value={
-              edit
-                ? user?.dob?.split("T")[0]
-                : user?.dob
-                  ? new Date(user?.dob).toLocaleDateString("en-GB")
-                  : ""
-            }
+            label="Birth Place / பிறந்த இடம்"
+            name="birth_place"
+            value={user?.birth_place || ""}
             onChange={handleChange}
-            type="date"
+            type="text"
           />
-<Input
-  edit={edit}
-  label="Birth Place / பிறந்த இடம்"
-  name="birth_place"
-  value={user?.birth_place || ""}
-  onChange={handleChange}
-  type="text"
-/>
 
           <Input
             edit={edit}

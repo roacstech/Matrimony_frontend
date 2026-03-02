@@ -19,7 +19,7 @@ import {
   Lock,
 } from "lucide-react";
 import { getEnumLabel } from "../../utils/convertHelper";
-
+import { calculateAge } from "../../utils/dateHelper";
 const Img_Url = import.meta.env.VITE_IMG_URL;
 
 const ConnectionCard = () => {
@@ -288,6 +288,14 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
           month: "short",
           year: "numeric",
         })
+      : "—"
+  }
+/>
+<PopupDetail
+  label="Age / வயது"
+  value={
+    selectedUser?.dob
+      ? `${calculateAge(selectedUser.dob)} Years`
       : "—"
   }
 />

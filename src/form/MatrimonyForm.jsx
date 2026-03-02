@@ -34,6 +34,8 @@ const MatrimonyForm = () => {
     submitForm,
   } = useMatrimonyForm();
 
+  const displayMode = "both"; 
+// or "tamil"
   // ✅ ADD THIS HERE (JUST BELOW HOOKS)
   useEffect(() => {
     console.log("🔥 FORM DATA =>", formData);
