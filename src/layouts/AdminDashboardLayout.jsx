@@ -113,9 +113,9 @@ const AdminDashboardLayout = () => {
               <Menu size={20} />
             </button>
             <div>
-              <h2 className="text-xl lg:text-3xl font-black text-[#5D4037] tracking-tight leading-none">
+              {/* <h2 className="text-xl lg:text-3xl font-black text-[#5D4037] tracking-tight leading-none">
                 Overview
-              </h2>
+              </h2> */}
               <p className="hidden xs:block text-[8px] lg:text-[10px] font-bold text-[#A67C52] uppercase tracking-[2px] lg:tracking-[3px] mt-1">
                 Manage platform records
               </p>

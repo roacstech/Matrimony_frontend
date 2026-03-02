@@ -12,20 +12,17 @@ import {
 
 const formatTime12h = (time) => {
   if (!time) return "-";
-
   const [h, m] = time.split(":");
   let hours = Number(h);
   const minutes = m;
-
   const period = hours >= 12 ? "PM" : "AM";
   hours = hours % 12 || 12;
-
   return `${hours}:${minutes} ${period}`;
 };
+
 const PendingForms = () => {
   const [pending, setPending] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-
   const [loadingProfile, setLoadingProfile] = useState(false);
 
   // ================= LOAD PENDING =================
@@ -46,7 +43,6 @@ const PendingForms = () => {
     try {
       const res = await adminApproveUser(id);
       toast.success(res.message || "Approved successfully");
-
       setPending((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
       toast.error("Approval failed");
@@ -68,9 +64,7 @@ const PendingForms = () => {
   const handleView = async (item) => {
     try {
       setLoadingProfile(true);
-      
       const fullProfile = await getUserProfile(item.id);
-        console.log("👽",fullProfile)
       setSelectedUser(fullProfile);
     } catch {
       toast.error("Failed to load profile details");
@@ -78,7 +72,6 @@ const PendingForms = () => {
       setLoadingProfile(false);
     }
   };
-
 
   const closeModal = () => setSelectedUser(null);
 
@@ -93,203 +86,153 @@ const PendingForms = () => {
   }
 
   return (
-    <div className="space-y-6 cursor-pointer">
+    <div className="space-y-6 cursor-pointer px-2 md:px-0">
       {/* ================= HEADER ================= */}
       <div className="flex flex-col gap-1 ml-2">
         <h2 className="text-xl md:text-2xl font-black text-[#5D4037]">
           Pending User Requests
         </h2>
-        <p className="text-[10px] font-bold text-[#A67C52] uppercase tracking-widest">
+        {/* <p className="text-[10px] font-bold text-[#A67C52] uppercase tracking-widest">
           Review new profile submissions
-        </p>
+        </p> */}
       </div>
 
-      {/* ================= LIST ================= */}
-      <div className="grid gap-4">
-        {pending.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white  rounded-[28px] p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-5 shadow-sm"
-          >
-            <div className="flex items-center gap-5">
-              <div className="w-14 h-14 rounded-2xl overflow-hidden bg-[#FAF6F3] flex items-center justify-center">
-                {item.photo ? (
-                  <img
-                    src={`${import.meta.env.VITE_IMG_URL}/photos/${item.photo}`}
-                    alt="user"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User size={24} />
-                )}
-              </div>
-
-              <div>
-                <p className="text-[15px] font-black text-[#5D4037] leading-none mb-2">
-                  {" "}
-                  {item.profile?.fullName || item.name || "N/A"}{" "}
-                </p>
-                <p className="flex items-center gap-1 text-[11px] text-stone-500">
-                  <Mail size={12} /> {item.email}
-                </p>
-
-                <p className="flex items-center gap-1 text-[11px] text-stone-500">
-                  <MapPin size={12} /> {item.country || "India"}
-                </p>
-              </div>
-            </div>
-
-            {/* ACTION BUTTONS */}
-            <div className="flex gap-3 cursor-pointer">
-              <button
-                onClick={() => handleApprove(item.id)}
-                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#5D4037] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-sm cursor-pointer"
-              >
-                {" "}
-                <Check size={14} /> Accept{" "}
-              </button>
-
-              <button
-                onClick={() => handleReject(item)}
-                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#FAF6F3] text-rose-500 border border-rose-100 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 transition-all cursor-pointer "
-              >
-                {" "}
-                <X size={14} /> Reject{" "}
-              </button>
-
-              <button
-                onClick={() => handleView(item)}
-                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#FAF6F3] text-[#5D4037] border border-[#A67C52] rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-[#FAEBCF] transition-all cursor-pointer"
-              >
-                {" "}
-                <Eye size={14} />{" "}
-              </button>
-            </div>
-          </div>
-        ))}
+      {/* ================= TABLE LIST (Replicating AllUsers Head) ================= */}
+      <div className="bg-white rounded-[30px] md:rounded-[40px] shadow-sm border border-[#EEEEEE] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left min-w-[800px]">
+            <thead>
+              <tr className="bg-[#FAF6F3]/50 border-b border-[#EEEEEE]">
+                <th className="px-8 py-6 text-[10px] font-black text-stone-400 uppercase tracking-widest">
+                  Profile Details
+                </th>
+                <th className="px-8 py-6 text-[10px] font-black text-stone-400 uppercase tracking-widest">
+                  Contact Info
+                </th>
+                <th className="px-8 py-6 text-[10px] font-black text-stone-400 uppercase tracking-widest text-center">
+                  Review Details
+                </th>
+                <th className="px-8 py-6 text-[10px] font-black text-stone-400 uppercase tracking-widest text-center">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#EEEEEE]">
+              {pending.map((item) => (
+                <tr key={item.id} className="group hover:bg-[#FAF6F3]/30 transition-all">
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-[#5D4037] overflow-hidden flex-shrink-0 flex items-center justify-center border border-stone-100 shadow-sm">
+                        {item.photo ? (
+                          <img
+                            src={`${import.meta.env.VITE_IMG_URL}/photos/${item.photo}`}
+                            alt="user"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <User size={20} className="text-white" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-[14px] font-black text-[#5D4037] leading-tight">
+                          {item.profile?.fullName || item.name || "N/A"}
+                        </p>
+                        <p className="text-[9px] text-[#A67C52] font-bold uppercase tracking-widest mt-1">
+                          <MapPin size={10} className="inline mr-1" /> {item.country || "India"}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-8 py-5">
+                    <p className="text-xs font-bold text-[#5D4037] truncate max-w-[200px]">
+                      <Mail size={12} className="inline mr-1 text-stone-400" /> {item.email}
+                    </p>
+                  </td>
+                <td className="px-8 py-5 text-center">
+  <button
+    onClick={() => handleView(item)}
+    className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#5D4037] bg-[#FAF6F3] border border-[#A67C52]/20 hover:bg-[#5D4037] hover:text-white rounded-xl transition-all shadow-sm mx-auto flex items-center justify-center"
+  >
+    View Profile
+  </button>
+</td>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center justify-center gap-2">
+                      <button
+                        onClick={() => handleApprove(item.id)}
+                        className="px-4 py-2 bg-[#5D4037] text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:opacity-90 transition-all flex items-center gap-1.5"
+                      >
+                        <Check size={14} /> Accept
+                      </button>
+                      <button
+                        onClick={() => handleReject(item)}
+                        className="px-4 py-2 bg-rose-50 text-rose-500 border border-rose-100 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all flex items-center gap-1.5"
+                      >
+                        <X size={14} /> Reject
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* ================= MODAL ================= */}
+      {/* ================= MODAL (KEEPING ORIGINAL DESIGN) ================= */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-6">
-          <div className="bg-[#FDFBF9] w-[900px] max-w-full rounded-3xl shadow-xl p-10 relative">
-            {/* Close */}
-            <button
-              onClick={closeModal}
-              className="absolute top-6 right-6 text-[#5D4037] text-lg"
-            >
-              ✕
-            </button>
-
-            {/* Profile Image */}
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 md:p-6">
+          <div className="bg-[#FDFBF9] w-[900px] max-w-full max-h-[90vh] overflow-y-auto rounded-3xl shadow-xl p-6 md:p-10 relative">
+            <button onClick={closeModal} className="absolute top-6 right-6 text-[#5D4037] text-lg z-10">✕</button>
             <div className="flex justify-center mb-6">
               {selectedUser.photo ? (
-                <img
-                  src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`}
-                  alt="user"
-                  className="w-20 h-20 rounded-2xl object-cover shadow-sm"
-                />
+                <img src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`} className="w-20 h-20 rounded-2xl object-cover shadow-sm" alt="user" />
               ) : (
-                <div className="w-20 h-20 rounded-2xl bg-[#FAF6F3] flex items-center justify-center">
-                  <User size={28} />
-                </div>
+                <div className="w-20 h-20 rounded-2xl bg-[#FAF6F3] flex items-center justify-center"><User size={28} /></div>
               )}
             </div>
-
-            {/* Name */}
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-semibold text-[#5D4037]">
-                {selectedUser.fullName}
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">
-                {selectedUser.city}, {selectedUser.country}
-              </p>
+              <h2 className="text-3xl font-semibold text-[#5D4037]">{selectedUser.fullName}</h2>
+              <p className="text-sm text-gray-500 mt-1">{selectedUser.city}, {selectedUser.country}</p>
+              <p className="text-sm text-gray-500 mt-1">{selectedUser.email}</p>
             </div>
-
-            {/* Two Column Layout */}
-            <div className="grid grid-cols-2 gap-12">
-              {/* LEFT */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
               <div>
-                <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">
-                  PERSONAL INFO
-                </h3>
-
+                <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">PERSONAL INFO</h3>
                 <InfoRow label="Gender / பாலினம் " value={selectedUser.gender} />
                 <InfoRow label="DOB / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
-<InfoRow
-  label="Birth Time / பிறந்த நேரம் "
-  value={formatTime12h(selectedUser.birthTime)}
-/>
-
-                <InfoRow
-                  label="Marital Status / திருமண நிலை"
-                  value={selectedUser.maritalStatus}
-                />
+                <InfoRow label="Birth Time / பிறந்த நேரம் " value={formatTime12h(selectedUser.birthTime)} />
+                <InfoRow label="Marital Status / திருமண நிலை" value={selectedUser.maritalStatus} />
                 <InfoRow label="Email / மின்னஞ்சல்" value={selectedUser.email} />
-                    <InfoRow label="Phone / தொலைபேசி எண்" value={selectedUser.phone} />
-                 
+                <InfoRow label="Phone / தொலைபேசி எண்" value={selectedUser.phone} />
                 <InfoRow label="Income / தொழில்" value={selectedUser.income} />
                 <InfoRow label="Work Location / வேலை இடம்" value={selectedUser.workLocation} />
-                {/* <InfoRow label="City / நகரம்" value={selectedUser.city} /> */}
                 <InfoRow label="Education / கல்வி" value={selectedUser.education} />
               </div>
-
-              {/* RIGHT */}
               <div>
-                <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">
-                  FAMILY & DETAILS
-                </h3>
-
-      
+                <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-4">FAMILY & DETAILS</h3>
                 <InfoRow label="Father/ தந்தை பெயர்" value={selectedUser.father} />
                 <InfoRow label="Mother / தாய் பெயர்" value={selectedUser.mother} />
                 <InfoRow label="Grandfather/ தாத்தா பெயர்" value={selectedUser.grandfather} />
                 <InfoRow label="Grandmother/ பாட்டி பெயர்" value={selectedUser.grandmother} />
-
-            <InfoRow
-  label="Mother Side Grandfather/ தாய்வழி தாத்தா பெயர்"
-  value={selectedUser.motherSideGrandfather}
-/>
-
-<InfoRow
-  label="Mother Side Grandmother/ தாய்வழி பாட்டி பெயர்"
-  value={selectedUser.motherSideGrandmother}
-/>
-                
+                <InfoRow label="Mother Side GF / தாய்வழி தாத்தா பெயர்" value={selectedUser.motherSideGrandfather} />
+                <InfoRow label="Mother Side GM / தாய்வழி பாட்டி பெயர்" value={selectedUser.motherSideGrandmother} />
                 <InfoRow label="Siblings/ உடன்பிறப்புகள்" value={selectedUser.siblings} />
                 <InfoRow label="Raasi/ இராசி" value={selectedUser.raasi} />
                 <InfoRow label="Star/ நட்சத்திரம்" value={selectedUser.star} />
                 <InfoRow label="Dosham/ தோஷாம்" value={selectedUser.dosham} />
               </div>
             </div>
-
-            {/* HOROSCOPE SECTION (Separate Row Full Width) */}
             <div className="mt-10">
-              <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-3">
-                JADHAGAM FILE / ஜாதகம்
-              </h3>
-
+              <h3 className="text-xs tracking-widest text-[#A67C52] font-semibold mb-3">JADHAGAM FILE / ஜாதகம்</h3>
               {selectedUser.horoscope?.uploaded ? (
                 <div className="flex items-center justify-between bg-[#FAF6F3] px-5 py-3 rounded-2xl">
-                  <span className="text-sm text-[#5D4037] truncate">
-                    {selectedUser.horoscope.fileName}
-                  </span>
-
-                  <a
-                    href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope.fileName}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-4 py-2 bg-[#5D4037] text-white text-xs rounded-xl font-semibold hover:opacity-90 transition"
-                  >
-                    View
-                  </a>
+                  <span className="text-sm text-[#5D4037] truncate">{selectedUser.horoscope.fileName}</span>
+                  <a href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope.fileName}`} target="_blank" rel="noreferrer" className="px-4 py-2 bg-[#5D4037] text-white text-xs rounded-xl font-semibold hover:opacity-90 transition">View</a>
                 </div>
-              ) : (
-                <p className="text-sm text-gray-400">Not Uploaded</p>
-              )}
+              ) : ( <p className="text-sm text-gray-400">Not Uploaded</p> )}
             </div>
-                            <InfoRow label="Remarks / குறிப்புகள்" value={selectedUser.remarks} />
-
+            <InfoRow label="Remarks / குறிப்புகள்" value={selectedUser.remarks} />
           </div>
         </div>
       )}
@@ -297,17 +240,11 @@ const PendingForms = () => {
   );
 };
 
-export default PendingForms;
-
-/* ================= REUSABLE COMPONENTS ================= */
-
 const InfoRow = ({ label, value }) => (
   <div className="flex justify-between py-2 border-b border-[#E6DFD8] text-sm">
-    <span className="text-gray-400 uppercase text-[11px] tracking-wide">
-      {label}
-    </span>
-    <span className="text-[#5D4037] font-medium text-right max-w-[55%]">
-      {value || "-"}
-    </span>
+    <span className="text-gray-400 uppercase text-[11px] tracking-wide pr-4">{label}</span>
+    <span className="text-[#5D4037] font-medium text-right max-w-[55%]">{value || "-"}</span>
   </div>
 );
+
+export default PendingForms;
