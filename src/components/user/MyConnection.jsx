@@ -6,7 +6,7 @@ import {
   rejectConnection,
   withdrawConnection,
   getUserProfile,
-  getAcceptedConnections,
+  getAcceptedConnections, // ✅ ADD THIS
 } from "../../api/userApi";
 import { viewProfile } from "../../api/profilesApi";
 import { getEnumOptions, getEnumLabel } from "../../utils/convertHelper";
@@ -82,37 +82,59 @@ const MyConnection = () => {
   // };
 
   /* ================= ACTIONS ================= */
-  const handleAcceptConnection = async (connectionId) => {
-    const res = await acceptConnection(connectionId);
 
-    if (!res.success) {
-      return triggerToast(res.message || "Accept failed");
+
+const refreshAcceptedConnections = async () => {
+  try {
+    const res = await getAcceptedConnections();
+    if (res?.success) {
+      const accepted = (res.data || []).map((c) => ({
+        ...c,
+        status: "Accepted",
+      }));
+      setAcceptedReceived(accepted);
+    }
+  } catch (err) {
+    console.error("Failed to refresh accepted connections", err);
+  }
+};
+
+
+
+const handleAcceptConnection = async (connectionId) => {
+  const res = await acceptConnection(connectionId);
+
+  if (!res.success) {
+    return triggerToast(res.message || "Accept failed");
+  }
+
+  triggerToast("Connection accepted");
+
+  setReceived((prev) => {
+    const acceptedConn = prev.find(
+      (c) => c.connectionId === connectionId
+    );
+
+    if (acceptedConn) {
+      setAcceptedReceived((prevAccepted) => [
+        {
+          ...acceptedConn,
+          profileId:
+            acceptedConn.profileId ||
+            acceptedConn.profile_id ||
+            acceptedConn.from_profile_id,
+          status: "Accepted",
+        },
+        ...prevAccepted,
+      ]);
     }
 
-    triggerToast("Connection accepted");
+    return prev.filter((c) => c.connectionId !== connectionId);
+  });
 
-    setReceived((prev) => {
-      const acceptedConn = prev.find(
-        (c) => c.connectionId === connectionId
-      );
-
-      if (acceptedConn) {
-        setAcceptedReceived((prevAccepted) => [
-          {
-            ...acceptedConn,
-            profileId:
-              acceptedConn.profileId ||
-              acceptedConn.profile_id ||
-              acceptedConn.from_profile_id,
-            status: "Accepted",
-          },
-          ...prevAccepted,
-        ]);
-      }
-
-      return prev.filter((c) => c.connectionId !== connectionId);
-    });
-  };
+  // ✅ ONLY THIS LINE ADDED
+  await refreshAcceptedConnections();
+};
   const handleRejectConnection = async (connectionId) => {
     const res = await rejectConnection(connectionId);
     if (!res.success) return triggerToast(res.message || "Reject failed");
