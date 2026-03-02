@@ -103,7 +103,7 @@ const ConnectionCard = () => {
           onClick={() => setActiveTab("Public")}
           className={`flex-1 sm:flex-none whitespace-nowrap px-6 sm:px-8 py-2.5 rounded-full text-[10px] font-black tracking-[2px] uppercase transition-all duration-300 ${
             activeTab === "Public"
-              ? "bg-[#5D4037] text-white shadow-xl -translate-y-0.5"
+              ? "bg-[#1A5AF0] text-white shadow-xl -translate-y-0.5"
               : "bg-white text-gray-400 border border-[#EEEEEE]"
           }`}
         >
@@ -116,7 +116,7 @@ const ConnectionCard = () => {
           onClick={() => setActiveTab("Private")}
           className={`flex-1 sm:flex-none whitespace-nowrap px-6 sm:px-8 py-2.5 rounded-full text-[10px] font-black tracking-[2px] uppercase transition-all duration-300 ${
             activeTab === "Private"
-              ? "bg-[#5D4037] text-white shadow-xl -translate-y-0.5"
+              ? "bg-[#1A5AF0] text-white shadow-xl -translate-y-0.5"
               : "bg-white text-gray-400 border border-[#EEEEEE]"
           }`}
         >
@@ -144,7 +144,7 @@ const ConnectionCard = () => {
             <div
               key={u.id}
                  
-              className="group relative bg-white rounded-[32px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#A67C52]/30 transition-all duration-500 flex flex-col w-full msm:max-w-[420px]
+              className="group relative bg-white rounded-[32px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#1A5AF0]/30 transition-all duration-500 flex flex-col w-full msm:max-w-[420px]
 lg:max-w-[480px]
 xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
             >
@@ -156,8 +156,8 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                 className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-1.5 rounded-full shadow-md border border-white transition-transform group-hover:scale-105"
                 style={{
                   backgroundColor:
-                    u.privacy === "Public" ? "#FAF6F3" : "#EEEEEE",
-                  color: "#5D4037",
+                    u.privacy === "Public" ? "#EFF6FF" : "#F3F4F6",
+                  color: "#1A5AF0",
                 }}
               >
                 <span className="text-[9px] font-black uppercase tracking-[1.5px] whitespace-nowrap leading-none">
@@ -211,7 +211,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
 {u.privacy === "Public" && (
   <button
     onClick={() => handleViewProfile(u.user_id)}
-    className="mt-6 w-full py-4 bg-[#5D4037] text-white text-[12px] font-black uppercase tracking-[2px] rounded-[24px] hover:opacity-90 transition-all shadow-md block"
+    className="mt-6 w-full py-4 bg-[#1A5AF0] text-white text-[12px] font-black uppercase tracking-[2px] rounded-[24px] hover:bg-[#1e40af] transition-all shadow-md block"
   >
     View Profile
   </button>
@@ -223,7 +223,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
     {u.connection_status === "Not Sent" && (
       <button
         onClick={() => handleConnect(u.id)}
-        className="w-full bg-[#5D4037] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#4a332c] transition-all shadow-lg"
+        className="w-full bg-[#1A5AF0] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#1e40af] transition-all shadow-lg"
       >
         Connect Now
       </button>
@@ -243,7 +243,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
     {u.connection_status === "Accepted" && (
       <button
         onClick={() => handleViewProfile(u.user_id)}
-        className="w-full bg-[#5D4037] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#4a332c] transition-all shadow-lg"
+        className="w-full bg-[#1A5AF0] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#1e40af] transition-all shadow-lg"
       >
         View Profile
       </button>
@@ -267,11 +267,11 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
 
       {/* ================= VIEW USER POPUP ================= */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-[#5D4037]/40 backdrop-blur-md flex items-center justify-center z-[100] p-3 sm:p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[100] p-3 sm:p-4">
           <div className="relative bg-white rounded-[32px] sm:rounded-[40px] p-5 sm:p-8 w-full max-w-[650px] max-h-[90vh] overflow-y-auto shadow-2xl border border-[#EEEEEE]">
             <button
               onClick={() => setSelectedUser(null)}
-              className="sticky top-0 float-right z-10 p-2 bg-[#5D4037] rounded-full text-white hover:bg-[#A67C52] transition-all mb-2"
+              className="sticky top-0 float-right z-10 p-2 bg-[#1A5AF0] rounded-full text-white hover:bg-[#111827] transition-all mb-2"
             >
               <X size={18} />
             </button>
@@ -282,16 +282,16 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                 <img
                   src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`}
                   alt=""
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-[25px] sm:rounded-[30px] shadow-xl border-4 border-[#FAF6F3] object-cover"
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-[25px] sm:rounded-[30px] shadow-xl border-4 border-[#F8FAFC] object-cover"
                 />
-                <div className="absolute -bottom-2 -right-2 bg-[#A67C52] text-white p-2 rounded-lg shadow-lg">
+                <div className="absolute -bottom-2 -right-2 bg-[#111827] text-white p-2 rounded-lg shadow-lg">
                   <User size={16} />
                 </div>
               </div>
-              <h3 className="text-center font-black text-xl sm:text-2xl text-[#5D4037] tracking-tight px-2">
+              <h3 className="text-center font-black text-xl sm:text-2xl text-[#111827] tracking-tight px-2">
                 {selectedUser.full_name}
               </h3>
-              <p className="text-center text-[9px] sm:text-[10px] text-[#A67C52] font-black uppercase tracking-[2px] sm:tracking-[3px] mt-1">
+              <p className="text-center text-[9px] sm:text-[10px] text-[#1A5AF0] font-black uppercase tracking-[2px] sm:tracking-[3px] mt-1">
                 {selectedUser.occupation}
               </p>
               <p className="text-center text-[10px] text-gray-400 mt-2 uppercase tracking-widest flex items-center justify-center gap-1">
@@ -302,7 +302,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
               {/* Left Column */}
               <div className="space-y-3">
-                <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">
+                <h4 className="text-[10px] font-black text-[#1A5AF0] uppercase tracking-[2px] mb-4 border-b border-[#F8FAFC] pb-1">
                   Personal Info
                 </h4>
              <PopupDetail
@@ -378,8 +378,8 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                 />
          
 
-                <div className="mt-4 pt-4 border-t border-[#FAF6F3]">
-                  <p className="text-[10px] font-black text-[#5D4037] uppercase mb-1 flex items-center gap-2">
+                <div className="mt-4 pt-4 border-t border-[#F8FAFC]">
+                  <p className="text-[10px] font-black text-[#111827] uppercase mb-1 flex items-center gap-2">
                     <GraduationCap size={14} /> Education / கல்வி
                   </p>
                   <p className="text-xs text-gray-500 font-medium leading-relaxed">
@@ -390,7 +390,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
 
               {/* Right Column */}
               <div className="space-y-3">
-                <h4 className="text-[10px] font-black text-[#A67C52] uppercase tracking-[2px] mb-4 border-b border-[#FAF6F3] pb-1">
+                <h4 className="text-[10px] font-black text-[#1A5AF0] uppercase tracking-[2px] mb-4 border-b border-[#F8FAFC] pb-1">
                   Family & Details
                 </h4>
                 <PopupDetail
@@ -414,7 +414,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                   label="Mother Side Grandfather Name / தாய்வழி தாத்தா பெயர்"
                   value={selectedUser.mother_side_grandfather_name}
                 />
-                     <PopupDetail
+                       <PopupDetail
                   label="Mother Side Grandmother Name / தாய்வழி பாட்டி பெயர்"
                   value={selectedUser.mother_side_grandmother_name}
                 />
@@ -423,28 +423,28 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                   value={selectedUser.siblings}
                 />
 
-                <div className="mt-6 grid grid-cols-2 gap-3 bg-[#FAF6F3] p-4 rounded-2xl border border-[#EEEEEE]">
+                <div className="mt-6 grid grid-cols-2 gap-3 bg-[#F8FAFC] p-4 rounded-2xl border border-[#EEEEEE]">
                   <div>
-                    <p className="text-[9px] font-black text-[#A67C52] uppercase">
+                    <p className="text-[9px] font-black text-[#1A5AF0] uppercase">
                       Raasi
                     </p>
-                    <p className="text-[11px] font-bold text-[#5D4037]">
+                    <p className="text-[11px] font-bold text-[#111827]">
                       {getEnumLabel("raasi", selectedUser.raasi, displayMode)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[9px] font-black text-[#A67C52] uppercase">
+                    <p className="text-[9px] font-black text-[#1A5AF0] uppercase">
                       Star
                     </p>
-                    <p className="text-[11px] font-bold text-[#5D4037]">
+                    <p className="text-[11px] font-bold text-[#111827]">
                       {getEnumLabel("star", selectedUser.star, displayMode)}
                     </p>
                   </div>
                   <div className="col-span-2 mt-1">
-                    <p className="text-[9px] font-black text-[#A67C52] uppercase">
+                    <p className="text-[9px] font-black text-[#1A5AF0] uppercase">
                       Dosham
                     </p>
-                    <p className="text-[11px] font-bold text-[#5D4037]">
+                    <p className="text-[11px] font-bold text-[#111827]">
                       {getEnumLabel("dosham", selectedUser.dosham, displayMode)}
                     </p>
                   </div>
@@ -455,13 +455,13 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
             {/* JADHAGAM SECTION */}
             <div className="mt-10">
               {selectedUser.horoscope_uploaded ? (
-                <div className="p-4 sm:p-5 bg-[#FAF6F3] rounded-[24px] border border-[#EEEEEE] flex flex-col sm:flex-row items-center justify-between gap-4 group hover:border-[#A67C52] transition-all">
+                <div className="p-4 sm:p-5 bg-[#F8FAFC] rounded-[24px] border border-[#EEEEEE] flex flex-col sm:flex-row items-center justify-between gap-4 group hover:border-[#1A5AF0] transition-all">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-white rounded-xl text-[#A67C52] shadow-sm">
+                    <div className="p-3 bg-white rounded-xl text-[#1A5AF0] shadow-sm">
                       <FileText size={20} />
                     </div>
                     <div>
-                      <p className="text-[11px] font-black text-[#5D4037] uppercase tracking-wider">
+                      <p className="text-[11px] font-black text-[#111827] uppercase tracking-wider">
                         📜 Horoscope / Jadhagam
                       </p>
                     </div>
@@ -470,7 +470,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
                     href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope_file_name}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full sm:w-auto text-center px-6 py-2.5 text-[9px] bg-[#5D4037] text-white rounded-xl font-black uppercase tracking-widest hover:bg-[#A67C52] transition-all shadow-md"
+                    className="w-full sm:w-auto text-center px-6 py-2.5 text-[9px] bg-[#1A5AF0] text-white rounded-xl font-black uppercase tracking-widest hover:bg-[#111827] transition-all shadow-md"
                   >
                     View
                   </a>
@@ -490,7 +490,7 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
       {/* 🔔 GLOBAL TOAST POPUP (MOBILE OPTIMIZED) */}
       {toast.show && (
         <div className="fixed bottom-10 left-0 right-0 z-[9999] flex justify-center px-4 sm:bottom-auto sm:top-32 sm:ml-60">
-          <div className="bg-[#5D4037] text-[#FAF6F3] font-bold px-6 sm:px-10 py-3 rounded-2xl shadow-2xl text-center transform-gpu scale-100 opacity-100 transition-all duration-300">
+          <div className="bg-[#111827] text-[#FAF6F3] font-bold px-6 sm:px-10 py-3 rounded-2xl shadow-2xl text-center transform-gpu scale-100 opacity-100 transition-all duration-300">
             {toast.msg}
           </div>
         </div>
@@ -501,11 +501,11 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
 
 /* ================= HELPER COMPONENTS ================= */
 const PopupDetail = ({ label, value }) => (
-  <div className="flex justify-between items-start py-1.5 border-b border-[#FAF6F3] gap-4">
+  <div className="flex justify-between items-start py-1.5 border-b border-[#F8FAFC] gap-4">
     <span className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest min-w-[100px]">
       {label}
     </span>
-    <span className="text-[10px] sm:text-[11px] font-black text-[#5D4037] text-right">
+    <span className="text-[10px] sm:text-[11px] font-black text-[#111827] text-right">
       {value || "N/A"}
     </span>
   </div>
@@ -514,16 +514,16 @@ const PopupDetail = ({ label, value }) => (
 const DetailItem = ({ icon, label, value, isAccent }) => (
   <div className="flex flex-col min-w-0 w-full">
     <div className="flex items-center gap-1.5 mb-1">
-      <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-[#FAF6F3] rounded-md text-[12px]">
+      <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-[#F8FAFC] rounded-md text-[12px]">
         {icon}
       </span>
-      <span className="text-[8px] sm:text-[9px] text-[#A67C52] uppercase font-black tracking-[0.1em] leading-none truncate">
+      <span className="text-[8px] sm:text-[9px] text-[#111827] uppercase font-black tracking-[0.1em] leading-none truncate">
         {label}
       </span>
     </div>
     <div className="ml-6">
       <span
-        className={`text-[10px] font-black leading-tight block truncate uppercase tracking-wider ${isAccent ? "text-[#5D4037]" : "text-gray-500"}`}
+        className={`text-[10px] font-black leading-tight block truncate uppercase tracking-wider ${isAccent ? "text-[#1A5AF0]" : "text-gray-500"}`}
         title={value}
       >
         {value || "---"}

@@ -11,6 +11,7 @@ import {
 import { viewProfile } from "../../api/profilesApi";
 import { getEnumOptions, getEnumLabel } from "../../utils/convertHelper";
 import { calculateAge } from "../../utils/dateHelper";
+
 const MyConnection = () => {
   const [received, setReceived] = useState([]);
   const [sent, setSent] = useState([]);
@@ -81,37 +82,37 @@ const MyConnection = () => {
   // };
 
   /* ================= ACTIONS ================= */
-const handleAcceptConnection = async (connectionId) => {
-  const res = await acceptConnection(connectionId);
+  const handleAcceptConnection = async (connectionId) => {
+    const res = await acceptConnection(connectionId);
 
-  if (!res.success) {
-    return triggerToast(res.message || "Accept failed");
-  }
-
-  triggerToast("Connection accepted");
-
-  setReceived((prev) => {
-    const acceptedConn = prev.find(
-      (c) => c.connectionId === connectionId
-    );
-
-    if (acceptedConn) {
-    setAcceptedReceived((prevAccepted) => [
-  {
-    ...acceptedConn,
-    profileId:
-      acceptedConn.profileId ||
-      acceptedConn.profile_id ||
-      acceptedConn.from_profile_id,
-    status: "Accepted",
-  },
-  ...prevAccepted,
-]);
+    if (!res.success) {
+      return triggerToast(res.message || "Accept failed");
     }
 
-    return prev.filter((c) => c.connectionId !== connectionId);
-  });
-};
+    triggerToast("Connection accepted");
+
+    setReceived((prev) => {
+      const acceptedConn = prev.find(
+        (c) => c.connectionId === connectionId
+      );
+
+      if (acceptedConn) {
+        setAcceptedReceived((prevAccepted) => [
+          {
+            ...acceptedConn,
+            profileId:
+              acceptedConn.profileId ||
+              acceptedConn.profile_id ||
+              acceptedConn.from_profile_id,
+            status: "Accepted",
+          },
+          ...prevAccepted,
+        ]);
+      }
+
+      return prev.filter((c) => c.connectionId !== connectionId);
+    });
+  };
   const handleRejectConnection = async (connectionId) => {
     const res = await rejectConnection(connectionId);
     if (!res.success) return triggerToast(res.message || "Reject failed");
@@ -164,10 +165,10 @@ const handleAcceptConnection = async (connectionId) => {
   const allReceived = [...received, ...acceptedReceived];
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto bg-[#FDFCFD] min-h-screen relative">
+    <div className="p-6 max-w-[1400px] mx-auto bg-[#F8FAFC] min-h-screen relative">
       {/* Toast */}
       {toast.show && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-[#3B1E54] text-white px-6 py-3 rounded-xl shadow-lg text-xs font-bold uppercase tracking-widest">
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-[#111827] text-white px-6 py-3 rounded-xl shadow-2xl text-xs font-bold uppercase tracking-widest border border-blue-500/30">
           {toast.msg}
         </div>
       )}
@@ -175,8 +176,9 @@ const handleAcceptConnection = async (connectionId) => {
       <div className="flex flex-col lg:flex-row gap-12">
         {/* ================= RECEIVED ================= */}
         <section className="w-full lg:w-[55%]">
-          <h2 className="text-lg font-black text-[#3B1E54] uppercase mb-6 tracking-widest">
+          <h2 className="text-lg font-black text-[#111827] uppercase mb-6 tracking-widest flex items-center gap-3">
             Received Connections
+            <span className="h-1 w-12 bg-[#1A5AF0] rounded-full"></span>
           </h2>
 
           <div className="space-y-5">
@@ -189,42 +191,46 @@ const handleAcceptConnection = async (connectionId) => {
               const isAccepted = c.status === "Accepted";
 
               return (
-            <div
-  key={c.connectionId}
-  className={`rounded-2xl p-5 transition-all shadow-sm 
-  ${isAccepted ? "bg-green-50/70" : expired ? "opacity-40 bg-gray-50" : "bg-white shadow-md"}`}
->
+                <div
+                  key={c.connectionId}
+                  className={`rounded-2xl p-5 transition-all border 
+  ${isAccepted ? "bg-blue-50/50 border-blue-100" : expired ? "opacity-40 bg-gray-50 border-transparent" : "bg-white shadow-md border-gray-100"}`}
+                >
                   <div className="flex justify-between items-center mb-2">
-                    {/* <h3 className="font-bold text-[#3B1E54]">{c.full_name}</h3> */}
+                    {/* <h3 className="font-bold text-[#111827]">{c.full_name}</h3> */}
                     {isAccepted ? (
-                      <span className="text-[10px] bg-green-200 text-green-700 px-3 py-1 rounded-full font-black uppercase">
+                      <span className="text-[10px] bg-[#1A5AF0] text-white px-3 py-1 rounded-full font-black uppercase">
                         Accepted
                       </span>
                     ) : !expired ? (
-                      <span className="text-xs text-pink-500 font-bold">
+                      <span className="text-xs text-[#1A5AF0] font-bold">
                         {/* {hoursLeft(c.created_at)}h left */}
                       </span>
-                    ) : null}
+                    ) : (
+                      <span className="text-[10px] bg-gray-200 text-gray-500 px-3 py-1 rounded-full font-black uppercase">
+                        Expired
+                      </span>
+                    )}
                   </div>
 
-            <p className="text-xs text-gray-500">
-  {getEnumLabel("gender", c.gender, displayMode)} • {c.occupation} • {c.city}
-</p>
+                  <p className="text-xs text-gray-500 font-medium">
+                    {getEnumLabel("gender", c.gender, displayMode)} • {c.occupation} • {c.city}
+                  </p>
 
-{isAccepted && (
-  <div className="flex justify-end mt-4">
-    <button
-      onClick={() =>
-        handleViewProfile(c.user_id, c.from_user, c.profileId)
-      }
-      className="bg-[#3B1E54] text-white px-6 py-2 rounded-full
-                 text-[10px] font-bold uppercase tracking-widest
-                 hover:bg-[#2A153D] transition-colors"
-    >
-      View Profile
-    </button>
-  </div>
-)}
+                  {isAccepted && (
+                    <div className="flex justify-end mt-4">
+                      <button
+                        onClick={() =>
+                          handleViewProfile(c.user_id, c.from_user, c.profileId)
+                        }
+                        className="bg-[#111827] text-white px-6 py-2 rounded-full
+                                 text-[10px] font-bold uppercase tracking-widest
+                                 hover:bg-[#1A5AF0] transition-colors shadow-lg"
+                      >
+                        View Profile
+                      </button>
+                    </div>
+                  )}
 
                   {!expired && !isAccepted && (
                     <div className="flex gap-3 mt-4">
@@ -233,7 +239,7 @@ const handleAcceptConnection = async (connectionId) => {
                           e.stopPropagation();
                           handleAcceptConnection(c.connectionId);
                         }}
-                        className="bg-[#228B22] text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#90EE90] transition-colors"
+                        className="bg-[#1A5AF0] text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-[#111827] transition-colors shadow-md"
                       >
                         Accept
                       </button>
@@ -242,14 +248,14 @@ const handleAcceptConnection = async (connectionId) => {
                           e.stopPropagation();
                           handleRejectConnection(c.connectionId);
                         }}
-                        className="bg-rose-50 text-rose-500 px-6 py-2 rounded-full text-[10px] font-bold uppercase hover:bg-rose-100 transition-colors"
+                        className="bg-white text-rose-500 border border-rose-100 px-6 py-2 rounded-full text-[10px] font-bold uppercase hover:bg-rose-50 transition-colors"
                       >
                         Reject
                       </button>
                     </div>
                   )}
                 </div>
-                
+
               );
             })}
           </div>
@@ -257,8 +263,8 @@ const handleAcceptConnection = async (connectionId) => {
         </section>
 
         {/* ================= SENT ================= */}
-        <section className="w-full lg:w-[45%] bg-[#FFF5F7] p-6 rounded-3xl shadow-sm">
-          <h2 className="text-base font-black text-[#3B1E54] uppercase mb-6 tracking-widest">
+        <section className="w-full lg:w-[45%] bg-white border border-gray-100 p-6 rounded-3xl shadow-xl">
+          <h2 className="text-base font-black text-[#111827] uppercase mb-6 tracking-widest">
             Sent Requests ({sent.length})
           </h2>
 
@@ -266,19 +272,19 @@ const handleAcceptConnection = async (connectionId) => {
             {sent.map((c) => (
               <div
                 key={c.connectionId}
-                className="flex justify-between items-center bg-white/60 p-4 rounded-xl shadow-sm"
+                className="flex justify-between items-center bg-[#F8FAFC] border border-gray-50 p-4 rounded-xl hover:border-blue-100 transition-colors"
               >
                 <div>
-                  <p className="font-bold text-[#3B1E54] text-sm">
+                  <p className="font-bold text-[#111827] text-sm">
                     {c.receiver_work || "User Profile"}
                   </p>
-                <p className="text-[10px] text-gray-400 uppercase tracking-widest">
-  {c.receiver_city} • {getEnumLabel("raasi", c.receiver_raasi, displayMode)}
-</p>
+                  <p className="text-[10px] text-[#1A5AF0] font-bold uppercase tracking-widest">
+                    {c.receiver_city} • {getEnumLabel("raasi", c.receiver_raasi, displayMode)}
+                  </p>
                 </div>
                 <button
                   onClick={() => handleWithdrawRequest(c.connectionId)}
-                  className="bg-rose-100 text-rose-600 px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-colors hover:bg-rose-200"
+                  className="bg-rose-50 text-rose-600 px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-colors hover:bg-rose-100"
                 >
                   Cancel
                 </button>
@@ -290,25 +296,28 @@ const handleAcceptConnection = async (connectionId) => {
 
       {/* ================= PROFILE MODAL ================= */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-[#3B1E54]/40 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-5xl max-h-[95vh] overflow-y-auto rounded-[2.5rem] shadow-2xl relative p-8">
+        <div className="fixed inset-0 bg-[#111827]/80 backdrop-blur-sm flex items-center justify-center z-[110] p-4">
+          <div className="bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-[2rem] shadow-2xl relative p-8 border border-gray-100">
             <button
               onClick={() => setSelectedUser(null)}
-              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center rounded-full bg-[#FFF5F7] text-[#3B1E54] font-bold hover:bg-[#FCE7EB] transition-colors"
+              className="fixed lg:absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-[#F1F5F9] text-[#111827] font-bold hover:bg-[#1A5AF0] hover:text-white transition-all shadow-md z-[120]"
             >
               ✕
             </button>
 
             {/* HEADER */}
-            <div className="flex flex-col items-center mb-10 text-center">
-              <img
-                src={`${Img_Url}/photos/${selectedUser.photo}`}
-                className="w-24 h-24 object-cover rounded-2xl shadow-xl mb-4 bg-gray-100"
-              />
-              <h2 className="text-2xl font-black text-[#3B1E54] tracking-tight">
+            <div className="flex flex-col items-center mb-12 text-center">
+              <div className="relative">
+                <img
+                  src={`${Img_Url}/photos/${selectedUser.photo}`}
+                  className="w-28 h-28 object-cover rounded-3xl shadow-2xl mb-4 bg-gray-100 border-4 border-white"
+                />
+                <div className="absolute -bottom-1 -right-1 bg-[#1A5AF0] w-6 h-6 rounded-full border-4 border-white"></div>
+              </div>
+              <h2 className="text-2xl font-black text-[#111827] tracking-tight">
                 {selectedUser.full_name}
               </h2>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">
+              <p className="text-[10px] font-black text-[#1A5AF0] uppercase tracking-[0.3em] mt-2">
                 {selectedUser.city} • {selectedUser.country}
               </p>
             </div>
@@ -330,13 +339,13 @@ const handleAcceptConnection = async (connectionId) => {
                   label="Date of Birth / பிறந்த தேதி"
                   value={selectedUser.dob?.split("T")[0]}
                 />
-                 <Row
+                <Row
                   label="Age / வயது"
-  value={
-    selectedUser?.dob
-      ? `${calculateAge(selectedUser.dob)} Years`
-      : "—"
-  }                />
+                  value={
+                    selectedUser?.dob
+                      ? `${calculateAge(selectedUser.dob)} Years`
+                      : "—"
+                  } />
                 <Row
                   label="Birth Place / பிறந்த இடம்"
                   value={selectedUser.birth_place}
@@ -461,12 +470,12 @@ const handleAcceptConnection = async (connectionId) => {
                           "_blank",
                         )
                       }
-                      className="bg-[#3B1E54] text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md hover:bg-[#2A153D] transition-all"
+                      className="bg-[#111827] text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md hover:bg-[#1A5AF0] transition-all"
                     >
                       View Horoscope / ஜாதகம் பார்க்க
                     </button>
                   ) : (
-                    <div className="bg-[#FFF5F7] text-[#852D3E] px-6 py-2 rounded-full text-xs font-bold italic w-fit">
+                    <div className="bg-gray-100 text-gray-400 px-6 py-2 rounded-full text-xs font-bold italic w-fit">
                       Document Not Shared / பதிவேற்றம் இல்லை
                     </div>
                   )}
@@ -484,9 +493,9 @@ const handleAcceptConnection = async (connectionId) => {
 
 const Section = ({ title, children }) => (
   <div>
-    <h3 className="text-xs font-black text-[#3B1E54] uppercase tracking-[0.25em] mb-6 flex items-center gap-4">
+    <h3 className="text-xs font-black text-[#111827] uppercase tracking-[0.25em] mb-6 flex items-center gap-4">
       {title}
-      <span className="h-[2px] w-8 bg-pink-100 rounded-full"></span>
+      <span className="h-[2px] w-8 bg-blue-100 rounded-full"></span>
     </h3>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {children}
@@ -496,10 +505,10 @@ const Section = ({ title, children }) => (
 
 const Row = ({ label, value }) => (
   <div className="flex flex-col gap-1.5">
-    <label className="text-[10px] text-[#852D3E] font-bold uppercase tracking-wider opacity-60 ml-1">
+    <label className="text-[10px] text-[#1A5AF0] font-bold uppercase tracking-wider ml-1">
       {label}
     </label>
-    <div className="bg-[#FFF5F7] rounded-xl px-4 py-3 text-sm text-[#3B1E54] font-bold shadow-sm">
+    <div className="bg-[#F8FAFC] border border-gray-50 rounded-xl px-4 py-3 text-sm text-[#111827] font-bold shadow-sm">
       {value || <span className="text-gray-300 font-normal italic">—</span>}
     </div>
   </div>
