@@ -81,13 +81,37 @@ const MyConnection = () => {
   // };
 
   /* ================= ACTIONS ================= */
-  const handleAcceptConnection = async (connectionId) => {
-    const res = await acceptConnection(connectionId);
-    if (!res.success) return triggerToast(res.message || "Accept failed");
-    triggerToast("Connection accepted");
-    setReceived((prev) => prev.filter((c) => c.connectionId !== connectionId));
-  };
+const handleAcceptConnection = async (connectionId) => {
+  const res = await acceptConnection(connectionId);
 
+  if (!res.success) {
+    return triggerToast(res.message || "Accept failed");
+  }
+
+  triggerToast("Connection accepted");
+
+  setReceived((prev) => {
+    const acceptedConn = prev.find(
+      (c) => c.connectionId === connectionId
+    );
+
+    if (acceptedConn) {
+    setAcceptedReceived((prevAccepted) => [
+  {
+    ...acceptedConn,
+    profileId:
+      acceptedConn.profileId ||
+      acceptedConn.profile_id ||
+      acceptedConn.from_profile_id,
+    status: "Accepted",
+  },
+  ...prevAccepted,
+]);
+    }
+
+    return prev.filter((c) => c.connectionId !== connectionId);
+  });
+};
   const handleRejectConnection = async (connectionId) => {
     const res = await rejectConnection(connectionId);
     if (!res.success) return triggerToast(res.message || "Reject failed");
@@ -165,17 +189,13 @@ const MyConnection = () => {
               const isAccepted = c.status === "Accepted";
 
               return (
-                <div
-                  key={c.connectionId}
-                  onClick={() =>
-                    isAccepted &&
-                    handleViewProfile(c.user_id, c.from_user, c.profileId)
-                  }
-                  className={`rounded-2xl p-5 transition-all shadow-sm 
-                  ${isAccepted ? "bg-green-50/70 cursor-pointer" : expired ? "opacity-40 bg-gray-50" : "bg-white shadow-md"}`}
-                >
+            <div
+  key={c.connectionId}
+  className={`rounded-2xl p-5 transition-all shadow-sm 
+  ${isAccepted ? "bg-green-50/70" : expired ? "opacity-40 bg-gray-50" : "bg-white shadow-md"}`}
+>
                   <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-bold text-[#3B1E54]">{c.full_name}</h3>
+                    {/* <h3 className="font-bold text-[#3B1E54]">{c.full_name}</h3> */}
                     {isAccepted ? (
                       <span className="text-[10px] bg-green-200 text-green-700 px-3 py-1 rounded-full font-black uppercase">
                         Accepted
@@ -187,9 +207,24 @@ const MyConnection = () => {
                     ) : null}
                   </div>
 
-                  <p className="text-xs text-gray-500">
-                    {c.gender} • {c.occupation} • {c.city}
-                  </p>
+            <p className="text-xs text-gray-500">
+  {getEnumLabel("gender", c.gender, displayMode)} • {c.occupation} • {c.city}
+</p>
+
+{isAccepted && (
+  <div className="flex justify-end mt-4">
+    <button
+      onClick={() =>
+        handleViewProfile(c.user_id, c.from_user, c.profileId)
+      }
+      className="bg-[#3B1E54] text-white px-6 py-2 rounded-full
+                 text-[10px] font-bold uppercase tracking-widest
+                 hover:bg-[#2A153D] transition-colors"
+    >
+      View Profile
+    </button>
+  </div>
+)}
 
                   {!expired && !isAccepted && (
                     <div className="flex gap-3 mt-4">
@@ -214,9 +249,11 @@ const MyConnection = () => {
                     </div>
                   )}
                 </div>
+                
               );
             })}
           </div>
+
         </section>
 
         {/* ================= SENT ================= */}
@@ -235,9 +272,9 @@ const MyConnection = () => {
                   <p className="font-bold text-[#3B1E54] text-sm">
                     {c.receiver_work || "User Profile"}
                   </p>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest">
-                    {c.receiver_city} • {c.receiver_raasi}
-                  </p>
+                <p className="text-[10px] text-gray-400 uppercase tracking-widest">
+  {c.receiver_city} • {getEnumLabel("raasi", c.receiver_raasi, displayMode)}
+</p>
                 </div>
                 <button
                   onClick={() => handleWithdrawRequest(c.connectionId)}
