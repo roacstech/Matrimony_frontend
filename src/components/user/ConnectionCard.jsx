@@ -128,14 +128,19 @@ const ConnectionCard = () => {
 
       {/* ================= CARD GRID ================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-8  max-w-8xl md:max-w-6xl mx-auto">
-        {connections
-          .filter((u) => {
-             console.log("🦁",u )
-            if (u.privacy !== activeTab) return false;
-            if (!genderFilter(u.gender)) return false;
-            return true;
-          })
-          .map((u) => (
+     {connections
+.filter((u) => {
+
+  // 👶 inactive user hide (users table)
+  if (u.is_active !== 1) return false;
+  // or: if (u.status !== "ACTIVE") return false;
+
+  if (u.privacy !== activeTab) return false;
+  if (!genderFilter(u.gender)) return false;
+
+  return true;
+})
+  .map((u) => (
             <div
               key={u.id}
                  
@@ -176,6 +181,11 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
   label="Gender / பாலினம்"
   value={getEnumLabel("gender", u.gender, displayMode)}
 />
+<DetailItem
+  icon="🎂"
+  label="Age / வயது"
+  value={u.dob ? `${calculateAge(u.dob)} Years` : "---"}
+/>
                 <DetailItem icon="💰" label="Salary / மாத வருமானம்" value={u.income} />
                 <DetailItem
                   icon="💼"
@@ -207,25 +217,45 @@ xl:max-w-[520px]  h-fit pt-12 pb-6 px-5 sm:px-6"
   </button>
 )}
               {/* ACTION BUTTON */}
-             {u.privacy === "Private" && (
+{u.privacy === "Private" && (
   <div className="mt-8 pt-5 border-t border-dashed border-[#EEEEEE]">
-    {u.connection_status === "Not Sent" ? (
+    {/* NOT SENT */}
+    {u.connection_status === "Not Sent" && (
       <button
         onClick={() => handleConnect(u.id)}
-        className="w-full bg-[#5D4037] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#4a332c] transition-all transform active:scale-[0.96] shadow-lg shadow-stone-200"
+        className="w-full bg-[#5D4037] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#4a332c] transition-all shadow-lg"
       >
         Connect Now
       </button>
-    ) : (
+    )}
+
+    {/* SENT */}
+    {u.connection_status === "Sent" && (
       <button
         disabled
         className="w-full bg-gray-400 text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] cursor-not-allowed"
       >
-        {u.connection_status === "Sent"
-          ? "Request Sent"
-          : u.connection_status === "Accepted"
-          ? "Connected"
-          : "Rejected"}
+        Request Sent
+      </button>
+    )}
+
+    {/* ✅ ACCEPTED → VIEW PROFILE */}
+    {u.connection_status === "Accepted" && (
+      <button
+        onClick={() => handleViewProfile(u.user_id)}
+        className="w-full bg-[#5D4037] text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] hover:bg-[#4a332c] transition-all shadow-lg"
+      >
+        View Profile
+      </button>
+    )}
+
+    {/* REJECTED */}
+    {u.connection_status === "Rejected" && (
+      <button
+        disabled
+        className="w-full bg-red-400 text-white py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[2px] cursor-not-allowed"
+      >
+        Rejected
       </button>
     )}
   </div>
