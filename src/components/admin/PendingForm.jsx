@@ -148,10 +148,10 @@ const PendingForms = () => {
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    {/* <p className="text-xs font-bold text-black truncate max-w-[200px]">
+                    <p className="text-xs font-bold text-black truncate max-w-[200px]">
                       <Mail size={18} className="inline mr-1 text-gray-400" />{" "}
                       {item.email}
-                    </p> */}
+                    </p>
                   </td>
                   <td className="px-8 py-5 text-center">
                     <button
@@ -211,10 +211,10 @@ const PendingForms = () => {
               <h2 className="text-3xl font-black text-black">
                 {selectedUser.fullName}
               </h2>
-              <p className="text-sm font-bold text-gray-400 mt-1 uppercase tracking-widest">
+              <p className="text-sm font-bold text-[#1A5AF0] mt-1 uppercase tracking-widest">
                 {selectedUser.city}, {selectedUser.country}
               </p>
-              <p className="text-sm font-bold text-[#1A5AF0] mt-1">{selectedUser.email}</p>
+              <p className="text-sm font-bold  text-gray-400 mt-1">{selectedUser.email}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
               <div>

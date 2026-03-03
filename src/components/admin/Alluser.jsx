@@ -115,11 +115,15 @@ const AllUsers = () => {
                   {selectedUser.fullName}
                 </h2>
                 <div className="flex flex-col gap-0.5 mt-1">
+                 
                   <p className="flex items-center gap-1.5 text-[10px] font-black text-[#1A5AF0] uppercase tracking-wider">
-                    <MapPin size={12} /> {selectedUser.city}
+                    <MapPin size={12} /> {selectedUser.city},  {selectedUser.country}
                   </p>
                   <p className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 lowercase">
                     <Mail size={12} /> {selectedUser.email || "user@mail.com"}
+                  </p>
+                 <p className="flex items-center gap-1.5 text-[15px] font-bold text-gray-800 uppercase">
+                   
                   </p>
                 </div>
               </div>
@@ -167,9 +171,12 @@ const AllUsers = () => {
               <InfoBox label="Birth Time / பிறந்த நேரம்" value={formatTime12h(selectedUser.birthTime)} />
               <InfoBox label="Phone Number / தொலைபேசி எண்" value={selectedUser.phone} />
               <InfoBox label="Marital Status / திருமண நிலை" value={getEnumLabel("maritalStatus", selectedUser.maritalStatus, displayMode)} />
+                                            <InfoBox label="Full Address/ வீட்டு முகவரி" value={selectedUser.country} />
+
               <div className="sm:col-span-2 lg:col-span-3">
                 <InfoBox label="Full Address/ வீட்டு முகவரி" value={selectedUser.address} />
               </div>
+
             </>
           )}
 
