@@ -78,15 +78,15 @@ const PendingForms = () => {
 
   const closeModal = () => setSelectedUser(null);
 
-  if (!pending.length) {
-    return (
-      <div className="p-10 text-center bg-white rounded-[30px] border border-gray-100 shadow-sm">
-        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-          No Pending Requests
-        </p>
-      </div>
-    );
-  }
+// if (!pending.length) {
+//   return (
+//     <div className="p-10 text-center bg-white rounded-[30px] border border-gray-100 shadow-sm">
+//       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+//         No Pending Requests
+//       </p>
+//     </div>
+//   );
+// }
 
   return (
     <div className="space-y-6 cursor-pointer px-2 md:px-0">
@@ -117,69 +117,86 @@ const PendingForms = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
-              {pending.map((item) => (
-                <tr
-                  key={item.id}
-                  className="group hover:bg-blue-50/20 transition-all"
-                >
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#1A5AF0] overflow-hidden flex-shrink-0 flex items-center justify-center border border-blue-50 shadow-sm">
-                        {item.photo ? (
-                          <img
-                            src={`${import.meta.env.VITE_IMG_URL}/photos/${item.photo}`}
-                            alt="user"
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <User size={20} className="text-white" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-[14px] font-black text-black leading-tight">
-                          {item.profile?.fullName || item.name || "N/A"}
-                        </p>
-                        <p className="text-[9px] text-[#1A5AF0] font-bold uppercase tracking-widest mt-1">
-                          <MapPin size={10} className="inline mr-1" />{" "}
-                          {item.country || "India"}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-5">
-                    <p className="text-xs font-bold text-black truncate max-w-[200px]">
-                      <Mail size={18} className="inline mr-1 text-gray-400" />{" "}
-                      {item.email}
-                    </p>
-                  </td>
-                  <td className="px-8 py-5 text-center">
-                    <button
-                      onClick={() => handleView(item)}
-                      className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#1A5AF0] bg-white border border-[#1A5AF0] hover:bg-[#1A5AF0] hover:text-white rounded-xl transition-all shadow-sm mx-auto flex items-center justify-center"
-                    >
-                      View Profile
-                    </button>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => handleApprove(item.id)}
-                        className="px-4 py-2 bg-[#1A5AF0] text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:opacity-90 transition-all flex items-center gap-1.5 shadow-sm"
-                      >
-                        <Check size={14} /> Accept
-                      </button>
-                      <button
-                        onClick={() => handleReject(item)}
-                        className="px-4 py-2 bg-rose-50 text-rose-500 border border-rose-100 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all flex items-center gap-1.5"
-                      >
-                        <X size={14} /> Reject
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+          <tbody className="divide-y divide-gray-50">
+  {pending.length === 0 ? (
+    <tr>
+      <td
+        colSpan="4"
+        className="text-center py-16 text-gray-400 font-bold text-sm"
+      >
+        No Pending Requests
+      </td>
+    </tr>
+  ) : (
+    pending.map((item) => (
+      <tr
+        key={item.id}
+        className="group hover:bg-blue-50/20 transition-all"
+      >
+        <td className="px-8 py-5">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-[#1A5AF0] overflow-hidden flex-shrink-0 flex items-center justify-center border border-blue-50 shadow-sm">
+              {item.photo ? (
+                <img
+                  src={`${import.meta.env.VITE_IMG_URL}/photos/${item.photo}`}
+                  alt="user"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User size={20} className="text-white" />
+              )}
+            </div>
+            <div>
+              <p className="text-[14px] font-black text-black leading-tight">
+                {item.profile?.fullName || item.name || "N/A"}
+              </p>
+              <p className="text-[9px] text-[#1A5AF0] font-bold uppercase tracking-widest mt-1">
+                <MapPin size={10} className="inline mr-1" />
+                {item.country || "India"}
+              </p>
+            </div>
+          </div>
+        </td>
+
+        <td className="px-8 py-5">
+          <div className="flex items-center gap-2">
+            <Mail size={18} className="text-gray-400 shrink-0" />
+            <p className="text-xs font-bold text-black whitespace-nowrap">
+              {item.email}
+            </p>
+          </div>
+        </td>
+
+        <td className="px-8 py-5 text-center">
+          <button
+            onClick={() => handleView(item)}
+            className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#1A5AF0] bg-white border border-[#1A5AF0] hover:bg-[#1A5AF0] hover:text-white rounded-xl transition-all shadow-sm mx-auto flex items-center justify-center"
+          >
+            View Profile
+          </button>
+        </td>
+
+        <td className="px-8 py-5">
+          <div className="flex items-center justify-center gap-2">
+            <button
+              onClick={() => handleApprove(item.id)}
+              className="px-4 py-2 bg-[#1A5AF0] text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:opacity-90 transition-all flex items-center gap-1.5 shadow-sm"
+            >
+              <Check size={14} /> Accept
+            </button>
+
+            <button
+              onClick={() => handleReject(item)}
+              className="px-4 py-2 bg-rose-50 text-rose-500 border border-rose-100 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-rose-100 transition-all flex items-center gap-1.5"
+            >
+              <X size={14} /> Reject
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
           </table>
         </div>
       </div>
