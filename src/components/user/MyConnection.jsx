@@ -28,6 +28,20 @@ const MyConnection = () => {
   const displayMode = "both";
   // "tamil" or "both"
 
+  const formatTime12h = (time) => {
+    if (!time) return "—";
+    // Create a dummy date to parse the time string
+    const [hours, minutes] = time.split(":");
+    const date = new Date();
+    date.setHours(parseInt(hours), parseInt(minutes));
+
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
   /* ================= LOAD CONNECTIONS ================= */
   useEffect(() => {
     const loadConnections = async () => {
@@ -83,58 +97,48 @@ const MyConnection = () => {
 
   /* ================= ACTIONS ================= */
 
-
-const refreshAcceptedConnections = async () => {
-  try {
-    const res = await getAcceptedConnections();
-    if (res?.success) {
-      const accepted = (res.data || []).map((c) => ({
-        ...c,
-        status: "Accepted",
-      }));
-      setAcceptedReceived(accepted);
-    }
-  } catch (err) {
-    console.error("Failed to refresh accepted connections", err);
-  }
-};
-
-
-
-const handleAcceptConnection = async (connectionId) => {
-  const res = await acceptConnection(connectionId);
-
-  if (!res.success) {
-    return triggerToast(res.message || "Accept failed");
-  }
-
-  triggerToast("Connection accepted");
-
-  setReceived((prev) => {
-    const acceptedConn = prev.find(
-      (c) => c.connectionId === connectionId
-    );
-
-    if (acceptedConn) {
-      setAcceptedReceived((prevAccepted) => [
-        {
-          ...acceptedConn,
-          profileId:
-            acceptedConn.profileId ||
-            acceptedConn.profile_id ||
-            acceptedConn.from_profile_id,
+  const refreshAcceptedConnections = async () => {
+    try {
+      const res = await getAcceptedConnections();
+      if (res?.success) {
+        const accepted = (res.data || []).map((c) => ({
+          ...c,
           status: "Accepted",
-        },
-        ...prevAccepted,
-      ]);
+        }));
+        setAcceptedReceived(accepted);
+      }
+    } catch (err) {
+      console.error("Failed to refresh accepted connections", err);
+    }
+  };
+
+  // 🔄 REFRESH SENT CONNECTIONS (ONLY FOR ACCEPT CASE)
+  const refreshSentConnections = async () => {
+    try {
+      const res = await getSentConnections();
+      if (res?.success && Array.isArray(res.data)) {
+        setSent(res.data);
+      }
+    } catch (err) {
+      console.error("Failed to refresh sent connections", err);
+    }
+  };
+
+  const handleAcceptConnection = async (connectionId) => {
+    const res = await acceptConnection(connectionId);
+
+    if (!res.success) {
+      return triggerToast(res.message || "Accept failed");
     }
 
-    return prev.filter((c) => c.connectionId !== connectionId);
-  });
+    triggerToast("Connection accepted");
 
-  // ✅ ONLY THIS LINE ADDED
-  await refreshAcceptedConnections();
-};
+    // Remove from received list
+    setReceived((prev) => prev.filter((c) => c.connectionId !== connectionId));
+
+    // 🔥 Important: Reload accepted from backend
+    await refreshAcceptedConnections();
+  };
   const handleRejectConnection = async (connectionId) => {
     const res = await rejectConnection(connectionId);
     if (!res.success) return triggerToast(res.message || "Reject failed");
@@ -236,7 +240,8 @@ const handleAcceptConnection = async (connectionId) => {
                   </div>
 
                   <p className="text-xs text-gray-500 font-medium">
-                    {getEnumLabel("gender", c.gender, displayMode)} • {c.occupation} • {c.city}
+                    {getEnumLabel("gender", c.gender, displayMode)} •{" "}
+                    {c.occupation} • {c.city}
                   </p>
 
                   {isAccepted && (
@@ -245,9 +250,9 @@ const handleAcceptConnection = async (connectionId) => {
                         onClick={() =>
                           handleViewProfile(c.user_id, c.from_user, c.profileId)
                         }
-                        className="bg-[#111827] text-white px-6 py-2 rounded-full
+                        className="] bg-[#1A5AF0] text-white px-6 py-2 rounded-full
                                  text-[10px] font-bold uppercase tracking-widest
-                                 hover:bg-[#1A5AF0] transition-colors shadow-lg"
+                                 hover:bg-[##111827] transition-colors shadow-lg"
                       >
                         View Profile
                       </button>
@@ -277,21 +282,20 @@ const handleAcceptConnection = async (connectionId) => {
                     </div>
                   )}
                 </div>
-
               );
             })}
           </div>
-
         </section>
 
         {/* ================= SENT ================= */}
         <section className="w-full lg:w-[45%] bg-white border border-gray-100 p-6 rounded-3xl shadow-xl">
           <h2 className="text-base font-black text-[#111827] uppercase mb-6 tracking-widest">
-            Sent Requests ({sent.length})
+            Sent Requests ({sent.filter(c => c.status !== "Accepted" && !acceptedReceived.some(a => a.connectionId === c.connectionId)).length})
           </h2>
 
           <div className="space-y-4">
-            {sent.map((c) => (
+            {/* ✅ FIX: Filter out sent connections that have already been accepted */}
+            {sent.filter(c => c.status !== "Accepted" && !acceptedReceived.some(a => a.connectionId === c.connectionId)).map((c) => (
               <div
                 key={c.connectionId}
                 className="flex justify-between items-center bg-[#F8FAFC] border border-gray-50 p-4 rounded-xl hover:border-blue-100 transition-colors"
@@ -301,7 +305,8 @@ const handleAcceptConnection = async (connectionId) => {
                     {c.receiver_work || "User Profile"}
                   </p>
                   <p className="text-[10px] text-[#1A5AF0] font-bold uppercase tracking-widest">
-                    {c.receiver_city} • {getEnumLabel("raasi", c.receiver_raasi, displayMode)}
+                    {c.receiver_city} •{" "}
+                    {getEnumLabel("raasi", c.receiver_raasi, displayMode)}
                   </p>
                 </div>
                 <button
@@ -342,6 +347,9 @@ const handleAcceptConnection = async (connectionId) => {
               <p className="text-[10px] font-black text-[#1A5AF0] uppercase tracking-[0.3em] mt-2">
                 {selectedUser.city} • {selectedUser.country}
               </p>
+              <p className="text-[10px] font-black text-gray-400 lowercase tracking-[0.3em] mt-2">
+                {selectedUser.email}
+              </p>
             </div>
 
             {/* CONTENT SECTIONS */}
@@ -367,14 +375,15 @@ const handleAcceptConnection = async (connectionId) => {
                     selectedUser?.dob
                       ? `${calculateAge(selectedUser.dob)} Years`
                       : "—"
-                  } />
+                  }
+                />
                 <Row
                   label="Birth Place / பிறந்த இடம்"
                   value={selectedUser.birth_place}
                 />
                 <Row
                   label="Birth Time / பிறந்த நேரம்"
-                  value={selectedUser.birth_time}
+                  value={formatTime12h(selectedUser.birth_time)}
                 />
                 <Row
                   label="Marital Status / திருமண நிலை"
@@ -492,7 +501,7 @@ const handleAcceptConnection = async (connectionId) => {
                           "_blank",
                         )
                       }
-                      className="bg-[#111827] text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md hover:bg-[#1A5AF0] transition-all"
+                      className="bg-[#1A5AF0] text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md hover:bg-[#111827] transition-all"
                     >
                       View Horoscope / ஜாதகம் பார்க்க
                     </button>
