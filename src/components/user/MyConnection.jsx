@@ -112,6 +112,18 @@ const MyConnection = () => {
     }
   };
 
+  // 🔄 REFRESH SENT CONNECTIONS (ONLY FOR ACCEPT CASE)
+  const refreshSentConnections = async () => {
+    try {
+      const res = await getSentConnections();
+      if (res?.success && Array.isArray(res.data)) {
+        setSent(res.data);
+      }
+    } catch (err) {
+      console.error("Failed to refresh sent connections", err);
+    }
+  };
+
   const handleAcceptConnection = async (connectionId) => {
     const res = await acceptConnection(connectionId);
 
@@ -121,27 +133,10 @@ const MyConnection = () => {
 
     triggerToast("Connection accepted");
 
-    setReceived((prev) => {
-      const acceptedConn = prev.find((c) => c.connectionId === connectionId);
+    // Remove from received list
+    setReceived((prev) => prev.filter((c) => c.connectionId !== connectionId));
 
-      if (acceptedConn) {
-        setAcceptedReceived((prevAccepted) => [
-          {
-            ...acceptedConn,
-            profileId:
-              acceptedConn.profileId ||
-              acceptedConn.profile_id ||
-              acceptedConn.from_profile_id,
-            status: "Accepted",
-          },
-          ...prevAccepted,
-        ]);
-      }
-
-      return prev.filter((c) => c.connectionId !== connectionId);
-    });
-
-    // ✅ ONLY THIS LINE ADDED
+    // 🔥 Important: Reload accepted from backend
     await refreshAcceptedConnections();
   };
   const handleRejectConnection = async (connectionId) => {
@@ -295,11 +290,12 @@ const MyConnection = () => {
         {/* ================= SENT ================= */}
         <section className="w-full lg:w-[45%] bg-white border border-gray-100 p-6 rounded-3xl shadow-xl">
           <h2 className="text-base font-black text-[#111827] uppercase mb-6 tracking-widest">
-            Sent Requests ({sent.length})
+            Sent Requests ({sent.filter(c => c.status !== "Accepted" && !acceptedReceived.some(a => a.connectionId === c.connectionId)).length})
           </h2>
 
           <div className="space-y-4">
-            {sent.map((c) => (
+            {/* ✅ FIX: Filter out sent connections that have already been accepted */}
+            {sent.filter(c => c.status !== "Accepted" && !acceptedReceived.some(a => a.connectionId === c.connectionId)).map((c) => (
               <div
                 key={c.connectionId}
                 className="flex justify-between items-center bg-[#F8FAFC] border border-gray-50 p-4 rounded-xl hover:border-blue-100 transition-colors"
