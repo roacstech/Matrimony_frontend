@@ -204,7 +204,7 @@ const MyConnection = () => {
         <section className="w-full lg:w-[55%]">
           <h2 className="text-lg font-black text-[#111827] uppercase mb-6 tracking-widest flex items-center gap-3">
             Received Connections
-            <span className="h-1 w-12 bg-[#1A5AF0] rounded-full"></span>
+           
           </h2>
 
           <div className="space-y-5">
@@ -225,7 +225,7 @@ const MyConnection = () => {
                   <div className="flex justify-between items-center mb-2">
                     {/* <h3 className="font-bold text-[#111827]">{c.full_name}</h3> */}
                     {isAccepted ? (
-                      <span className="text-[10px] bg-[#1A5AF0] text-white px-3 py-1 rounded-full font-black uppercase">
+                      <span className="text-[10px] bg-green-500 text-white px-3 py-1 rounded-full font-black uppercase">
                         Accepted
                       </span>
                     ) : !expired ? (
