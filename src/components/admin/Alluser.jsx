@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   Eye,
+  Trash2,
   ArrowLeft,
   FileText,
   Download,
@@ -10,10 +11,15 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { calculateAge } from "../../utils/dateHelper";
-import { getAllUsers, adminToggleVisibility } from "../../api/adminApi";
+import {
+  getAllUsers,
+  adminToggleVisibility,
+  deleteUser,
+} from "../../api/adminApi";
 import { getEnumLabel } from "../../utils/convertHelper";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
-//update
 const AllUsers = () => {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState("all");
@@ -21,9 +27,9 @@ const AllUsers = () => {
   const [activeTab, setActiveTab] = useState("personal");
   const [togglingUserId, setTogglingUserId] = useState(null);
 
-  const displayMode = "both"; 
+  const displayMode = "both";
 
-  //* ================= FETCH USERS ================= */
+  /* ================= FETCH USERS ================= */
   useEffect(() => {
     getAllUsers()
       .then((res) => {
@@ -57,6 +63,52 @@ const AllUsers = () => {
     } finally {
       setTogglingUserId(null);
     }
+  };
+
+  /* ================= DELETE USER ================= */
+  /* ================= DELETE USER ================= */
+  const queryClient = useQueryClient();
+
+  const { mutate: handleDeleteUser } = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: (_, userId) => {
+      setData((prev) => prev.filter((u) => u.id !== userId));
+      setSelectedUser(null);
+      toast.success("User deleted successfully");
+    },
+    onError: (err) => {
+      console.error("Delete failed:", err.message);
+      toast.error("Failed to delete user");
+    },
+  });
+
+  const confirmDelete = (userId) => {
+    toast(
+      (t) => (
+        <div className="flex flex-col gap-3">
+          <p className="text-sm font-black text-black">Delete this user?</p>
+          <p className="text-xs text-gray-400">This action cannot be undone.</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                handleDeleteUser(userId);
+                toast.dismiss(t.id);
+              }}
+              className="px-4 py-1.5 bg-rose-500 text-white text-xs font-black rounded-lg hover:bg-rose-600 transition"
+            >
+              Delete
+            </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-4 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg hover:bg-gray-200 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { duration: 10000 },
+    );
   };
 
   const formatTime12h = (time) => {
@@ -115,16 +167,14 @@ const AllUsers = () => {
                   {selectedUser.fullName}
                 </h2>
                 <div className="flex flex-col gap-0.5 mt-1">
-                 
                   <p className="flex items-center gap-1.5 text-[10px] font-black text-[#1A5AF0] uppercase tracking-wider">
-                    <MapPin size={12} /> {selectedUser.city},  {selectedUser.country}
+                    <MapPin size={12} /> {selectedUser.city},{" "}
+                    {selectedUser.country}
                   </p>
                   <p className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 lowercase">
                     <Mail size={12} /> {selectedUser.email || "user@mail.com"}
                   </p>
-                 <p className="flex items-center gap-1.5 text-[15px] font-bold text-gray-800 uppercase">
-                   
-                  </p>
+                  <p className="flex items-center gap-1.5 text-[15px] font-bold text-gray-800 uppercase"></p>
                 </div>
               </div>
             </div>
@@ -163,49 +213,128 @@ const AllUsers = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-in fade-in duration-500">
           {activeTab === "personal" && (
             <>
-              <InfoBox label="Full Name/ முழு பெயர்" value={selectedUser.fullName} />
-              <InfoBox label="Gender/ பாலினம்" value={getEnumLabel("gender", selectedUser.gender, displayMode)} /> 
-              <InfoBox label="Date of Birth / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
-              <InfoBox label="Age / வயது" value={selectedUser?.dob ? `${calculateAge(selectedUser.dob)} Years` : "—"} />
-              <InfoBox label="Birth Place / பிறந்த இடம்" value={selectedUser.birthPlace} />
-              <InfoBox label="Birth Time / பிறந்த நேரம்" value={formatTime12h(selectedUser.birthTime)} />
-              <InfoBox label="Phone Number / தொலைபேசி எண்" value={selectedUser.phone} />
-              <InfoBox label="Marital Status / திருமண நிலை" value={getEnumLabel("maritalStatus", selectedUser.maritalStatus, displayMode)} />
-                                            <InfoBox label="Full Address/ வீட்டு முகவரி" value={selectedUser.country} />
+              <InfoBox
+                label="Full Name/ முழு பெயர்"
+                value={selectedUser.fullName}
+              />
+              <InfoBox
+                label="Gender/ பாலினம்"
+                value={getEnumLabel("gender", selectedUser.gender, displayMode)}
+              />
+              <InfoBox
+                label="Date of Birth / பிறந்த தேதி"
+                value={selectedUser.dob?.split("T")[0]}
+              />
+              <InfoBox
+                label="Age / வயது"
+                value={
+                  selectedUser?.dob
+                    ? `${calculateAge(selectedUser.dob)} Years`
+                    : "—"
+                }
+              />
+              <InfoBox
+                label="Birth Place / பிறந்த இடம்"
+                value={selectedUser.birthPlace}
+              />
+              <InfoBox
+                label="Birth Time / பிறந்த நேரம்"
+                value={formatTime12h(selectedUser.birthTime)}
+              />
+              <InfoBox
+                label="Phone Number / தொலைபேசி எண்"
+                value={selectedUser.phone}
+              />
+              <InfoBox
+                label="Marital Status / திருமண நிலை"
+                value={getEnumLabel(
+                  "maritalStatus",
+                  selectedUser.maritalStatus,
+                  displayMode,
+                )}
+              />
+              <InfoBox
+                label="Full Address/ வீட்டு முகவரி"
+                value={selectedUser.country}
+              />
 
               <div className="sm:col-span-2 lg:col-span-3">
-                <InfoBox label="Full Address/ வீட்டு முகவரி" value={selectedUser.address} />
+                <InfoBox
+                  label="Full Address/ வீட்டு முகவரி"
+                  value={selectedUser.address}
+                />
               </div>
-
             </>
           )}
 
           {activeTab === "education" && (
             <>
-              <InfoBox label="Qualification/ கல்வி" value={selectedUser.education} />
-              <InfoBox label="Job / Occupation / தொழில்" value={selectedUser.occupation} />
-              <InfoBox label="Annual Income/மாத வருமானம்" value={selectedUser.income} />
-              <InfoBox label="Work Location / வேலை இடம்" value={selectedUser.workLocation} />
+              <InfoBox
+                label="Qualification/ கல்வி"
+                value={selectedUser.education}
+              />
+              <InfoBox
+                label="Job / Occupation / தொழில்"
+                value={selectedUser.occupation}
+              />
+              <InfoBox
+                label="Annual Income/மாத வருமானம்"
+                value={selectedUser.income}
+              />
+              <InfoBox
+                label="Work Location / வேலை இடம்"
+                value={selectedUser.workLocation}
+              />
             </>
           )}
 
           {activeTab === "family" && (
             <>
-              <InfoBox label="Father's Name/ தந்தை பெயர்" value={selectedUser.father} />
-              <InfoBox label="Mother's Name/ தாய் பெயர்" value={selectedUser.mother} />
-              <InfoBox label="Paternal Grandfather/ தாத்தா பெயர்" value={selectedUser.grandfather} />
-              <InfoBox label="Paternal Grandmother/ பாட்டி பெயர்" value={selectedUser.grandmother} />
-              <InfoBox label="Mother Side Grandfather / தாய்வழி தாத்தா பெயர்" value={selectedUser.motherSideGrandfather} />
-              <InfoBox label="Mother Side Grandmother / தாய்வழி பாட்டி பெயர்" value={selectedUser.motherSideGrandmother} />
-              <InfoBox label="Siblings/ உடன்பிறப்புகள்" value={selectedUser.siblings} />
+              <InfoBox
+                label="Father's Name/ தந்தை பெயர்"
+                value={selectedUser.father}
+              />
+              <InfoBox
+                label="Mother's Name/ தாய் பெயர்"
+                value={selectedUser.mother}
+              />
+              <InfoBox
+                label="Paternal Grandfather/ தாத்தா பெயர்"
+                value={selectedUser.grandfather}
+              />
+              <InfoBox
+                label="Paternal Grandmother/ பாட்டி பெயர்"
+                value={selectedUser.grandmother}
+              />
+              <InfoBox
+                label="Mother Side Grandfather / தாய்வழி தாத்தா பெயர்"
+                value={selectedUser.motherSideGrandfather}
+              />
+              <InfoBox
+                label="Mother Side Grandmother / தாய்வழி பாட்டி பெயர்"
+                value={selectedUser.motherSideGrandmother}
+              />
+              <InfoBox
+                label="Siblings/ உடன்பிறப்புகள்"
+                value={selectedUser.siblings}
+              />
             </>
           )}
 
           {activeTab === "horoscope" && (
             <>
-              <InfoBox label="Raasi / இராசி" value={getEnumLabel("raasi", selectedUser.raasi, displayMode)} />
-              <InfoBox label="Star / நட்சத்திரம்" value={getEnumLabel("star", selectedUser.star, displayMode)} />
-              <InfoBox label="Dosham / தோஷாம்" value={getEnumLabel("dosham", selectedUser.dosham, displayMode)} />
+              <InfoBox
+                label="Raasi / இராசி"
+                value={getEnumLabel("raasi", selectedUser.raasi, displayMode)}
+              />
+              <InfoBox
+                label="Star / நட்சத்திரம்"
+                value={getEnumLabel("star", selectedUser.star, displayMode)}
+              />
+              <InfoBox
+                label="Dosham / தோஷாம்"
+                value={getEnumLabel("dosham", selectedUser.dosham, displayMode)}
+              />
               <div className="sm:col-span-2 lg:col-span-3 mt-4">
                 <div className="p-5 md:p-6 bg-blue-50/50 border border-blue-100 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
@@ -213,9 +342,13 @@ const AllUsers = () => {
                       <FileText size={24} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Jadhagam File/ ஜாதகம்</p>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                        Jadhagam File/ ஜாதகம்
+                      </p>
                       <p className="text-sm font-bold text-black truncate max-w-[150px] sm:max-w-xs">
-                        {selectedUser.horoscope?.uploaded ? selectedUser.horoscope.fileName || "horoscope.pdf" : "Not Uploaded"}
+                        {selectedUser.horoscope?.uploaded
+                          ? selectedUser.horoscope.fileName || "horoscope.pdf"
+                          : "Not Uploaded"}
                       </p>
                     </div>
                   </div>
@@ -228,10 +361,13 @@ const AllUsers = () => {
                     >
                       <Download size={14} /> View
                     </a>
-                  )} 
+                  )}
                 </div>
                 <div className="mt-4">
-                  <InfoBox label="Remarks / குறிப்புகள்" value={selectedUser.remarks} />
+                  <InfoBox
+                    label="Remarks / குறிப்புகள்"
+                    value={selectedUser.remarks}
+                  />
                 </div>
               </div>
             </>
@@ -246,7 +382,9 @@ const AllUsers = () => {
     <div className="bg-white rounded-[30px] md:rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-6 md:p-8 border-b border-gray-100 flex flex-col xl:flex-row justify-between items-center gap-6">
         <div className="text-center xl:text-left">
-          <h2 className="text-xl md:text-2xl font-black text-black tracking-tight">User Records</h2>
+          <h2 className="text-xl md:text-2xl font-black text-black tracking-tight">
+            User Records
+          </h2>
         </div>
         <div className="flex bg-blue-50/50 p-1.5 rounded-[22px] border border-blue-100 overflow-x-auto no-scrollbar max-w-full">
           {["all", "male", "female", "active", "inactive"].map((f) => (
@@ -274,28 +412,47 @@ const AllUsers = () => {
           </thead>
           <tbody className="divide-y divide-gray-50">
             {filteredUsers.map((u) => (
-              <tr key={u.id} className="group hover:bg-blue-50/20 transition-all">
+              <tr
+                key={u.id}
+                className="group hover:bg-blue-50/20 transition-all"
+              >
                 <td className="px-6 md:px-8 py-5">
                   <div className="flex items-center gap-4">
                     <div className="w-11 h-11 md:w-12 md:h-12 rounded-[16px] md:rounded-[18px] bg-[#1A5AF0] overflow-hidden flex-shrink-0 flex items-center justify-center">
                       {u?.photo ? (
-                        <img src={`${import.meta.env.VITE_IMG_URL}/photos/${u.photo}`} alt="user" className="w-full h-full object-cover" />
+                        <img
+                          src={`${import.meta.env.VITE_IMG_URL}/photos/${u.photo}`}
+                          alt="user"
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
-                        <div className="text-white font-bold">{u?.fullName?.charAt(0).toUpperCase()}</div>
+                        <div className="text-white font-bold">
+                          {u?.fullName?.charAt(0).toUpperCase()}
+                        </div>
                       )}
                     </div>
                     <div>
-                      <p className="text-[13px] md:text-[14px] font-black text-black leading-none">{u.fullName}</p>
-                      <p className="text-[9px] md:text-[10px] text-[#1A5AF0] font-bold uppercase tracking-widest mt-1.5">{u.gender} • {u.city}</p>
+                      <p className="text-[13px] md:text-[14px] font-black text-black leading-none">
+                        {u.fullName}
+                      </p>
+                      <p className="text-[9px] md:text-[10px] text-[#1A5AF0] font-bold uppercase tracking-widest mt-1.5">
+                        {u.gender} • {u.city}
+                      </p>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 md:px-8 py-5">
-                  <p className="text-xs font-bold text-gray-600 truncate max-w-[150px]">{u.occupation}</p>
-                  <p className="text-[10px] text-gray-400 uppercase font-black mt-1 tracking-tighter">{u.income}</p>
+                  <p className="text-xs font-bold text-gray-600 truncate max-w-[150px]">
+                    {u.occupation}
+                  </p>
+                  <p className="text-[10px] text-gray-400 uppercase font-black mt-1 tracking-tighter">
+                    {u.income}
+                  </p>
                 </td>
                 <td className="px-6 md:px-8 py-5">
-                  <p className={`inline-block px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full ${u.privacy === "Private" ? "bg-rose-50 text-rose-600 border border-rose-100" : "bg-emerald-50 text-emerald-600 border border-emerald-100"}`}>
+                  <p
+                    className={`inline-block px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full ${u.privacy === "Private" ? "bg-rose-50 text-rose-600 border border-rose-100" : "bg-emerald-50 text-emerald-600 border border-emerald-100"}`}
+                  >
                     {u.privacy}
                   </p>
                 </td>
@@ -305,20 +462,32 @@ const AllUsers = () => {
                       onClick={() => togglePublicStatus(u.id, u.is_active)}
                       className={`w-10 h-5 rounded-full relative transition-all ${u.is_active === 1 ? "bg-[#1A5AF0]" : "bg-gray-200"}`}
                     >
-                      <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${u.is_active ? "left-[22px]" : "left-0.5"}`} />
+                      <span
+                        className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${u.is_active ? "left-[22px]" : "left-0.5"}`}
+                      />
                     </button>
-                    <span className={`text-[8px] font-black uppercase tracking-tighter ${u.is_active ? "text-[#1A5AF0]" : "text-gray-400"}`}>
+                    <span
+                      className={`text-[8px] font-black uppercase tracking-tighter ${u.is_active ? "text-[#1A5AF0]" : "text-gray-400"}`}
+                    >
                       {u.is_active === 1 ? "ACTIVE" : "INACTIVE"}
                     </span>
                   </div>
                 </td>
                 <td className="px-6 md:px-8 py-5 text-center">
-                  <button
-                    onClick={() => setSelectedUser(u)}
-                    className="p-2.5 md:p-3 text-[#1A5AF0] bg-blue-50 hover:bg-[#1A5AF0] hover:text-white rounded-xl md:rounded-2xl transition-all shadow-sm"
-                  >
-                    <Eye size={18} />
-                  </button>
+                  <div className="flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => setSelectedUser(u)}
+                      className="p-2.5 md:p-3 text-[#1A5AF0] bg-blue-50 hover:bg-[#1A5AF0] hover:text-white rounded-xl md:rounded-2xl transition-all shadow-sm"
+                    >
+                      <Eye size={18} />
+                    </button>
+                    <button
+                      onClick={() => confirmDelete(u.id)}
+                      className="p-2.5 md:p-3 text-rose-500 bg-rose-50 hover:bg-rose-500 hover:text-white rounded-xl md:rounded-2xl transition-all shadow-sm"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
