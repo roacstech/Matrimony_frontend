@@ -6,9 +6,12 @@ import LoginRoutes from "./routes/LoginRoutes";
 import UserRoutes from "./routes/UserRoutes";
 import AdminRoutes from "./routes/AdminRoutes";
 import AdminDashboardLayout from "./layouts/AdminDashboardLayout";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
 
 function App() {
   return (
+    <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <Routes>
         {/* LOGIN / PUBLIC ROUTES */}
@@ -37,6 +40,7 @@ function App() {
         }}
       />
     </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

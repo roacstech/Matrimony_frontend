@@ -199,3 +199,21 @@ export const getUserProfile = async (profileId) => {
 };
 
 
+/* ===============================
+   DELETE  USER & PROFILE
+================================ */
+export const deleteUser = async (userId) => {
+  const res = await fetch(`${BASE_URL}/users/${userId}`, {
+    method: "DELETE",
+    headers: getAuthHeader(),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message || "Failed to delete user");
+  }
+
+  return data;
+};
+
