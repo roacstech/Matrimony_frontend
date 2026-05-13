@@ -15,8 +15,6 @@ import {
 import {
   getUserProfile,
   updateUserProfile,
-  uploadHoroscope,
-  uploadProfilePhoto,
 } from "../../api/userApi";
 
 import {
@@ -25,30 +23,63 @@ import {
 } from "../../utils/convertHelper";
 import { calculateAge } from "../../utils/dateHelper";
 
+// ─── S3 imports ───────────────────────────────────────────────────────────────
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { v4 as uuidv4 } from "uuid";
+import s3awsConfig from "../../utils/aws-config"; // adjust path if needed
+
+// ─── S3 bucket & folder constants ─────────────────────────────────────────────
+const S3_BUCKET        = "roacs-bucket";
+const S3_BASE_URL      = `https://${S3_BUCKET}.s3.ap-south-1.amazonaws.com`;
+const PHOTO_FOLDER     = "matrimony-profiles/photos";
+const HOROSCOPE_FOLDER = "matrimony-profiles/horoscopes";
+
+// ─── Helper: upload a single File to S3, returns the public URL ───────────────
+const uploadFileToS3 = async (file, folder) => {
+  const ext         = file.name?.split(".").pop() || "bin";
+  const fileKey     = `${folder}/${uuidv4()}.${ext}`;
+  const contentType = file.type || "application/octet-stream";
+  const uint8Array  = new Uint8Array(await file.arrayBuffer());
+
+  await s3awsConfig.send(
+    new PutObjectCommand({
+      Bucket:      S3_BUCKET,
+      Key:         fileKey,
+      Body:        uint8Array,
+      ContentType: contentType,
+    })
+  );
+
+  return `${S3_BASE_URL}/${fileKey}`;
+};
+
 export const PRIVACY_OPTIONS = [
-  { value: "Public", label: "🌍 Public / பொது" },
+  { value: "Public",  label: "🌍 Public / பொது" },
   { value: "Private", label: "🔒 Private / தனிப்பட்ட" },
 ];
 
 const Profile = () => {
   const userId = localStorage.getItem("userid");
-  const [user, setUser] = useState(null);
-  const [edit, setEdit] = useState(false);
-  const fileInputRef = useRef(null);
-  const horoscopeRef = useRef(null);
-  const [loading, setLoading] = useState(true);
+  const [user,       setUser]       = useState(null);
+  const [edit,       setEdit]       = useState(false);
+  const [loading,    setLoading]    = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const fileInputRef  = useRef(null);
+  const horoscopeRef  = useRef(null);
+
+  const displayMode = "both"; // "tamil" | "both"
 
   const formatTime12h = (time) => {
     if (!time) return "-";
     const [h, m] = time.split(":");
-    let hours = Number(h);
-    const minutes = m;
+    let hours    = Number(h);
     const period = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return `${hours}:${minutes} ${period}`;
+    hours        = hours % 12 || 12;
+    return `${hours}:${m} ${period}`;
   };
-  const displayMode = "both";
-  // "tamil" or "both"
+
+  // ── Fetch profile on mount ──────────────────────────────────────────────────
   useEffect(() => {
     getUserProfile(userId)
       .then((res) => {
@@ -63,45 +94,68 @@ const Profile = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  // ── Horoscope upload → S3 ──────────────────────────────────────────────────
   const handleHoroscopeUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    const toastId = toast.loading("Uploading horoscope…");
+    setIsUploading(true);
     try {
-      const res = await uploadHoroscope(file);
-      if (res.success) {
-        toast.success("Horoscope updated");
-        setUser((prev) => ({
-          ...prev,
-          horoscope_uploaded: 1,
-          horoscope_file_name: res?.horoscope?.fileName,
-          horoscope_file_url: res?.horoscope?.fileUrl,
-          horoscope: {
-            uploaded: true,
-            fileName: res?.horoscope?.fileName,
-            fileUrl: res?.horoscope?.fileUrl,
-          },
-        }));
-      }
-    } catch {
-      toast.error("Upload failed");
+      const url = await uploadFileToS3(file, HOROSCOPE_FOLDER);
+      toast.dismiss(toastId);
+      toast.success("Horoscope updated");
+
+      setUser((prev) => ({
+        ...prev,
+        horoscope_uploaded:   1,
+        horoscope_file_name:  file.name,
+        horoscope_file_url:   url,
+        horoscope: {
+          uploaded: true,
+          fileName: file.name,
+          fileUrl:  url,
+        },
+      }));
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error("Horoscope upload failed");
+      console.error(err);
+    } finally {
+      setIsUploading(false);
     }
   };
 
+  // ── Profile photo upload → S3 ──────────────────────────────────────────────
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const toastId = toast.loading("Uploading photo…");
+    setIsUploading(true);
+    try {
+      const url = await uploadFileToS3(file, PHOTO_FOLDER);
+      toast.dismiss(toastId);
+      toast.success("Photo updated");
+
+      // Store full S3 URL so the <img> below renders it directly
+      setUser((prev) => ({ ...prev, photo: url }));
+    } catch (err) {
+      toast.dismiss(toastId);
+      toast.error("Photo upload failed");
+      console.error(err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // ── Generic field change ───────────────────────────────────────────────────
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePhotoChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const res = await uploadProfilePhoto(file);
-    if (res.success) {
-      toast.success("Photo updated");
-      setUser((prev) => ({ ...prev, photo: res.photo }));
-    }
-  };
-
+  // ── Save profile (text fields only; files already on S3) ──────────────────
   const handleSave = async () => {
     try {
       const { horoscope, ...cleanUser } = user;
@@ -109,11 +163,8 @@ const Profile = () => {
       if (res.success) {
         toast.success("Profile Updated!");
         setEdit(false);
-        // ✅ Re-fetch fresh data from DB after save
         const updated = await getUserProfile(userId);
-        if (updated?.success) {
-          setUser(updated.data);
-        }
+        if (updated?.success) setUser(updated.data);
       } else {
         toast.error(res.message || "Update failed");
       }
@@ -123,20 +174,33 @@ const Profile = () => {
     }
   };
 
-  const formatTimeAMPM = (timeStr) => {
-    if (!timeStr) return "";
-    const [hours, minutes] = timeStr.split(":");
-    const date = new Date();
-    date.setHours(hours, minutes);
-    return date.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
+  // ── Resolve photo src: full URL (S3) or legacy relative path ──────────────
+  const resolvePhotoSrc = (photo) => {
+    if (!photo) return null;
+    if (photo.startsWith("http")) return photo; // already a full S3 URL
+    return `${import.meta.env.VITE_IMG_URL}/photos/${photo}`; // legacy path
   };
+
+  // ── Resolve horoscope URL ──────────────────────────────────────────────────
+  const resolveHoroscopeSrc = (user) => {
+    const url = user?.horoscope?.fileUrl || user?.horoscope_file_url;
+    if (!url) return null;
+    if (url.startsWith("http")) return url; // full S3 URL
+    // legacy: reconstruct from VITE_IMG_URL
+    return `${import.meta.env.VITE_IMG_URL}/photos/${url.split("/").pop()}`;
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-sm font-bold text-gray-400 animate-pulse">Loading profile…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto p-3 md:p-6 bg-transparent min-h-screen font-sans">
+
       {/* ================= HEADER SECTION ================= */}
       <div className="bg-white border border-gray-100 rounded-[30px] md:rounded-[40px] p-5 md:p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-blue-900/5">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
@@ -144,7 +208,8 @@ const Profile = () => {
             <div className="w-24 h-24 rounded-[30px] border-4 border-[#F8FAFC] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md">
               {user?.photo ? (
                 <img
-                  src={`${import.meta.env.VITE_IMG_URL}/photos/${user?.photo}`}
+                  src={resolvePhotoSrc(user.photo)}
+                  alt="Profile"
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -153,6 +218,7 @@ const Profile = () => {
                 </span>
               )}
             </div>
+
             <div
               className={`absolute -bottom-1 -right-1 px-3 py-1 rounded-lg text-[8px] font-black uppercase border-2 border-white shadow-md ${
                 user?.privacy === "Public"
@@ -162,21 +228,31 @@ const Profile = () => {
             >
               {user?.privacy} Mode
             </div>
+
             {edit && (
               <button
                 onClick={() => fileInputRef.current.click()}
-                className="absolute inset-0 bg-[#111827]/40 rounded-[30px] flex items-center justify-center transition-all hover:bg-[#111827]/60"
+                disabled={isUploading}
+                className="absolute inset-0 bg-[#111827]/40 rounded-[30px] flex items-center justify-center transition-all hover:bg-[#111827]/60 disabled:cursor-not-allowed"
               >
-                <Camera className="text-white" size={24} />
+                {isUploading ? (
+                  <span className="text-white text-[10px] font-black animate-pulse">
+                    Uploading…
+                  </span>
+                ) : (
+                  <Camera className="text-white" size={24} />
+                )}
               </button>
             )}
             <input
               type="file"
+              accept="image/*"
               ref={fileInputRef}
               className="hidden"
               onChange={handlePhotoChange}
             />
           </div>
+
           <div className="flex flex-col items-center md:items-start">
             <h1 className="text-xl md:text-2xl font-black text-[#111827] uppercase tracking-tight">
               {user?.full_name}
@@ -200,7 +276,8 @@ const Profile = () => {
             <>
               <button
                 onClick={handleSave}
-                className="w-full md:w-auto bg-emerald-600 text-white px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[2px] flex items-center justify-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100"
+                disabled={isUploading}
+                className="w-full md:w-auto bg-emerald-600 text-white px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[2px] flex items-center justify-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Check size={14} /> Save Changes
               </button>
@@ -216,6 +293,8 @@ const Profile = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {/* ── Basic Details ── */}
         <Section title="Basic Details" icon={<Users size={16} />}>
           <Input
             edit={edit}
@@ -252,7 +331,6 @@ const Profile = () => {
             }
             onChange={handleChange}
           />
-
           <Input
             edit={false}
             label="Age / வயது"
@@ -268,7 +346,6 @@ const Profile = () => {
             onChange={handleChange}
             type="text"
           />
-
           <Input
             edit={edit}
             label="Birth Time / பிறந்த நேரம்"
@@ -295,17 +372,14 @@ const Profile = () => {
             value={
               edit
                 ? user?.marital_status
-                : getEnumLabel(
-                    "maritalStatus",
-                    user?.marital_status,
-                    displayMode,
-                  )
+                : getEnumLabel("maritalStatus", user?.marital_status, displayMode)
             }
             onChange={handleChange}
             options={getEnumOptions("maritalStatus", displayMode)}
           />
         </Section>
 
+        {/* ── Education & Career ── */}
         <Section title="Education & Career" icon={<Briefcase size={16} />}>
           <Input
             edit={edit}
@@ -345,16 +419,14 @@ const Profile = () => {
           />
         </Section>
 
-        {/* ================= ASTROLOGY SECTION ================= */}
+        {/* ── Astrology ── */}
         <Section title="Astrology Info" icon={<Sparkles size={16} />}>
           <Input
             edit={edit}
             label="Raasi / ராசி"
             name="raasi"
             value={
-              edit
-                ? user?.raasi
-                : getEnumLabel("raasi", user?.raasi, displayMode)
+              edit ? user?.raasi : getEnumLabel("raasi", user?.raasi, displayMode)
             }
             onChange={handleChange}
             options={getEnumOptions("raasi", displayMode)}
@@ -382,21 +454,35 @@ const Profile = () => {
             options={getEnumOptions("dosham", displayMode)}
             className="md:col-span-2"
           />
+
+          {/* ── Horoscope upload → S3 ── */}
           <div className="col-span-1 sm:col-span-2 flex flex-col gap-1">
             <span className="text-[9px] font-black text-[#1A5AF0] uppercase tracking-wider">
-              Jadhagam (PDF/JPG) / ஜாதகம் (PDF/JPG)
+              Jadhagam (PDF/JPG) / ஜாதகம்
             </span>
 
             {edit ? (
               <div
-                onClick={() => horoscopeRef.current.click()}
-                className="cursor-pointer bg-blue-50/50 border-2 border-dashed border-blue-200 p-3 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-[#111827] hover:bg-blue-50 transition-all"
+                onClick={() => !isUploading && horoscopeRef.current.click()}
+                className={`cursor-pointer bg-blue-50/50 border-2 border-dashed border-blue-200 p-3 rounded-xl flex items-center justify-center gap-2 text-[10px] font-black text-[#111827] hover:bg-blue-50 transition-all ${
+                  isUploading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
-                <Upload size={14} /> Update File
+                {isUploading ? (
+                  <span className="animate-pulse text-[#1A5AF0]">Uploading…</span>
+                ) : (
+                  <>
+                    <Upload size={14} />
+                    {user?.horoscope?.uploaded || user?.horoscope_uploaded
+                      ? "Update File"
+                      : "Upload File"}
+                  </>
+                )}
                 <input
                   type="file"
                   ref={horoscopeRef}
                   className="hidden"
+                  accept=".pdf,.jpg,.jpeg,.png"
                   onChange={handleHoroscopeUpload}
                 />
               </div>
@@ -405,7 +491,7 @@ const Profile = () => {
                 <FileText size={14} className="text-[#1A5AF0] shrink-0" />
                 {user?.horoscope?.uploaded || user?.horoscope_uploaded ? (
                   <a
-                    href={`${import.meta.env.VITE_IMG_URL}/photos/${(user?.horoscope?.fileUrl || user?.horoscope_file_url)?.split("/").pop()}`}
+                    href={resolveHoroscopeSrc(user)}
                     target="_blank"
                     rel="noreferrer"
                     className="underline hover:text-[#1A5AF0] truncate"
@@ -420,6 +506,7 @@ const Profile = () => {
           </div>
         </Section>
 
+        {/* ── Family Details ── */}
         <Section title="Family Details" icon={<Users size={16} />}>
           <Input
             edit={edit}
@@ -473,6 +560,7 @@ const Profile = () => {
           />
         </Section>
 
+        {/* ── Location & Settings ── */}
         <Section
           title="Location & Settings"
           icon={<ShieldCheck size={16} />}
@@ -512,6 +600,7 @@ const Profile = () => {
           </div>
         </Section>
 
+        {/* ── Remarks ── */}
         <Section
           title="Remarks"
           icon={<Sparkles size={16} />}
@@ -542,7 +631,7 @@ const Profile = () => {
   );
 };
 
-/* HELPERS */
+/* ─── HELPERS ─────────────────────────────────────────────────────────────── */
 const Section = ({ title, icon, children, className }) => (
   <div
     className={`bg-white p-5 md:p-7 rounded-[30px] md:rounded-[35px] border border-gray-100 shadow-xl shadow-blue-900/5 hover:shadow-blue-900/10 transition-shadow ${className}`}
