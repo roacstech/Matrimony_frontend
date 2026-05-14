@@ -55,7 +55,7 @@ const UserDashboardLayout = ({
     toast(
       (t) => (
         <div className="flex flex-col gap-4 p-2">
-          <p className="text-sm font-black text-black text-center">
+          <p className="text-sm font-medium text-medium text-center">
             Logout செய்ய வேண்டுமா?
           </p>
           <div className="flex gap-3 justify-center">
@@ -65,13 +65,13 @@ const UserDashboardLayout = ({
                 performLogout(navigate);
                 toast.success("Logged out successfully");
               }}
-              className="px-4 py-2 bg-[#d6e4ff] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700"
+              className="px-4 py-2 bg-[#d6e4ff] text-blue-500 rounded-xl text-xs font-medium  tracking-widest hover:bg-[#c0d4ff]"
             >
               Yes
             </button>
             <button
               onClick={() => toast.dismiss(t.id)}
-              className="px-4 py-2 bg-gray-100 text-black rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-200"
+              className="px-4 py-2 bg-gray-100 text-black rounded-xl text-xs font-medium  tracking-widest hover:bg-gray-200"
             >
               No
             </button>
@@ -148,7 +148,7 @@ const UserDashboardLayout = ({
 
     {/* DROPDOWN MENU */}
     {showMenu && (
-      <div className="absolute right-0 top-14 w-52 bg-white rounded-[8px] shadow-2xl border border-gray-100 z-50 overflow-hidden">
+      <div className="absolute right-0 top-14 w-52 bg-[#f5f7fa] rounded-[8px] shadow-2 border border-gray-100 z-50 overflow-hidden">
         
         {/* IMAGE + NAME INSIDE */}
         <div className="flex flex-col items-center gap-1.5 px-4 py-4 border-b border-gray-100">
@@ -167,14 +167,14 @@ const UserDashboardLayout = ({
         <div className="p-2">
           <button
             onClick={() => { navigate("/user/dashboard/profile"); onAvatarClick(); }}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-medium tracking-widest text-black hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+            className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-medium tracking-widest text-black hover:text-blue-500 rounded-xl transition-colors cursor-pointer"
           >
             <Settings size={16} className="text-[#818CF8]" /> Profile Settings
           </button>
          
           <button
             onClick={() => { handleLogout(); onAvatarClick(); }}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-medium tracking-widest text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+            className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-medium tracking-widest text-rose-600  rounded-xl transition-colors cursor-pointer"
           >
             <LogOut size={16} /> Logout
           </button>
