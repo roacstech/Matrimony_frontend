@@ -2,23 +2,38 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import toast from "react-hot-toast";
 import { RiDiamondRingFill } from "react-icons/ri";
-import { FaLink } from "react-icons/fa";
 import {
   Settings,
   LogOut,
   Menu,
-  ChevronDown,
   Inbox,
   Send,
 } from "lucide-react";
 import { performLogout } from "../Data/logout";
 import { getUserProfile } from "../api/userApi";
 
-const UserDashboardLayout = ({ showMenu, onAvatarClick, children }) => {
+const navItems = [
+  {
+    name: "Matches",
+    path: "/user/dashboard",
+    icon: <RiDiamondRingFill size={18} />,
+    end: true,
+  },
+  {
+    name: "Requests Received",
+    path: "/user/dashboard/my-connection/received",
+    icon: <Inbox size={18} />,
+  },
+  {
+    name: "Sent Requests",
+    path: "/user/dashboard/my-connection/sent",
+    icon: <Send size={18} />,
+  },
+];
+
+const UserDashboardLayout = ({ children }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [openMenu, setOpenMenu] = useState(null);
   const [isProfileDropdown, setProfileDropdown] = useState(false);
   const [user, setUserData] = useState({});
   const profileRef = useRef(null);
@@ -35,16 +50,6 @@ const UserDashboardLayout = ({ showMenu, onAvatarClick, children }) => {
     };
     if (userId) fetchUser();
   }, [userId]);
-
-  // Auto-open submenu if current path matches a child
-  useEffect(() => {
-    const MY_CONNECTIONS_KEY = "my-connections";
-    const isConnectionChild = [
-      "/user/dashboard/my-connection/received",
-      "/user/dashboard/my-connection/sent",
-    ].some((p) => location.pathname.startsWith(p));
-    if (isConnectionChild) setOpenMenu(MY_CONNECTIONS_KEY);
-  }, [location.pathname]);
 
   // Close profile dropdown on outside click
   useEffect(() => {
@@ -97,24 +102,6 @@ const UserDashboardLayout = ({ showMenu, onAvatarClick, children }) => {
 
   const closeSidebar = () => setIsSidebarOpen(false);
 
-  const connectionChildren = [
-    {
-      name: "Received",
-      path: "/user/dashboard/my-connection/received",
-      icon: <Inbox size={16} />,
-    },
-    {
-      name: "Sent",
-      path: "/user/dashboard/my-connection/sent",
-      icon: <Send size={16} />,
-    },
-  ];
-
-  const isConnectionActive = connectionChildren.some((c) =>
-    location.pathname.startsWith(c.path)
-  );
-  const isConnectionOpen = openMenu === "my-connections";
-
   return (
     <div className="min-h-screen flex bg-[#F8FAFC] font-sans overflow-hidden">
 
@@ -156,68 +143,24 @@ const UserDashboardLayout = ({ showMenu, onAvatarClick, children }) => {
 
         {/* NAVIGATION */}
         <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-          {/* Dashboard */}
-          <NavLink
-            to="/user/dashboard"
-            end
-            onClick={closeSidebar}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all
-              ${isActive
-                ? "bg-[#1A5AF0] text-white"
-                : "text-gray-300 hover:bg-gray-800"
-              }`
-            }
-          >
-            <RiDiamondRingFill size={18} />
-            <span>Matches</span>
-          </NavLink>
-
-          {/* My Connections (with submenu) */}
-          <div>
-            <button
-              onClick={() =>
-                setOpenMenu(isConnectionOpen ? null : "my-connections")
-              }
-              className={`cursor-pointer w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all
-                ${isConnectionActive
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.end}
+              onClick={closeSidebar}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all
+                ${isActive
                   ? "bg-[#1A5AF0] text-white"
                   : "text-gray-300 hover:bg-gray-800"
-                }`}
+                }`
+              }
             >
-              <div className="flex items-center gap-3">
-                <FaLink size={16} />
-                <span>My Connections</span>
-              </div>
-              <ChevronDown
-                size={14}
-                className={`transition-transform duration-200 ${isConnectionOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {isConnectionOpen && (
-              <div className="ml-4 mt-1 border-l border-gray-700 pl-3 space-y-0.5">
-                {connectionChildren.map((child) => {
-                  const isChildActive = location.pathname.startsWith(child.path);
-                  return (
-                    <NavLink
-                      key={child.path}
-                      to={child.path}
-                      onClick={closeSidebar}
-                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition-all
-                        ${isChildActive
-                          ? "text-white bg-white/10"
-                          : "text-gray-400 hover:text-white hover:bg-white/5"
-                        }`}
-                    >
-                      {child.icon}
-                      {child.name}
-                    </NavLink>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+              {item.icon}
+              <span>{item.name}</span>
+            </NavLink>
+          ))}
         </nav>
       </aside>
 
@@ -289,7 +232,7 @@ const UserDashboardLayout = ({ showMenu, onAvatarClick, children }) => {
         {/* PAGE CONTENT */}
         <main className="flex-1 p-4 lg:p-6 overflow-y-auto bg-[#F8FAFC]">
           <div className="max-w-[1400px] mx-auto">
-            <div className="bg-white rounded-3xl p-5 lg:p-8 shadow border border-gray-100 min-h-[calc(100vh-110px)]">
+            <div className="bg-white rounded-xl p-5 lg:p-8 shadow border border-gray-100 min-h-[calc(100vh-110px)]">
               {children}
             </div>
           </div>

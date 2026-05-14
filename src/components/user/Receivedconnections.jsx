@@ -1,336 +1,370 @@
-    import React, { useEffect, useState } from "react";
-    import {
-    getReceivedConnections,
-    acceptConnection,
-    rejectConnection,
-    getUserProfile,
-    getAcceptedConnections,
-    } from "../../api/userApi";
-    import { viewProfile } from "../../api/profilesApi";
-    import { getEnumLabel } from "../../utils/convertHelper";
-    import { calculateAge } from "../../utils/dateHelper";
-    import { X, CheckCircle, XCircle, Eye } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import {
+  getReceivedConnections,
+  acceptConnection,
+  rejectConnection,
+  getUserProfile,
+  getAcceptedConnections,
+} from "../../api/userApi";
+import { viewProfile } from "../../api/profilesApi";
+import { getEnumLabel } from "../../utils/convertHelper";
+import { calculateAge } from "../../utils/dateHelper";
+import { X, CheckCircle, XCircle, Eye, Inbox } from "lucide-react";
 
-    const ReceivedConnections = () => {
-    const [received, setReceived] = useState([]);
-    const [acceptedReceived, setAcceptedReceived] = useState([]);
-    const [selectedUser, setSelectedUser] = useState(null);
-    const [toast, setToast] = useState({ show: false, msg: "" });
+const ReceivedConnections = () => {
+  const [received, setReceived] = useState([]);
+  const [acceptedReceived, setAcceptedReceived] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [toast, setToast] = useState({ show: false, msg: "" });
 
-    const Img_Url = import.meta.env.VITE_IMG_URL;
-    const displayMode = "both";
+  const Img_Url = import.meta.env.VITE_IMG_URL;
+  const displayMode = "both";
 
-    const triggerToast = (msg) => {
-        setToast({ show: true, msg });
-        setTimeout(() => setToast({ show: false, msg: "" }), 2000);
+  const resolvePhotoSrc = (photo) => {
+    if (!photo) return null;
+    if (photo.startsWith("http")) return photo;
+    return `${Img_Url}/photos/${photo}`;
+  };
+
+  const triggerToast = (msg) => {
+    setToast({ show: true, msg });
+    setTimeout(() => setToast({ show: false, msg: "" }), 2000);
+  };
+
+  const formatTime12h = (time) => {
+    if (!time) return "—";
+    const [hours, minutes] = time.split(":");
+    const date = new Date();
+    date.setHours(parseInt(hours), parseInt(minutes));
+    return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  };
+
+  const isExpired = (createdAt) =>
+    Date.now() - new Date(createdAt).getTime() >= 24 * 60 * 60 * 1000;
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const receivedRes = await getReceivedConnections();
+        if (receivedRes?.success && Array.isArray(receivedRes.data))
+          setReceived(receivedRes.data);
+      } catch (err) {
+        console.error("Failed to load received connections", err);
+      }
     };
+    load();
+  }, []);
 
-    const formatTime12h = (time) => {
-        if (!time) return "—";
-        const [hours, minutes] = time.split(":");
-        const date = new Date();
-        date.setHours(parseInt(hours), parseInt(minutes));
-        return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-    };
-
-    const isExpired = (createdAt) =>
-        Date.now() - new Date(createdAt).getTime() >= 24 * 60 * 60 * 1000;
-
-    useEffect(() => {
-        const load = async () => {
-        try {
-            const receivedRes = await getReceivedConnections();
-            if (receivedRes?.success && Array.isArray(receivedRes.data))
-            setReceived(receivedRes.data);
-        } catch (err) {
-            console.error("Failed to load received connections", err);
-        }
-        };
-        load();
-    }, []);
-
-    useEffect(() => {
-        const loadAccepted = async () => {
-        try {
-            const res = await getAcceptedConnections();
-            if (res?.success) {
-            setAcceptedReceived((res.data || []).map((c) => ({ ...c, status: "Accepted" })));
-            }
-        } catch (err) {
-            console.error("Failed to load accepted connections", err);
-        }
-        };
-        loadAccepted();
-    }, []);
-
-    const refreshAccepted = async () => {
-        try {
+  useEffect(() => {
+    const loadAccepted = async () => {
+      try {
         const res = await getAcceptedConnections();
         if (res?.success)
-            setAcceptedReceived((res.data || []).map((c) => ({ ...c, status: "Accepted" })));
-        } catch (err) {
-        console.error(err);
-        }
+          setAcceptedReceived((res.data || []).map((c) => ({ ...c, status: "Accepted" })));
+      } catch (err) {
+        console.error("Failed to load accepted connections", err);
+      }
     };
+    loadAccepted();
+  }, []);
 
-    const handleAccept = async (connectionId) => {
-        const res = await acceptConnection(connectionId);
-        if (!res.success) return triggerToast(res.message || "Accept failed");
-        triggerToast("Connection accepted");
-        setReceived((prev) => prev.filter((c) => c.connectionId !== connectionId));
-        await refreshAccepted();
-    };
+  const refreshAccepted = async () => {
+    try {
+      const res = await getAcceptedConnections();
+      if (res?.success)
+        setAcceptedReceived((res.data || []).map((c) => ({ ...c, status: "Accepted" })));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-    const handleReject = async (connectionId) => {
-        const res = await rejectConnection(connectionId);
-        if (!res.success) return triggerToast(res.message || "Reject failed");
-        triggerToast("Connection rejected");
-        setReceived((prev) => prev.filter((c) => c.connectionId !== connectionId));
-    };
+  const handleAccept = async (connectionId) => {
+    const res = await acceptConnection(connectionId);
+    if (!res.success) return triggerToast(res.message || "Accept failed");
+    triggerToast("Connection accepted");
+    setReceived((prev) => prev.filter((c) => c.connectionId !== connectionId));
+    await refreshAccepted();
+  };
 
-    const handleViewProfile = async (userId, fuser, profileId) => {
-        if (!profileId) return triggerToast("Profile ID missing");
-        try {
-        const token = localStorage.getItem("accesstoken");
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        const trackRes = await viewProfile(payload.id, profileId);
-        if (trackRes.success) {
-            const res = await getUserProfile(userId);
-            if (res.success) setSelectedUser(res.data);
-            else triggerToast("Could not load profile");
-        } else {
-            triggerToast(trackRes.message || "Failed to initialize view");
-        }
-        } catch (err) {
-        console.error(err);
-        triggerToast("Error opening profile");
-        }
-    };
+  const handleReject = async (connectionId) => {
+    const res = await rejectConnection(connectionId);
+    if (!res.success) return triggerToast(res.message || "Reject failed");
+    triggerToast("Connection rejected");
+    setReceived((prev) => prev.filter((c) => c.connectionId !== connectionId));
+  };
 
-    const allRows = [...received, ...acceptedReceived];
+  const handleViewProfile = async (userId, fuser, profileId) => {
+    if (!profileId) return triggerToast("Profile ID missing");
+    try {
+      const token = localStorage.getItem("accesstoken");
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const trackRes = await viewProfile(payload.id, profileId);
+      if (trackRes.success) {
+        const res = await getUserProfile(userId);
+        if (res.success) setSelectedUser(res.data);
+        else triggerToast("Could not load profile");
+      } else {
+        triggerToast(trackRes.message || "Failed to initialize view");
+      }
+    } catch (err) {
+      console.error(err);
+      triggerToast("Error opening profile");
+    }
+  };
 
-    const getStatus = (c) => {
-        if (c.status === "Accepted") return "accepted";
-        if (isExpired(c.created_at)) return "expired";
-        return "pending";
-    };
+  const allRows = [...received, ...acceptedReceived];
 
-    return (
-        <div className="p-6 max-w-[1400px] mx-auto min-h-screen relative">
-        {/* Toast */}
-        {toast.show && (
-            <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-[#111827] text-white px-6 py-3 rounded-xl shadow-2xl text-xs font-medium uppercase tracking-widest border border-blue-500/30">
-            {toast.msg}
-            </div>
-        )}
+  const getStatus = (c) => {
+    if (c.status === "Accepted") return "accepted";
+    if (isExpired(c.created_at)) return "expired";
+    return "pending";
+  };
 
-        {/* HEADER */}
-        <div className="mb-6 flex items-center justify-between">
-            <div>
-            <h2 className="text-lg font-semibold text-[#111827]">Received Connections</h2>
-            <p className="text-xs text-gray-400 mt-0.5">{allRows.length} total requests</p>
-            </div>
+  return (
+    <div className="space-y-5">
+
+      {/* Toast */}
+      {toast.show && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-[#111827] text-white px-6 py-3 rounded-xl shadow-2xl text-xs font-medium uppercase tracking-widest border border-blue-500/30">
+          {toast.msg}
         </div>
+      )}
 
-        {/* TABLE */}
-        <div className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm">
+      {/* ── Top bar ── */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
+            <Inbox size={18} className="text-blue-500" />
+          </div>
+          <h2 className="text-lg font-bold text-gray-900">Received Connections</h2>
+        </div>
+        <span className="px-3 py-1 text-xs font-semibold text-blue-600 bg-blue-50 rounded-full border border-blue-100">
+          {allRows.length} total
+        </span>
+      </div>
 
-            <div className="overflow-x-auto">
-            <table className="w-full text-left min-w-[600px]">
-                <thead>
-                <tr className="bg-gray-100 border-b border-gray-100 text-[10px] font-semibold text-black-400 uppercase tracking-widest">
-                    <th className="px-6 py-4">Gender</th>
-                    <th className="px-6 py-4">Occupation</th>
-                    <th className="px-6 py-4">Location</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-center">Actions</th>
+      {/* ── Table ── */}
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left min-w-[760px]">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Gender</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Occupation</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Location</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Status</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {allRows.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="text-center py-14 text-sm text-gray-400">
+                    No received requests found
+                  </td>
                 </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                {allRows.length === 0 && (
-                    <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-sm text-gray-300 font-medium">
-                        No received requests found
-                    </td>
-                    </tr>
-                )}
-                {allRows.map((c) => {
-                    const status = getStatus(c);
-                    return (
+              ) : (
+                allRows.map((c, idx) => {
+                  const status = getStatus(c);
+                  return (
                     <tr
-                        key={c.connectionId}
-                        className={`transition-all ${status === "expired" ? "opacity-40" : "hover:bg-blue-50/20"}`}
+                      key={c.connectionId}
+                      className={`border-b border-gray-50 transition-colors ${
+                        status === "expired"
+                          ? "opacity-40"
+                          : idx % 2 === 1
+                          ? "bg-gray-50/40 hover:bg-gray-50"
+                          : "bg-white hover:bg-gray-50"
+                      }`}
                     >
-                        <td className="px-6 py-4 text-sm font-medium text-[#111827]">
+                      {/* Gender */}
+                      <td className="px-6 py-4 text-sm font-semibold text-gray-800">
                         {getEnumLabel("gender", c.gender, displayMode)}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 font-medium">
+                      </td>
+
+                      {/* Occupation */}
+                      <td className="px-6 py-4 text-sm text-gray-600">
                         {c.occupation || "—"}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-500 font-medium">
+                      </td>
+
+                      {/* Location */}
+                      <td className="px-6 py-4 text-sm text-gray-600">
                         {c.city || "—"}
-                        </td>
-                        <td className="px-6 py-4">
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4">
                         {status === "accepted" && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-medium bg-green-50 text-green-600 border border-green-100 uppercase">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-green-50 text-green-600 border border-green-100 uppercase">
                             <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> Accepted
-                            </span>
+                          </span>
                         )}
                         {status === "expired" && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-medium bg-gray-100 text-gray-400 uppercase">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-400 uppercase">
                             Expired
-                            </span>
+                          </span>
                         )}
                         {status === "pending" && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-medium bg-yellow-50 text-yellow-600 border border-yellow-100 uppercase">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-yellow-50 text-yellow-600 border border-yellow-100 uppercase">
                             <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" /> Pending
-                            </span>
+                          </span>
                         )}
-                        </td>
-                        <td className="px-6 py-4">
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4">
                         <div className="flex items-center justify-center gap-2">
-                            {status === "accepted" && (
+                          {status === "accepted" && (
                             <button
-                                onClick={() => handleViewProfile(c.user_id, c.from_user, c.profileId)}
-                                className="cursor-pointer flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-[#1A5AF0] rounded-lg text-[10px] font-medium uppercase tracking-widest hover:bg-[#1A5AF0] hover:text-white transition-all"
+                              onClick={() => handleViewProfile(c.user_id, c.from_user, c.profileId)}
+                              className="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-blue-600 border border-blue-200 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-all"
                             >
-                                <Eye size={13} /> View
+                              <Eye size={13} /> View
                             </button>
-                            )}
-                            {status === "pending" && (
+                          )}
+                          {status === "pending" && (
                             <>
-                                <button
+                              <button
                                 onClick={() => handleAccept(c.connectionId)}
-                                className="cursor-pointer flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-[#1A5AF0] rounded-lg text-[10px] font-medium uppercase tracking-widest hover:bg-[#1A5AF0] hover:text-white transition-all"
-                                >
+                                className="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-all"
+                              >
                                 <CheckCircle size={13} /> Accept
-                                </button>
-                                <button
+                              </button>
+                              <button
                                 onClick={() => handleReject(c.connectionId)}
-                                className="cursor-pointer flex items-center gap-1.5 px-4 py-2 bg-rose-50 text-rose-500 rounded-lg text-[10px] font-medium uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all"
-                                >
+                                className="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-rose-500 border border-rose-200 bg-rose-50 hover:bg-rose-500 hover:text-white rounded-lg transition-all"
+                              >
                                 <XCircle size={13} /> Reject
-                                </button>
+                              </button>
                             </>
-                            )}
-                            {status === "expired" && (
+                          )}
+                          {status === "expired" && (
                             <span className="text-[10px] text-gray-300 font-medium uppercase">—</span>
-                            )}
+                          )}
                         </div>
-                        </td>
+                      </td>
                     </tr>
-                    );
-                })}
-                </tbody>
-            </table>
-            </div>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
+      </div>
 
-        {/* PROFILE MODAL */}
-        {selectedUser && (
-            <div className="fixed inset-0 bg-[#111827]/80 backdrop-blur-sm flex items-center justify-center z-[110] p-4">
-            <div className="bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-[2rem] shadow-2xl relative p-8 border border-gray-100">
-                <button
-                onClick={() => setSelectedUser(null)}
-                className="cursor-pointer absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-[#F1F5F9] text-[#111827] hover:bg-[#1A5AF0] hover:text-white transition-all shadow-md z-[120]"
-                >
-                <X size={16} />
-                </button>
+      {/* ── Profile Modal ── */}
+      {selectedUser && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white w-[900px] max-w-full max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl p-6 md:p-10 relative border border-gray-200">
 
-                <div className="flex flex-col items-center mb-12 text-center">
-                <div className="relative mb-4">
-                    <img
-                    src={`${Img_Url}/photos/${selectedUser.photo}`}
-                    className="w-28 h-28 object-cover rounded-3xl shadow-2xl bg-gray-100 border-4 border-white"
-                    />
-                    <div className="absolute -bottom-1 -right-1 bg-[#1A5AF0] w-6 h-6 rounded-full border-4 border-white" />
-                </div>
-                <h2 className="text-2xl font-semibold text-[#111827]">{selectedUser.full_name}</h2>
-                <p className="text-[10px] font-medium text-[#1A5AF0] uppercase tracking-[0.3em] mt-2">
-                    {selectedUser.city} • {selectedUser.country}
+            <button
+              onClick={() => setSelectedUser(null)}
+              className="cursor-pointer absolute top-5 right-5 w-9 h-9 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition flex items-center justify-center"
+            >
+              <X size={16} />
+            </button>
+
+            {/* Avatar + name */}
+            <div className="flex flex-col items-center mb-8">
+              <div className="w-16 h-16 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center mb-3">
+                {selectedUser.photo ? (
+                  <img
+                    src={resolvePhotoSrc(selectedUser.photo)}
+                    className="w-full h-full object-cover"
+                    alt="user"
+                  />
+                ) : (
+                  <span className="text-2xl font-semibold text-gray-400">
+                    {selectedUser.full_name?.charAt(0)}
+                  </span>
+                )}
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">{selectedUser.full_name}</h2>
+              <p className="text-sm text-blue-600 mt-1">
+                {selectedUser.city}, {selectedUser.country}
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">{selectedUser.email}</p>
+            </div>
+
+            {/* Two-column info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-3">
+                  Personal Info
                 </p>
-                <p className="text-[10px] font-medium text-gray-400 tracking-[0.2em] mt-1">
-                    {selectedUser.email}
+                <InfoRow label="Gender / பாலினம்" value={getEnumLabel("gender", selectedUser.gender, displayMode)} />
+                <InfoRow label="DOB / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
+                <InfoRow label="Age / வயது" value={selectedUser?.dob ? `${calculateAge(selectedUser.dob)} Years` : "—"} />
+                <InfoRow label="Birth Place / பிறந்த இடம்" value={selectedUser.birth_place} />
+                <InfoRow label="Birth Time / பிறந்த நேரம்" value={formatTime12h(selectedUser.birth_time)} />
+                <InfoRow label="Marital Status / திருமண நிலை" value={getEnumLabel("maritalStatus", selectedUser.marital_status, displayMode)} />
+                <InfoRow label="Email / மின்னஞ்சல்" value={selectedUser.email} />
+                <InfoRow label="Phone / தொலைபேசி" value={selectedUser.phone} />
+                <InfoRow label="Income / வருமானம்" value={selectedUser.income} />
+                <InfoRow label="Work Location / வேலை இடம்" value={selectedUser.work_location} />
+                <InfoRow label="Education / கல்வி" value={selectedUser.education} />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-3">
+                  Family & Details
                 </p>
-                </div>
-
-                <div className="space-y-12">
-                <Section title="Personal Information / தனிப்பட்ட விவரங்கள்">
-                    <Row label="Gender / பாலினம்" value={getEnumLabel("gender", selectedUser.gender, displayMode)} />
-                    <Row label="Date of Birth / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
-                    <Row label="Age / வயது" value={selectedUser?.dob ? `${calculateAge(selectedUser.dob)} Years` : "—"} />
-                    <Row label="Birth Place / பிறந்த இடம்" value={selectedUser.birth_place} />
-                    <Row label="Birth Time / பிறந்த நேரம்" value={formatTime12h(selectedUser.birth_time)} />
-                    <Row label="Marital Status / திருமண நிலை" value={getEnumLabel("maritalStatus", selectedUser.marital_status, displayMode)} />
-                    <Row label="Email / மின்னஞ்சல்" value={selectedUser.email} />
-                    <Row label="Phone / தொலைபேசி" value={selectedUser.phone} />
-                </Section>
-                <Section title="Education & Career / கல்வி & தொழில்">
-                    <Row label="Education / கல்வி" value={selectedUser.education} />
-                    <Row label="Occupation / தொழில்" value={selectedUser.occupation} />
-                    <Row label="Income / வருமானம்" value={selectedUser.income} />
-                    <Row label="Work Location / வேலை இடம்" value={selectedUser.workLocation || selectedUser.work_location} />
-                </Section>
-                <Section title="Family Details / குடும்ப விவரங்கள்">
-                    <Row label="Father / தந்தை" value={selectedUser.father_name} />
-                    <Row label="Mother / தாய்" value={selectedUser.mother_name} />
-                    <Row label="Grandfather / தாத்தா" value={selectedUser.grandfather_name} />
-                    <Row label="Grandmother / பாட்டி" value={selectedUser.grandmother_name} />
-                    <Row label="Mother's Grandfather / தாய்வழி தாத்தா" value={selectedUser.mother_side_grandfather_name} />
-                    <Row label="Mother's Grandmother / தாய்வழி பாட்டி" value={selectedUser.mother_side_grandmother_name} />
-                    <Row label="Siblings / உடன்பிறப்புகள்" value={selectedUser.siblings} />
-                </Section>
-                <Section title="Astrology / ஜாதகம்">
-                    <Row label="Raasi / இராசி" value={getEnumLabel("raasi", selectedUser.raasi, displayMode)} />
-                    <Row label="Star / நட்சத்திரம்" value={getEnumLabel("star", selectedUser.star, displayMode)} />
-                    <Row label="Dosham / தோஷம்" value={getEnumLabel("dosham", selectedUser.dosham, displayMode)} />
-                </Section>
-                <Section title="Address / முகவரி">
-                    <Row label="Address / முகவரி" value={selectedUser.address} />
-                    <Row label="City / நகரம்" value={selectedUser.city} />
-                    <Row label="Country / நாடு" value={selectedUser.country} />
-                </Section>
-                <Section title="Horoscope / ஜாதகம் கோப்பு">
-                    <div className="pt-1">
-                    {selectedUser.horoscope_uploaded ? (
-                        <button
-                        onClick={() => window.open(`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope_file_name}`, "_blank")}
-                        className="cursor-pointer bg-[#1A5AF0] text-white px-8 py-3 rounded-full text-[10px] font-medium uppercase tracking-widest shadow-sm hover:bg-[#111827] transition-all"
-                        >
-                        View Horoscope / ஜாதகம் பார்க்க
-                        </button>
-                    ) : (
-                        <div className="bg-gray-100 text-gray-400 px-6 py-2 rounded-full text-xs font-medium italic w-fit">
-                        Not Uploaded / பதிவேற்றம் இல்லை
-                        </div>
-                    )}
-                    </div>
-                </Section>
-                </div>
+                <InfoRow label="Father / தந்தை" value={selectedUser.father_name} />
+                <InfoRow label="Mother / தாய்" value={selectedUser.mother_name} />
+                <InfoRow label="Grandfather / தாத்தா" value={selectedUser.grandfather_name} />
+                <InfoRow label="Grandmother / பாட்டி" value={selectedUser.grandmother_name} />
+                <InfoRow label="Mother Side GF / தாய்வழி தாத்தா" value={selectedUser.mother_side_grandfather_name} />
+                <InfoRow label="Mother Side GM / தாய்வழி பாட்டி" value={selectedUser.mother_side_grandmother_name} />
+                <InfoRow label="Siblings / உடன்பிறப்புகள்" value={selectedUser.siblings} />
+                <InfoRow label="Raasi / இராசி" value={getEnumLabel("raasi", selectedUser.raasi, displayMode)} />
+                <InfoRow label="Star / நட்சத்திரம்" value={getEnumLabel("star", selectedUser.star, displayMode)} />
+                <InfoRow label="Dosham / தோஷம்" value={getEnumLabel("dosham", selectedUser.dosham, displayMode)} />
+              </div>
             </div>
+
+            {/* Horoscope */}
+            <div className="mt-8">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
+                Jadhagam / ஜாதகம்
+              </p>
+              {selectedUser.horoscope_uploaded ? (
+                <div className="flex items-center justify-between bg-gray-50 border border-gray-200 px-4 py-3 rounded-xl">
+                  <span className="text-sm font-medium text-gray-800 truncate">
+                    {selectedUser.horoscope_file_name}
+                  </span>
+                  <a
+                    href={selectedUser.horoscope_file_url || `${Img_Url}/photos/${selectedUser.horoscope_file_name}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="cursor-pointer inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition"
+                  >
+                    View
+                  </a>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400">Not uploaded</p>
+              )}
             </div>
-        )}
+
+            {/* Remarks */}
+            <div className="mt-4">
+              <InfoRow label="Remarks / குறிப்புகள்" value={selectedUser.remarks} />
+            </div>
+          </div>
         </div>
-    );
-    };
-
-    const Section = ({ title, children }) => (
-    <div>
-        <h3 className="text-xs font-semibold text-[#111827] uppercase tracking-[0.25em] mb-6 flex items-center gap-4">
-        {title}
-        <span className="h-[2px] w-8 bg-blue-100 rounded-full" />
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{children}</div>
+      )}
     </div>
-    );
+  );
+};
 
-    const Row = ({ label, value }) => (
-    <div className="flex flex-col gap-2">
-        <label className="text-[10px] text-[#1A5AF0] font-medium uppercase tracking-wider ml-1">{label}</label>
-        <div className="bg-[#F8FAFC] border border-gray-50 rounded-xl px-4 py-3 text-sm text-[#111827] font-medium shadow-sm">
-        {value || <span className="text-gray-300 font-normal italic">—</span>}
-        </div>
-    </div>
-    );
+const InfoRow = ({ label, value }) => (
+  <div className="flex justify-between py-2 border-b border-gray-50 text-sm px-1 hover:bg-gray-50 transition-colors rounded">
+    <span className="text-xs text-gray-400 uppercase tracking-widest pr-4 shrink-0">
+      {label}
+    </span>
+    <span className="text-sm font-medium text-gray-800 text-right max-w-[55%]">
+      {value || "—"}
+    </span>
+  </div>
+);
 
-    export default ReceivedConnections;
+export default ReceivedConnections;
