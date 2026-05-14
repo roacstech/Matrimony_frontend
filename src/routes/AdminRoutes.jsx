@@ -5,6 +5,7 @@ import AdminDashboardLayout from "../layouts/AdminDashboardLayout";
 import AdminChart from "../components/admin/AdminChart";
 import Alluser from "../components/admin/Alluser";
 import PendingForm from "../components/admin/PendingForm";
+import ConnectionStatus from "../components/admin/ConnectionStatus";
 
 const AdminRoutes = () => {
     const token = localStorage.getItem("accesstoken");
@@ -26,6 +27,7 @@ const AdminRoutes = () => {
         <Route path="chart" element={<AdminChart />} />
         <Route path="all-users" element={<Alluser />} />
         <Route path="pending-forms" element={<PendingForm />} />
+        <Route path="connection-status" element={<ConnectionStatus />} />
       </Route>
     </Routes>
   );

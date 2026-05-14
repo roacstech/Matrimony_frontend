@@ -4,7 +4,7 @@ const BASE_URL = `${import.meta.env.VITE_APP_API_URL}admin`
    AUTH HEADER
 ================================ */
 const getAuthHeader = () => ({
-  Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+  Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
 });
 
 /* ===============================
@@ -215,5 +215,40 @@ export const deleteUser = async (userId) => {
   }
 
   return data;
+};
+
+
+/* ===============================
+   GET ALL CONNECTIONS (USER-LEVEL)
+================================ */
+export const getUserAllConnections = async () => {
+  const res = await fetch(`${import.meta.env.VITE_APP_API_URL}user/connections/all`, {
+    headers: getAuthHeader(),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message || "Failed to fetch all connections");
+  }
+
+  return data.data; // { total, connections[] }
+};
+
+/* ===============================
+    GET ALL CONNECTIONS (ADMIN)
+================================ */
+export const getAllConnections = async () => {
+  const res = await fetch(`${BASE_URL}/connections`, {
+    headers: getAuthHeader(),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message || "Failed to fetch connections");
+  }
+
+  return data.data; // 👈 array of all connections
 };
 

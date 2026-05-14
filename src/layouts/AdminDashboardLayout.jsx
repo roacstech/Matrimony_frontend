@@ -7,6 +7,7 @@ import {
   ClipboardList,
   LogOut,
   Menu,
+  Link2,
 } from "lucide-react";
 import { performLogout } from "../Data/logout";
 import IMG from "../assets/adminprofile.jpg";
@@ -104,6 +105,12 @@ const AdminDashboardLayout = () => {
             to="/admin/pending-forms"
             label="Pending Approvals"
             icon={<ClipboardList size={18} />}
+            onClick={closeSidebar}
+          />
+          <MenuItem
+            to="/admin/connection-status"
+            label="Connection Status"
+            icon={<Link2 size={18} />}
             onClick={closeSidebar}
           />
         </nav>

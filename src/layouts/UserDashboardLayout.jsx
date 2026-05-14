@@ -232,7 +232,7 @@ const UserDashboardLayout = ({ children }) => {
         {/* PAGE CONTENT */}
         <main className="flex-1 p-4 lg:p-6 overflow-y-auto bg-[#F8FAFC]">
           <div className="max-w-[1400px] mx-auto">
-            <div className="bg-white rounded-3xl p-5 lg:p-8 shadow border border-gray-100 min-h-[calc(100vh-110px)]">
+            <div className="bg-white rounded-xl p-5 lg:p-8 shadow border border-gray-100 min-h-[calc(100vh-110px)]">
               {children}
             </div>
           </div>
