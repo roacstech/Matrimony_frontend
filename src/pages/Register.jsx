@@ -85,7 +85,7 @@ const Register = ({ onNavigate }) => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-2xl text-white font-semibold text-base transition-all active:scale-[0.98] mt-2"
+          className="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-2xl text-white font-semibold text-base transition-all active:scale-[0.98] mt-2 cursor-pointer"
         >
           Sign Up
         </button>
@@ -96,7 +96,7 @@ const Register = ({ onNavigate }) => {
         <button
           type="button"
           onClick={onNavigate}
-          className="text-blue-600 font-semibold hover:underline"
+          className="text-blue-600 font-semibold hover:underline cursor-pointer"
         >
           Log In
         </button>

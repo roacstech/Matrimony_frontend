@@ -53,7 +53,7 @@ const Login = ({ onNavigate }) => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500 cursor-pointer"
             >
               {showPassword ? "Hide" : "Show"}
             </button>
@@ -62,10 +62,10 @@ const Login = ({ onNavigate }) => {
 
         <div className="flex justify-between text-sm">
           <label className="flex items-center gap-2">
-            <input type="checkbox" className="w-4 h-4 accent-blue-600" />
+            <input type="checkbox" className="w-4 h-4 accent-blue-600 cursor-pointer" />
             <span>Remember me</span>
           </label>
-          <button type="button" onClick={() => onNavigate("forgot")} className="text-blue-600 hover:underline">
+          <button type="button" onClick={() => onNavigate("forgot")} className="text-blue-600 hover:underline cursor-pointer">
             Forgot Password?
           </button>
         </div>
@@ -73,7 +73,7 @@ const Login = ({ onNavigate }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 py-3.5 rounded-2xl text-white font-semibold text-base transition-all"
+          className="w-full bg-blue-600 hover:bg-blue-700 py-3.5 rounded-2xl text-white font-semibold text-base transition-all cursor-pointer"
         >
           {loading ? "Signing In..." : "Sign In"}
         </button>
@@ -81,7 +81,7 @@ const Login = ({ onNavigate }) => {
 
       <p className="text-center text-sm text-gray-600 mt-6">
         Don't have an account?{' '}
-        <button onClick={onNavigate} className="text-blue-600 font-semibold hover:underline">Register</button>
+        <button onClick={onNavigate} className="text-blue-600 font-semibold hover:underline cursor-pointer">Register</button>
       </p>
     </div>
   );

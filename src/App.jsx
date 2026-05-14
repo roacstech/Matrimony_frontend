@@ -33,11 +33,7 @@ function App() {
       </Routes>
 
       <Toaster
-        position="top-center"
-        containerStyle={{
-          top: "50%",
-          transform: "translateY(-50%)",
-        }}
+        position="top-right"
         toastOptions={{
           duration: 1500,
           style: {
