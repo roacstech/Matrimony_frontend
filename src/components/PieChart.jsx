@@ -34,10 +34,10 @@ const PieChart = () => {
     datasets: [
       {
         data: [privacyCounts.private, privacyCounts.public],
-        backgroundColor: ["#1E40AF", "#E0F2FE"],
-        borderColor: ["#1E40AF", "#BAE6FD"],
-        borderWidth: 2,
-        hoverOffset: 6,
+        backgroundColor: ["#1D4ED8", "#BAE6FD"],
+        borderColor: ["#fff", "#fff"],
+        borderWidth: 3,
+        hoverOffset: 8,
       },
     ],
   };
@@ -45,7 +45,7 @@ const PieChart = () => {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: "65%",           // donut style
+    cutout: "68%",
     plugins: {
       legend: { display: false },
       tooltip: {
@@ -57,54 +57,58 @@ const PieChart = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row items-center gap-8">
+    <div className="flex flex-col md:flex-row items-center gap-10">
 
       {/* Left — title + legend */}
-      <div className="flex-1 min-w-[180px]">
-        <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-1">
+      <div className="flex-1 min-w-[200px]">
+        <p className="text-[11px] font-semibold text-blue-500 uppercase tracking-widest mb-1">
           Distribution
         </p>
-        <h3 className="text-xl font-semibold text-gray-800 mb-6">
+        <h3 className="text-xl font-bold text-gray-700 mb-6">
           Profile Privacy Status
         </h3>
 
-        {/* Legend items */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="space-y-3">
+          {/* Private */}
+          <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50/60 border border-blue-100">
             <div className="flex items-center gap-3">
-              <span className="w-3 h-3 rounded-full bg-[#1E40AF] inline-block" />
-              <span className="text-sm text-gray-600">Private Profiles</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-700 shrink-0" />
+              <span className="text-sm font-medium text-gray-600">Private Profiles</span>
             </div>
-            <div className="text-right">
-              <span className="text-sm font-semibold text-gray-800">
+            <div className="flex items-baseline gap-1">
+              <span className="text-base font-bold text-blue-700">
                 {privacyCounts.private}
               </span>
-              <span className="text-xs text-gray-400 ml-1">({privatePercent}%)</span>
+              <span className="text-xs text-gray-400">({privatePercent}%)</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          {/* Public */}
+          <div className="flex items-center justify-between p-3 rounded-xl bg-sky-50/60 border border-sky-100">
             <div className="flex items-center gap-3">
-              <span className="w-3 h-3 rounded-full bg-[#E0F2FE] border border-[#BAE6FD] inline-block" />
-              <span className="text-sm text-gray-600">Public Profiles</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-sky-400 shrink-0" />
+              <span className="text-sm font-medium text-gray-600">Public Profiles</span>
             </div>
-            <div className="text-right">
-              <span className="text-sm font-semibold text-gray-800">
+            <div className="flex items-baseline gap-1">
+              <span className="text-base font-bold text-sky-500">
                 {privacyCounts.public}
               </span>
-              <span className="text-xs text-gray-400 ml-1">({publicPercent}%)</span>
+              <span className="text-xs text-gray-400">({publicPercent}%)</span>
             </div>
           </div>
 
-          <div className="border-t border-gray-100 pt-4 flex items-center justify-between">
-            <span className="text-sm text-gray-400">Total Users</span>
-            <span className="text-sm font-semibold text-gray-800">{total}</span>
+          {/* Total */}
+          <div className="flex items-center justify-between pt-3 border-t border-gray-100 px-1">
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+              Total Users
+            </span>
+            <span className="text-base font-bold text-gray-700">{total}</span>
           </div>
         </div>
       </div>
 
-      {/* Right — donut chart */}
-      <div className="relative w-[220px] h-[220px] shrink-0">
+      {/* Right — donut */}
+      <div className="relative w-[210px] h-[210px] shrink-0">
         {loading ? (
           <div className="w-full h-full flex items-center justify-center text-sm text-gray-400">
             Loading...
@@ -112,10 +116,11 @@ const PieChart = () => {
         ) : (
           <>
             <Pie data={chartData} options={chartOptions} />
-            {/* Center label */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-2xl font-bold text-gray-800">{total}</span>
-              <span className="text-xs text-gray-400">Total</span>
+              <span className="text-3xl font-bold text-gray-700">{total}</span>
+              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mt-0.5">
+                Total
+              </span>
             </div>
           </>
         )}

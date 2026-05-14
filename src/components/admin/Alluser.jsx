@@ -5,11 +5,6 @@ import {
   ArrowLeft,
   FileText,
   Download,
-  Mail,
-  MapPin,
-  ShieldCheck,
-  ShieldAlert,
-  Pencil,
   User,
 } from "lucide-react";
 import { calculateAge } from "../../utils/dateHelper";
@@ -32,17 +27,23 @@ const AllUsers = () => {
 
   const displayMode = "both";
 
-  /* ================= FETCH ================= */
+  /* ================= FETCH — ACTIVE ONLY ================= */
   useEffect(() => {
-    getAllUsers()
-      .then((res) => {
-        const fixedData = res.map((u) => ({
-          ...u,
-          is_active: Number(u.is_active),
-        }));
-        setData(fixedData);
-      })
-      .catch(console.error);
+    const fetchUsers = async () => {
+      try {
+        const res = await getAllUsers();
+        const activeOnly = res
+          .filter((u) => u.status === "ACTIVE")
+          .map((u) => ({ ...u, is_active: Number(u.is_active) }));
+        setData(activeOnly);
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      }
+    };
+
+    fetchUsers();
+    const interval = setInterval(fetchUsers, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   /* ================= TOGGLE ================= */
@@ -91,7 +92,10 @@ const AllUsers = () => {
           <p className="text-xs text-gray-400">This action cannot be undone.</p>
           <div className="flex gap-2">
             <button
-              onClick={() => { handleDeleteUser(userId); toast.dismiss(t.id); }}
+              onClick={() => {
+                handleDeleteUser(userId);
+                toast.dismiss(t.id);
+              }}
               className="px-4 py-1.5 bg-rose-500 text-white text-xs font-bold rounded-lg hover:bg-rose-600 transition"
             >
               Delete
@@ -138,11 +142,13 @@ const AllUsers = () => {
   if (selectedUser) {
     return (
       <div className="bg-white rounded-2xl p-6 md:p-10 border border-gray-200">
-        {/* Back header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => { setSelectedUser(null); setActiveTab("personal"); }}
+              onClick={() => {
+                setSelectedUser(null);
+                setActiveTab("personal");
+              }}
               className="p-2.5 bg-gray-100 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition"
             >
               <ArrowLeft size={18} />
@@ -160,8 +166,12 @@ const AllUsers = () => {
                 )}
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">{selectedUser.fullName}</h2>
-                <p className="text-xs text-gray-400 mt-0.5">{selectedUser.email}</p>
+                <h2 className="text-xl font-bold text-gray-900">
+                  {selectedUser.fullName}
+                </h2>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {selectedUser.email}
+                </p>
               </div>
             </div>
           </div>
@@ -242,9 +252,13 @@ const AllUsers = () => {
                       <FileText size={20} />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400 uppercase tracking-widest">Jadhagam / ஜாதகம்</p>
+                      <p className="text-xs text-gray-400 uppercase tracking-widest">
+                        Jadhagam / ஜாதகம்
+                      </p>
                       <p className="text-sm font-semibold text-gray-800">
-                        {selectedUser.horoscope?.uploaded ? selectedUser.horoscope.fileName || "horoscope.pdf" : "Not Uploaded"}
+                        {selectedUser.horoscope?.uploaded
+                          ? selectedUser.horoscope.fileName || "horoscope.pdf"
+                          : "Not Uploaded"}
                       </p>
                     </div>
                   </div>
@@ -285,23 +299,20 @@ const AllUsers = () => {
           <h2 className="text-lg font-bold text-gray-900">User Management</h2>
         </div>
 
-        <div className="flex items-center gap-6">
-          {/* Tab filters */}
-          <div className="flex items-center gap-1 border-b border-gray-200">
-            {tabs.map((t) => (
-              <button
-                key={t}
-                onClick={() => setFilter(t)}
-                className={`px-4 py-2.5 text-sm font-medium capitalize transition-all border-b-2 -mb-px whitespace-nowrap ${
-                  filter === t
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-gray-400 hover:text-gray-600"
-                }`}
-              >
-                {t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
-              </button>
-            ))}
-          </div>
+        <div className="flex items-center gap-1 border-b border-gray-200">
+          {tabs.map((t) => (
+            <button
+              key={t}
+              onClick={() => setFilter(t)}
+              className={`px-4 py-2.5 text-sm font-medium capitalize transition-all border-b-2 -mb-px whitespace-nowrap ${
+                filter === t
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-400 hover:text-gray-600"
+              }`}
+            >
+              {t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -312,7 +323,7 @@ const AllUsers = () => {
           width="16" height="16" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
         >
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
         </svg>
         <input
           type="text"
@@ -328,9 +339,9 @@ const AllUsers = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left min-w-[860px]">
             <thead>
-              <tr className="border-b border-gray-100">
+              <tr className="border-b border-gray-100 bg-gray-50/60">
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500">Username</th>
-                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Name</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Full Name</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500">Email</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500">Gender</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500">Privacy</th>
@@ -342,14 +353,16 @@ const AllUsers = () => {
               {filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="text-center py-14 text-sm text-gray-400">
-                    {searchTerm ? "No users found matching your search" : "No users in this category"}
+                    {searchTerm
+                      ? "No users found matching your search"
+                      : "No approved users yet"}
                   </td>
                 </tr>
               ) : (
                 filteredUsers.map((u, idx) => (
                   <tr
                     key={u.id}
-                    className={`border-b border-gray-50 hover:bg-gray-50 transition-colors ${
+                    className={`border-b border-gray-50 hover:bg-blue-50/20 transition-colors ${
                       idx % 2 === 1 ? "bg-gray-50/40" : "bg-white"
                     }`}
                   >
@@ -373,13 +386,8 @@ const AllUsers = () => {
                       </div>
                     </td>
 
-                    {/* Full name */}
                     <td className="px-6 py-4 text-sm text-gray-700">{u.fullName || "—"}</td>
-
-                    {/* Email */}
                     <td className="px-6 py-4 text-sm text-gray-600">{u.email || "—"}</td>
-
-                    {/* Gender */}
                     <td className="px-6 py-4 text-sm text-gray-600 capitalize">{u.gender || "—"}</td>
 
                     {/* Privacy */}
@@ -395,7 +403,7 @@ const AllUsers = () => {
                       </span>
                     </td>
 
-                    {/* Status badge */}
+                    {/* Status */}
                     <td className="px-6 py-4">
                       <span
                         className={`px-3 py-1 text-xs font-semibold rounded-full ${
@@ -411,9 +419,9 @@ const AllUsers = () => {
                     {/* Actions */}
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center gap-3">
-                        {/* Toggle */}
                         <button
                           onClick={() => togglePublicStatus(u.id, u.is_active)}
+                          disabled={togglingUserId === u.id}
                           className={`w-10 h-5 rounded-full relative transition-all ${
                             u.is_active === 1 ? "bg-emerald-500" : "bg-gray-300"
                           }`}
@@ -424,8 +432,6 @@ const AllUsers = () => {
                             }`}
                           />
                         </button>
-
-                        {/* View */}
                         <button
                           onClick={() => setSelectedUser(u)}
                           className="text-gray-400 hover:text-blue-600 transition"
@@ -433,8 +439,6 @@ const AllUsers = () => {
                         >
                           <Eye size={16} />
                         </button>
-
-                        {/* Delete */}
                         <button
                           onClick={() => confirmDelete(u.id)}
                           className="text-gray-400 hover:text-rose-500 transition"
