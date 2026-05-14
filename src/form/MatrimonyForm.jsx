@@ -52,6 +52,7 @@ const uploadFileToS3 = async (file, folder) => {
 };
 
 const MatrimonyForm = () => {
+  // console.log("🔥 MATRIMONY FORM RENDERED");
   const navigate = useNavigate();
   const {
     currentStep,

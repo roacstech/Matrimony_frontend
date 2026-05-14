@@ -1,90 +1,87 @@
 import React, { useState } from "react";
-import Login from "./Login"; // adjust path if needed
-import Register from "./Register"; // adjust path if needed
-import ForgotPassword from "../pages/Forgetpassword"; // adjust path if needed
+import Login from "./Login";
+import Register from "./Register";
+import ForgotPassword from "../pages/Forgetpassword";
 import BrideGroom from "../assets/perumal.jpg";
 
 const Home = () => {
   const [view, setView] = useState("login");
 
   return (
-    <div className="min-h-screen w-full bg-[#B3CCFB] relative font-serif">
-      {/* Background layers */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#B3CCFB] via-[#EEEEEE] to-[#B3CCFB] z-0" />
-      <div className="absolute -top-20 -left-20 w-96 h-96 bg-[#000000] opacity-10 rounded-full blur-[120px]" />
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 font-sans overflow-hidden">
+      <div className="max-w-[1440px] mx-auto min-h-screen flex flex-col lg:flex-row">
 
-      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center lg:items-center justify-center px-5 sm:px-8 md:px-10 lg:px-12 py-8 lg:py-0 max-w-[1440px] mx-auto gap-10 lg:gap-12">
-        {/* LEFT: Title + Form */}
-        <div className="w-full lg:w-[50%] flex flex-col items-center lg:items-start justify-center space-y-8 lg:space-y-10 text-center lg:text-left">
-          <div className="space-y-6 md:space-y-8 overflow-hidden">
-            {/* Tamil Section - Appears First */}
-            <div className="space-y-3">
-              <h1 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight text-[#000000]">
-                தென்னிந்திய <br />
-                <span className="text-[#000000]">தாசபளஞ்சிக மஹாஜன சங்கம்</span>
-              </h1>
-              <div className="lg:border-l-4 border-[#000000] lg:pl-6">
-                <p className="font-bold text-lg sm:text-xl text-[#000000]/80">
+        {/* MOBILE IMAGE - Only visible on mobile */}
+        <div className="lg:hidden w-full relative h-[260px] sm:h-[320px] overflow-hidden">
+          <img
+            src={BrideGroom}
+            alt="Traditional Wedding"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/50" />
+        </div>
+
+        {/* LEFT SIDE */}
+        <div className="lg:w-1/2 flex flex-col justify-center px-4 sm:px-6 lg:px-12 py-8 lg:py-0">
+          <div className="w-full max-w-[460px] mx-auto lg:mx-0 lg:max-w-none">
+
+            {/* Titles */}
+            <div className="mb-8 text-center lg:text-left">
+              <div className="mt-4">
+                <h1 className="text-[21px] sm:text-2xl lg:text-xl font-bold leading-tight text-gray-900 break-words">
+                  தென்னிந்திய தாசபளஞ்சிக மஹாஜன சங்கம்
+                </h1>
+                <p className="text-base sm:text-lg font-semibold text-amber-700 mt-1">
                   “திருமண தகவல் மையம்”
                 </p>
               </div>
-            </div>
 
-            {/* Kannada Section - Appears Second */}
-            <div className="space-y-3">
-              <h1 className="text-3xl sm:text-4xl md:text-4xl font-bold leading-tight text-[#000000]">
-                ದಕ್ಷಿಣ ಭಾರತೀಯ <br />
-                <span className="text-[#000000]">ದಾಸಪಾಲಂಜಿಕ ಮಹಾಜನ ಸಂಗಮ</span>
-              </h1>
-              <div className="lg:border-l-4 border-[#000000] lg:pl-6">
-                <p className="font-bold text-lg sm:text-xl  text-[#000000]/80">
+              <div className="mt-6">
+                <h1 className="text-[21px] sm:text-2xl lg:text-xl font-bold leading-tight text-gray-900 break-words">
+                  ದಕ್ಷிண ಭಾರತೀಯ ದಾಸಪಾಲಂಜಿಕ ಮಹಾಜன ಸಂಗಮ
+                </h1>
+                <p className="text-base sm:text-lg font-semibold text-amber-700 mt-1">
                   “ವಿವಾಹ ಮಾಹಿತಿ ಕೇಂದ್ರ”
                 </p>
               </div>
             </div>
-          </div>
 
-          {/* Mobile Image - improved size */}
-          <div className="flex lg:hidden w-full justify-center mt-8 mb-10">
-            <div className="relative p-3 sm:p-4 bg-[#EEEEEE]/50 rounded-[40px] sm:rounded-[50px] border border-[#000000]/30 shadow-xl max-w-[92vw] sm:max-w-[88vw] md:max-w-[80vw]">
-              <img
-                src={BrideGroom}
-                alt="Traditional Decor"
-                className="rounded-[32px] sm:rounded-[40px] w-full max-h-[50vh] sm:max-h-[60vh] object-cover border border-[#000000]/10"
-                loading="lazy"
-              />
+            {/* Form Container - Wide on Large Screen, Full on Mobile */}
+            <div className="w-full lg:w-[600px] bg-white p-6 sm:p-8 border border-gray-100 overflow-hidden rounded-3xl ">
+              {view === "login" && (
+                <Login
+                  onNavigate={(target) => {
+                    if (target === "forgot") setView("forgot");
+                    else setView("register");
+                  }}
+                />
+              )}
+
+              {view === "register" && (
+                <Register onNavigate={() => setView("login")} />
+              )}
+
+              {view === "forgot" && (
+                <ForgotPassword onNavigate={() => setView("login")} />
+              )}
             </div>
           </div>
-
-          {/* Form - limited width on all screens */}
-        <div className="w-full max-w-md lg:max-w-[420px] xl:max-w-[480px]">
-      {view === "login" && (
-        <Login
-          onNavigate={(target) => {
-            if (target === "forgot") setView("forgot");
-            else setView("register");
-          }}
-        />
-      )}
-
-      {view === "register" && (
-        <Register onNavigate={() => setView("login")} />
-      )}
-
-      {view === "forgot" && (
-        <ForgotPassword onNavigate={() => setView("login")} />
-      )}
-    </div>
         </div>
 
-        {/* RIGHT: Desktop Image - keeping original proportions */}
-        <div className="hidden lg:flex lg:w-[45%] xl:w-[48%] h-[80vh] xl:h-[85vh] items-center justify-center">
-          <div className="relative p-3 bg-[#EEEEEE]/50 rounded-[70px] border border-[#000000]/30 shadow-xl">
+        {/* RIGHT SIDE - Desktop Image (Unchanged) */}
+        <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-gradient-to-br from-blue-900 to-slate-900 overflow-hidden">
+          <div className="absolute inset-0 bg-black/40 z-10" />
+          <img
+            src={BrideGroom}
+            alt="Traditional Wedding"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+
+          <div className="relative z-20 w-[88%] max-w-[500px] p-4 bg-white/10 backdrop-blur-md rounded-[3rem] border border-white/30 shadow-2xl">
             <img
               src={BrideGroom}
-              alt="Traditional Decor"
-              className="rounded-[60px] w-full max-h-[75vh] object-cover border-2 border-[#000000]/10"
-              loading="lazy"
+              alt="Traditional Wedding"
+              className="rounded-3xl w-full aspect-[4/3] object-cover border-4 border-white"
             />
           </div>
         </div>

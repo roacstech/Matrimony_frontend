@@ -1,86 +1,88 @@
 import React, { useState } from 'react';
 import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-import { useAuthForm } from '../Data/LoginRegister';   // adjust path if needed
+import { useAuthForm } from '../Data/LoginRegister';
 
 const Login = ({ onNavigate }) => {
-
   const { formData, handleChange, handleLoginSubmit } = useAuthForm();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await handleLoginSubmit(e);           // assuming this is async
-    setTimeout(() => setLoading(false), 2000); // simulate delay – remove in real app
+    await handleLoginSubmit(e);
+    setLoading(false);
   };
 
   return (
-    <div className="w-full
-  sm:w-[90%] 
-  md:w-[70%] 
-  lg:w-[800px] bg-[#F6F7F8] backdrop-blur-xl rounded-[30px] md:rounded-[40px] p-8 md:p-10 shadow-[0_20px_50px_rgba(93,64,55,0.1)] border border-[#EEEEEE] transition-all duration-300">
-      <div className="mb-6">
-        <p className="font-bold text-xl md:text-2xl text-[#000000]">
-          உள்நுழைக / Log In
-        </p>
+    <div className="w-full">
+      <div className="mb-8 text-center">
+        <h2 className="text-xl font-bold text-gray-900">உள்நுழைக / Log In</h2>
       </div>
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        {/* Email / Mobile Input */}
-        <div className="group relative">
-          <EnvelopeIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#000000] group-focus-within:text-[#000000]" />
-          <input
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            type="text"
-            placeholder="Email Address / Mobile No"
-            className="w-full pl-10 pr-4 py-3.5 bg-[#EEEEEE]/30 border border-[#9ca3af] rounded-xl focus:bg-white focus:border-[#000000] focus:outline-none transition-all text-sm"
-            required
-          />
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">Email / Mobile</label>
+          <div className="relative">
+            <EnvelopeIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              type="text"
+              placeholder="Enter email or mobile"
+              className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-300 rounded-2xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 text-sm"
+              required
+            />
+          </div>
         </div>
 
-        {/* Password Input */}
-        <div className="group relative">
-          <LockClosedIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#000000] group-focus-within:text-[#000000]" />
-          <input
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            type="password"
-            placeholder="Password"
-            className="w-full pl-10 pr-4 py-3.5 bg-[#EEEEEE]/30 border border-[#9ca3af] rounded-xl focus:bg-white focus:border-[#000000] focus:outline-none transition-all text-sm"
-            required
-          />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+          <div className="relative">
+            <LockClosedIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter password"
+              className="w-full pl-11 pr-12 py-3.5 bg-white border border-gray-300 rounded-2xl focus:border-blue-600 focus:ring-2 focus:ring-blue-100 text-sm"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
-<button
-  type="button"
-  onClick={() => onNavigate("forgot")}
-  className="hover:text-[#000000] hover:underline"
->
-  Forgot Password?
-</button>
-        {/* Submit Button */}
+
+        <div className="flex justify-between text-sm">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" className="w-4 h-4 accent-blue-600" />
+            <span>Remember me</span>
+          </label>
+          <button type="button" onClick={() => onNavigate("forgot")} className="text-blue-600 hover:underline">
+            Forgot Password?
+          </button>
+        </div>
+
         <button
           type="submit"
           disabled={loading}
-          className={`w-full bg-[#1A5AF0] text-white py-3.5 rounded-xl font-bold shadow-lg  hover:-translate-y-0.5 transition-all active:scale-95 mt-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className="w-full bg-blue-600 hover:bg-blue-700 py-3.5 rounded-2xl text-white font-semibold text-base transition-all"
         >
-          {loading ? "Processing..." : "Log In"}
+          {loading ? "Signing In..." : "Sign In"}
         </button>
       </form>
 
-      <p className="text-sm text-gray-500 mt-6 font-medium">
+      <p className="text-center text-sm text-gray-600 mt-6">
         Don't have an account?{' '}
-        <button
-          type="button"
-          onClick={onNavigate}
-          className="text-[#000000] font-bold  hover:underline ml-1"
-        >
-          Register
-        </button>
+        <button onClick={onNavigate} className="text-blue-600 font-semibold hover:underline">Register</button>
       </p>
-      
     </div>
   );
 };
