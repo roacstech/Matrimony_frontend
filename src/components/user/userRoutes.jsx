@@ -1,10 +1,12 @@
+import React from "react";
 import { Routes, Route } from "react-router-dom";
-import ConnectionCard from "../components/user/ConnectionCard";
-import ReceivedConnections from "../../components/user/ReceivedConnections";
-import SentConnections from "../../components/user/SentConnections";
-import Profile from "../components/user/Profile";
-import Notifications from "../components/user/Notifications";
-import UserDashboard from "../components/user/UserDashboard";
+
+import ConnectionCard from "./ConnectionCard";
+import ReceivedConnections from "./ReceivedConnections";
+import SentConnections from "./SentConnections";
+import Profile from "./Profile";
+import Notifications from "./Notifications";
+import UserDashboard from "./UserDashboard";
 import React from "react";
 
 const UserRoutes = () => {
