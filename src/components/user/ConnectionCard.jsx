@@ -89,12 +89,12 @@ const ConnectionCard = () => {
     <div className="p-3 xs:p-4 sm:p-5 md:p-6 lg:p-8 bg-transparent space-y-5 sm:space-y-8 lg:space-y-10 font-sans overflow-x-hidden w-full min-h-screen">
 
       {/* ================= TABS ================= */}
-      <div className="flex items-center border-b border-gray-200">
+      <div className="flex items-center">
         <span
           onClick={() => setActiveTab("Public")}
           className={`flex items-center gap-2 px-6 py-3 text-[13px] font-semibold cursor-pointer transition-all duration-200 ${
             activeTab === "Public"
-              ? "text-[#4361EE] border-b-2 border-[#4361EE] -mb-[2px]"
+              ? "text-[#4361EE] border-b-3 border-[#4361EE] -mb-[2px]"
               : "text-gray-400 hover:text-gray-600"
           }`}
         >
@@ -104,7 +104,7 @@ const ConnectionCard = () => {
           onClick={() => setActiveTab("Private")}
           className={`flex items-center gap-2 px-6 py-3 text-[13px] font-semibold cursor-pointer transition-all duration-200 ${
             activeTab === "Private"
-              ? "text-[#4361EE] border-b-2 border-[#4361EE] -mb-[2px]"
+              ? "text-[#4361EE] border-b-3 border-[#4361EE] -mb-[2px]"
               : "text-gray-400 hover:text-gray-600"
           }`}
         >
@@ -201,14 +201,14 @@ const ConnectionCard = () => {
               {u.privacy === "Private" && (
                 <div className="mt-5 pt-4 border-t border-dashed border-[#EEEEEE]">
                   {u.connection_status === "Not Sent" && (
-                    <button
-                      onClick={() => handleConnect(u.id)}
-                      className="w-full text-white py-3 rounded-lg text-[11px] font-semibold uppercase tracking-widest transition-all shadow-sm"
-                      style={{ backgroundColor: PRIMARY }}
-                    >
-                      Connect Now
-                    </button>
-                  )}
+  <button
+    onClick={() => handleConnect(u.id)}
+    className="w-full cursor-pointer text-white py-3 rounded-lg text-[11px] font-semibold uppercase tracking-widest transition-all shadow-sm"
+    style={{ backgroundColor: PRIMARY }}
+  >
+    Connect Now
+  </button>
+)}
                   {u.connection_status === "Sent" && (
                     <button
                       disabled
