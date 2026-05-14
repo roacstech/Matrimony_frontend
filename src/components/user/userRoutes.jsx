@@ -11,7 +11,6 @@ const UserRoutes = () => {
   return (
     <Routes>
       <Route path="dashboard" element={<UserDashboard />}>
-
         {/* DEFAULT PAGE */}
         <Route index element={<ConnectionCard />} />
 
@@ -22,7 +21,6 @@ const UserRoutes = () => {
         {/* OTHER PAGES */}
         <Route path="profile" element={<Profile />} />
         <Route path="notifications" element={<Notifications />} />
-
       </Route>
     </Routes>
   );
