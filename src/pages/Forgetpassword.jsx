@@ -91,7 +91,7 @@ const ForgotPassword = ({ onNavigate }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 py-3.5 rounded-2xl text-white font-semibold transition-all disabled:opacity-70"
+            className="w-full bg-blue-600 hover:bg-blue-700 py-3.5 rounded-2xl text-white font-semibold transition-all disabled:opacity-70 cursor-pointer"
           >
             {loading ? "Sending OTP..." : "Send OTP"}
           </button>
@@ -118,7 +118,7 @@ const ForgotPassword = ({ onNavigate }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 py-3.5 rounded-2xl text-white font-semibold transition-all disabled:opacity-70"
+            className="w-full bg-blue-600 hover:bg-blue-700 py-3.5 rounded-2xl text-white font-semibold transition-all disabled:opacity-70 cursor-pointer"
           >
             {loading ? "Verifying..." : "Verify OTP"}
           </button>
@@ -161,7 +161,7 @@ const ForgotPassword = ({ onNavigate }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 py-3.5 rounded-2xl text-white font-semibold transition-all disabled:opacity-70"
+            className="w-full bg-blue-600 hover:bg-blue-700 py-3.5 rounded-2xl text-white font-semibold transition-all disabled:opacity-70 cursor-pointer"
           >
             {loading ? "Resetting..." : "Reset Password"}
           </button>
@@ -170,7 +170,7 @@ const ForgotPassword = ({ onNavigate }) => {
 
       <p className="text-center text-sm text-gray-600 mt-6">
         Back to{' '}
-        <button onClick={onNavigate} className="text-blue-600 font-semibold hover:underline">
+        <button onClick={onNavigate} className="text-blue-600 font-semibold hover:underline cursor-pointer">
           Login
         </button>
       </p>
