@@ -7,7 +7,7 @@ import {
 import { getEnumLabel } from "../../utils/convertHelper";
 import { XCircle, Send } from "lucide-react";
 
-const SentConnections = () => {
+const Sentconnections = () => {
   const [sent, setSent] = useState([]);
   const [acceptedReceived, setAcceptedReceived] = useState([]);
   const [toast, setToast] = useState({ show: false, msg: "" });
@@ -170,4 +170,4 @@ const SentConnections = () => {
   );
 };
 
-export default SentConnections;
+export default Sentconnections;

@@ -11,7 +11,7 @@ import { getEnumLabel } from "../../utils/convertHelper";
 import { calculateAge } from "../../utils/dateHelper";
 import { X, CheckCircle, XCircle, Eye, Inbox } from "lucide-react";
 
-const ReceivedConnections = () => {
+const Receivedconnections = () => {
   const [received, setReceived] = useState([]);
   const [acceptedReceived, setAcceptedReceived] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -367,4 +367,4 @@ const InfoRow = ({ label, value }) => (
   </div>
 );
 
-export default ReceivedConnections;
+export default Receivedconnections;

@@ -2,8 +2,8 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 import ConnectionCard from "../components/user/ConnectionCard";
-import ReceivedConnections from "../components/user/ReceivedConnections";
-import SentConnections from "../components/user/SentConnections";
+import Receivedconnections from "../components/user/Receivedconnections";
+import Sentconnections from "../components/user/Sentconnections";
 import Profile from "../components/user/Profile";
 import Notifications from "../components/user/Notifications";
 import UserDashboard from "../components/user/UserDashboard";
@@ -16,12 +16,12 @@ const UserRoutes = () => {
 
         <Route
           path="my-connection/received"
-          element={<ReceivedConnections />}
+          element={<Receivedconnections />}
         />
 
         <Route
           path="my-connection/sent"
-          element={<SentConnections />}
+          element={<Sentconnections />}
         />
 
         <Route path="profile" element={<Profile />} />
