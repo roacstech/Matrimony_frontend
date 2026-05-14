@@ -25,62 +25,69 @@ const AdminDashboardLayout = () => {
           <p className="text-sm font-black text-black text-center">
             Are you sure you want to logout?
           </p>
-
           <div className="flex gap-3 justify-center">
             <button
               onClick={() => {
                 toast.dismiss(t.id);
                 performLogout(navigate);
-                toast.success("Logged out successfully", { duration: 2000 });
+                toast.success("Logged out successfully");
               }}
-              className="px-4 py-2 bg-[#1A5AF0] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-[#1A5AF0] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700"
             >
               OK
             </button>
-
             <button
               onClick={() => toast.dismiss(t.id)}
-              className="px-4 py-2 bg-gray-100 text-black rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 bg-gray-100 text-black rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-200"
             >
               Cancel
             </button>
           </div>
         </div>
       ),
-      { duration: Infinity, position: "top-center" },
+      { duration: Infinity, position: "top-center" }
     );
   };
 
   return (
-    <div className="min-h-screen flex bg-[#B3CCFB] relative overflow-hidden font-sans">
+    <div className="min-h-screen flex bg-[#F8FAFC] font-sans overflow-hidden">   {/* Light background for main area */}
+      
       {/* MOBILE OVERLAY */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={closeSidebar}
         />
       )}
 
-      {/* SIDEBAR */}
+      {/* SIDEBAR - Black Background Only */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-50 h-screen bg-white border-r border-gray-200 flex flex-col transition-all duration-300
-        w-[280px] ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+        className={`fixed lg:sticky top-0 left-0 z-50 h-screen bg-[#0F172A] text-white border-r border-gray-800 flex flex-col transition-all duration-300
+        w-[260px] ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
-        <div className="flex flex-col items-center justify-center mt-10">
-          <div className="relative p-1 rounded-full border-2 border-[#1A5AF0]/20">
-             <img
-              src={`${IMG}`}
-              alt="Admin"
-              className="w-16 h-16 rounded-full cursor-pointer shadow-md object-cover"
-            />
+        {/* LOGO AREA */}
+        <div className="h-16 border-b border-gray-800 flex items-center px-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#1A5AF0] rounded-xl flex items-center justify-center text-white font-bold text-xl">
+              D
+            </div>
+            <span className="text-xl font-bold tracking-tight">Dasabalanjika</span>
           </div>
-          <span className="mt-2 text-sm font-bold text-black uppercase tracking-wider">
-            Admin
-          </span>
         </div>
 
-        {/* Navigation Menu */}
-        <nav className="flex-1 px-4 lg:px-6 py-10 space-y-3 overflow-y-auto">
+        {/* Profile Section */}
+        <div className="px-5 pt-6 pb-5 border-b border-gray-800 flex flex-col items-center">
+          <img
+            src={IMG}
+            alt="Admin"
+            className="w-16 h-16 rounded-full border-2 border-gray-600 object-cover"
+          />
+          <h3 className="mt-3 font-semibold text-base">Admin</h3>
+          <p className="text-xs text-gray-400">admin@gmail.com</p>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
           <MenuItem
             to="/admin/chart"
             label="Dashboard"
@@ -89,13 +96,13 @@ const AdminDashboardLayout = () => {
           />
           <MenuItem
             to="/admin/all-users"
-            label="All Users"
+            label="Users Management"
             icon={<Users size={18} />}
             onClick={closeSidebar}
           />
           <MenuItem
             to="/admin/pending-forms"
-            label="Pending Forms"
+            label="Pending Approvals"
             icon={<ClipboardList size={18} />}
             onClick={closeSidebar}
           />
@@ -105,38 +112,33 @@ const AdminDashboardLayout = () => {
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* HEADER */}
-        <header className="h-20 lg:h-24 px-6 lg:px-12 flex items-center justify-between bg-transparent relative">
-          <div className="flex items-center gap-4">
+        <header className="h-16 px-5 lg:px-8 flex items-center justify-between bg-white border-b border-gray-100">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2.5 bg-white shadow-sm border border-gray-100 rounded-xl text-[#1A5AF0]"
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
             >
-              <Menu size={20} />
+              <Menu size={24} />
             </button>
-            <div>
-              <p className="hidden xs:block text-[8px] lg:text-[10px] font-black text-[#1A5AF0] uppercase tracking-[3px] mt-1">
-                Manage platform records
-              </p>
-            </div>
+            <p className="font-semibold text-gray-800">Dashboard</p>
           </div>
 
-          {/* PROFILE AVATAR (TOP-RIGHT) */}
           <div className="relative">
             <img
-              src={`${IMG}`}
+              src={IMG}
               alt="Admin"
-              className="w-12 h-12 rounded-full cursor-pointer border-2 border-white shadow-lg hover:border-[#1A5AF0] transition-all"
+              className="w-9 h-9 rounded-full cursor-pointer border border-gray-200 hover:border-[#1A5AF0]"
               onClick={() => setProfileDropdown(!isProfileDropdown)}
             />
 
             {isProfileDropdown && (
-              <div className="absolute right-0 mt-3 w-44 bg-white border border-gray-100 shadow-2xl rounded-2xl flex flex-col z-50 overflow-hidden p-1">
+              <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 shadow-lg rounded-2xl py-1 z-50">
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-3 text-rose-600 hover:bg-rose-50 transition-all text-[10px] font-black uppercase tracking-widest rounded-xl"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50"
                 >
-                  <LogOut size={16} />
-                  Logout
+                  <LogOut size={18} />
+                  <span>Logout</span>
                 </button>
               </div>
             )}
@@ -144,9 +146,9 @@ const AdminDashboardLayout = () => {
         </header>
 
         {/* PAGE CONTENT */}
-        <main className="flex-1 px-4 lg:px-12 pb-6 lg:pb-12 overflow-y-auto">
+        <main className="flex-1 p-4 lg:p-6 overflow-y-auto bg-[#F8FAFC]">
           <div className="max-w-[1400px] mx-auto">
-            <div className="bg-white rounded-[32px] lg:rounded-[48px] p-5 lg:p-10 shadow-2xl shadow-blue-900/10 border border-gray-100 min-h-[calc(100vh-140px)] lg:min-h-[calc(100vh-180px)]">
+            <div className="bg-white rounded-3xl p-5 lg:p-8 shadow border border-gray-100 min-h-[calc(100vh-110px)]">
               <Outlet />
             </div>
           </div>
@@ -156,24 +158,22 @@ const AdminDashboardLayout = () => {
   );
 };
 
-/* MENU ITEM COMPONENT */
+/* MENU ITEM */
 const MenuItem = ({ to, label, icon, onClick }) => {
   return (
     <NavLink
       to={to}
       onClick={onClick}
       className={({ isActive }) =>
-        `flex items-center gap-3 lg:gap-4 px-5 lg:px-6 py-3.5 lg:py-4 rounded-[18px] lg:rounded-[22px] text-[10px] lg:text-[11px] font-black uppercase tracking-[1.5px]
-        transition-all duration-300
-        ${
-          isActive
-            ? "bg-[#1A5AF0] text-white shadow-lg shadow-blue-200 lg:-translate-y-1"
-            : "text-gray-400 hover:bg-[#B3CCFB]/20 hover:text-[#1A5AF0]"
+        `flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all
+        ${isActive 
+          ? "bg-[#1A5AF0] text-white" 
+          : "text-gray-300 hover:bg-gray-800"
         }`
       }
     >
-      <span className="shrink-0">{icon}</span>
-      <span className="truncate">{label}</span>
+      <span>{icon}</span>
+      <span>{label}</span>
     </NavLink>
   );
 };
