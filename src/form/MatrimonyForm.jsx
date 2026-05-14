@@ -12,16 +12,16 @@ import { useNavigate } from "react-router-dom";
 
 import { getEnumOptions, getEnumLabel } from "../utils/convertHelper";
 
-// ─── S3 imports (same pattern as AddNewCompanyPageView) ───────────────────────
+// ─── S3 imports ───────────────────────────────────────────────────────────────
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
-import s3awsConfig from "../utils/aws-config"; // adjust path to your project's aws-config
+import s3awsConfig from "../utils/aws-config";
 
 // ─── S3 bucket & folder constants ────────────────────────────────────────────
-const S3_BUCKET = "roacs-bucket"; // ← your bucket name
+const S3_BUCKET = "roacs-bucket";
 const S3_BASE_URL = `https://${S3_BUCKET}.s3.ap-south-1.amazonaws.com`;
-const PHOTO_FOLDER = "matrimony-profiles/photos"; // new folder for profile photos
-const HOROSCOPE_FOLDER = "matrimony-profiles/horoscopes"; // new folder for horoscope files
+const PHOTO_FOLDER = "matrimony-profiles/photos";
+const HOROSCOPE_FOLDER = "matrimony-profiles/horoscopes";
 
 const steps = [
   "தனிப்பட்ட விவரங்கள் / Personal Details",
@@ -33,10 +33,11 @@ const steps = [
   "சுருக்கம் / Summary",
 ];
 
-// ─── Helper: upload a single File object to S3, returns the public URL ────────
+// ─── Helper: upload a single File to S3, returns the full public URL ──────────
+// URL format: https://roacs-bucket.s3.ap-south-1.amazonaws.com/<folder>/<uuid>.<ext>
 const uploadFileToS3 = async (file, folder) => {
   const ext = file.name?.split(".").pop() || "bin";
-  const fileKey = `${folder}/${uuidv4()}.${ext}`;
+  const fileKey = `${folder}/${uuidv4()}.${ext}`;           // e.g. matrimony-profiles/photos/uuid.jpg
   const contentType = file.type || "application/octet-stream";
   const uint8Array = new Uint8Array(await file.arrayBuffer());
 
@@ -49,11 +50,11 @@ const uploadFileToS3 = async (file, folder) => {
     }),
   );
 
+  // Returns: https://roacs-bucket.s3.ap-south-1.amazonaws.com/matrimony-profiles/photos/uuid.jpg
   return `${S3_BASE_URL}/${fileKey}`;
 };
 
 const MatrimonyForm = () => {
-  // console.log("🔥 MATRIMONY FORM RENDERED");
   const navigate = useNavigate();
   const {
     currentStep,
@@ -65,10 +66,10 @@ const MatrimonyForm = () => {
     submitForm,
   } = useMatrimonyForm();
 
-  // ── S3 upload state ─────────────────────────────────────────────────────────
+  // ── S3 upload state ──────────────────────────────────────────────────────────
   const [isUploading, setIsUploading] = useState(false);
-  const [photoS3Url, setPhotoS3Url] = useState(null);
-  const [horoscopeS3Url, setHoroscopeS3Url] = useState(null);
+  const [photoS3Url, setPhotoS3Url] = useState(null);       // full S3 URL for photo
+  const [horoscopeS3Url, setHoroscopeS3Url] = useState(null); // full S3 URL for horoscope
   const [photoPreview, setPhotoPreview] = useState(null);
   const [horoscopePreview, setHoroscopePreview] = useState(null);
 
@@ -78,21 +79,19 @@ const MatrimonyForm = () => {
     console.log("🔥 FORM DATA =>", formData);
   }, [formData]);
 
-  // ── Handle photo file selection → local preview + S3 upload ────────────────
+  // ── Handle photo selection → local preview + S3 upload ──────────────────────
   const handlePhotoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Pass file to form state (for local preview logic you already have)
-    handleFileChange(e);
+    handleFileChange(e);                                     // keep File in formData for UI
+    setPhotoPreview(URL.createObjectURL(file));              // local preview
 
-    // Local preview URL
-    setPhotoPreview(URL.createObjectURL(file));
-
-    // Upload to S3
     const toastId = toast.loading("Uploading profile photo…");
     setIsUploading(true);
     try {
+      // ✅ Uploads to S3 and stores the full URL:
+      // https://roacs-bucket.s3.ap-south-1.amazonaws.com/matrimony-profiles/photos/uuid.jpg
       const url = await uploadFileToS3(file, PHOTO_FOLDER);
       setPhotoS3Url(url);
       toast.dismiss(toastId);
@@ -106,14 +105,13 @@ const MatrimonyForm = () => {
     }
   };
 
-  // ── Handle horoscope file selection → local preview + S3 upload ────────────
+  // ── Handle horoscope selection → local preview + S3 upload ──────────────────
   const handleHoroscopeChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    handleFileChange(e);
+    handleFileChange(e);                                     // keep File in formData for UI
 
-    // Preview only for images; skip blob URL for PDF/DOC
     if (file.type?.includes("image")) {
       setHoroscopePreview(URL.createObjectURL(file));
     } else {
@@ -123,6 +121,8 @@ const MatrimonyForm = () => {
     const toastId = toast.loading("Uploading horoscope…");
     setIsUploading(true);
     try {
+      // ✅ Uploads to S3 and stores the full URL:
+      // https://roacs-bucket.s3.ap-south-1.amazonaws.com/matrimony-profiles/horoscopes/uuid.pdf
       const url = await uploadFileToS3(file, HOROSCOPE_FOLDER);
       setHoroscopeS3Url(url);
       toast.dismiss(toastId);
@@ -136,13 +136,17 @@ const MatrimonyForm = () => {
     }
   };
 
-  // ── Final submit: pass S3 URLs alongside form data ─────────────────────────
-  const handleSubmit = () => {
-    submitForm({
-      photoUrl: photoS3Url,
-      horoscopeUrl: horoscopeS3Url,
-    });
-  };
+  // ── Final submit: pass S3 URLs (NOT File objects) to submitForm ──────────────
+  // This ensures the database stores:
+  //   photo:     "https://roacs-bucket.s3.ap-south-1.amazonaws.com/matrimony-profiles/photos/uuid.jpg"
+  //   horoscope: "https://roacs-bucket.s3.ap-south-1.amazonaws.com/matrimony-profiles/horoscopes/uuid.pdf"
+  // Instead of the old local paths like "1778757973281-783649151.png"
+const handleSubmit = () => {
+  submitForm({
+    photoUrl: photoS3Url,         // ✅ full S3 URL passed into the payload
+    horoscopeUrl: horoscopeS3Url, // ✅ full S3 URL passed into the payload
+  });
+};
 
   // Shared class strings
   const input =
@@ -153,12 +157,10 @@ const MatrimonyForm = () => {
   return (
     <div
       className="min flex items-center justify-center p-3 bg-cover bg-center"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-      }}
+      style={{ backgroundImage: `url(${bgImage})` }}
     >
-      {" "}
       <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl grid md:grid-cols-3 overflow-hidden min-h-[600px]">
+
         {/* ── LEFT STEPPER ── */}
         <div className="bg-gray-100 p-8 text-black">
           <h2 className="text-2xl font-bold mb-10">
@@ -178,9 +180,7 @@ const MatrimonyForm = () => {
                 </div>
                 <span
                   className={
-                    i === currentStep
-                      ? "font-bold text-black"
-                      : "opacity-70 text-sm"
+                    i === currentStep ? "font-bold text-black" : "opacity-70 text-sm"
                   }
                 >
                   {s}
@@ -209,6 +209,7 @@ const MatrimonyForm = () => {
           </h3>
 
           <div className="flex-1 min-h-[350px]">
+
             {/* ── STEP 0 – Personal ── */}
             {currentStep === 0 && (
               <div className="grid md:grid-cols-2 gap-6">
@@ -227,9 +228,7 @@ const MatrimonyForm = () => {
                 >
                   <option value="">Gender / பாலினம்</option>
                   {getEnumOptions("gender", displayMode).map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
 
@@ -262,8 +261,7 @@ const MatrimonyForm = () => {
                       name="birthTime"
                       value={formData.birthTime}
                       onChange={handleChange}
-                      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2 text-black
-                                 focus:outline-none focus:ring-2 focus:ring-[#1A5AF0]"
+                      className="w-full rounded-md border border-gray-300 px-3 pt-6 pb-2 text-black focus:outline-none focus:ring-2 focus:ring-[#1A5AF0]"
                     />
                   </div>
                   <select
@@ -309,9 +307,7 @@ const MatrimonyForm = () => {
                 >
                   <option value="">Marital Status / திருமண நிலை</option>
                   {getEnumOptions("maritalStatus", displayMode).map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
               </div>
@@ -419,9 +415,7 @@ const MatrimonyForm = () => {
                   >
                     <option value="">Raasi / இராசி</option>
                     {getEnumOptions("raasi", displayMode).map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
 
@@ -433,9 +427,7 @@ const MatrimonyForm = () => {
                   >
                     <option value="">Natchathiram / நட்சத்திரம்</option>
                     {getEnumOptions("star", displayMode).map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
 
@@ -447,43 +439,32 @@ const MatrimonyForm = () => {
                   >
                     <option value="">Dosham / தோஷாம்</option>
                     {getEnumOptions("dosham", displayMode).map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
                 </div>
 
-                {/* ── Horoscope file upload (→ S3: matrimony-profiles/horoscopes/) ── */}
-                <label
-                  htmlFor="horoscope-file-input"
-                  className={`${uploadBox} cursor-pointer`}
-                >
+                {/* ── Horoscope file upload ── */}
+                <label htmlFor="horoscope-file-input" className={`${uploadBox} cursor-pointer`}>
                   {isUploading && formData.horoscope ? (
-                    <p className="text-xs text-center text-[#1A5AF0] animate-pulse">
-                      Uploading…
-                    </p>
-                  ) : formData.horoscope ? (
+                    <p className="text-xs text-center text-[#1A5AF0] animate-pulse">Uploading…</p>
+                  ) : horoscopeS3Url ? (
                     <>
                       <DocumentCheckIcon className="w-10 h-10 text-green-600" />
-                      <p className="text-xs mt-2 text-center text-black">
-                        {formData.horoscope.name}
-                      </p>
-                      {horoscopeS3Url && (
-                        <p className="text-[10px] mt-1 text-green-600 text-center px-1">
-                          ✓ Saved to cloud
-                        </p>
-                      )}
+                      <p className="text-xs mt-2 text-center text-black">{formData.horoscope?.name}</p>
+                      <p className="text-[10px] mt-1 text-green-600 text-center px-1">✓ Saved to cloud</p>
+                    </>
+                  ) : formData.horoscope ? (
+                    <>
+                      <DocumentCheckIcon className="w-10 h-10 text-amber-500" />
+                      <p className="text-xs mt-2 text-center text-black">{formData.horoscope.name}</p>
                     </>
                   ) : (
                     <>
                       <CloudArrowUpIcon className="w-10 h-10 text-[#1A5AF0]" />
-                      <p className="text-xs text-center mt-2 text-black">
-                        Upload Horoscope / ஜாதகம்
-                      </p>
+                      <p className="text-xs text-center mt-2 text-black">Upload Horoscope / ஜாதகம்</p>
                     </>
                   )}
-                  {/* ← uses handleHoroscopeChange instead of handleFileChange */}
                   <input
                     id="horoscope-file-input"
                     type="file"
@@ -529,56 +510,52 @@ const MatrimonyForm = () => {
                   <label className="block text-sm font-semibold text-black">
                     Account Settings / கணக்கு அமைப்புகள்
                   </label>
-                  <select
-                    name="privacy"
-                    onChange={handleChange}
-                    className={input}
-                  >
+                  <select name="privacy" onChange={handleChange} className={input}>
                     <option value="">Select / தேர்வு செய்யவும்</option>
                     <option value="Public">🌍 Public / பொது</option>
                     <option value="Private">🔒 Private / தனிப்பட்ட</option>
                   </select>
                 </div>
 
-                {/* ── Photo upload (→ S3: matrimony-profiles/photos/) ── */}
+                {/* ── Photo upload ── */}
                 <div className="space-y-2">
                   <p className="text-sm font-semibold text-black">
                     Upload Photo / பதிவேற்ற புகைப்படம்
                   </p>
                   <label
-                    className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all 
-                      ${
-                        formData.photo
-                          ? "bg-green-50 border-green-500"
-                          : "bg-gray-50 border-[#1A5AF0]/30"
-                      }`}
+                    className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
+                      photoS3Url
+                        ? "bg-green-50 border-green-500"
+                        : formData.photo
+                        ? "bg-amber-50 border-amber-400"
+                        : "bg-gray-50 border-[#1A5AF0]/30"
+                    }`}
                   >
-                    {isUploading && formData.photo ? (
-                      <p className="text-sm text-[#1A5AF0] animate-pulse">
-                        Uploading photo…
-                      </p>
-                    ) : formData.photo ? (
+                    {isUploading && formData.photo && !photoS3Url ? (
+                      <p className="text-sm text-[#1A5AF0] animate-pulse">Uploading photo…</p>
+                    ) : photoS3Url ? (
                       <>
                         <DocumentCheckIcon className="w-10 h-10 text-green-600" />
                         <p className="text-xs mt-2 text-center text-green-700 font-medium px-2 truncate w-full">
+                          {formData.photo?.name}
+                        </p>
+                        <p className="text-[10px] mt-1 text-green-600">✓ Saved to cloud</p>
+                      </>
+                    ) : formData.photo ? (
+                      <>
+                        <DocumentCheckIcon className="w-10 h-10 text-amber-500" />
+                        <p className="text-xs mt-2 text-center text-amber-600 font-medium px-2 truncate w-full">
                           {formData.photo.name}
                         </p>
-                        {photoS3Url && (
-                          <p className="text-[10px] mt-1 text-green-600">
-                            ✓ Saved to cloud
-                          </p>
-                        )}
                       </>
                     ) : (
                       <>
                         <CloudArrowUpIcon className="w-8 h-8 mb-2 text-[#1A5AF0]" />
                         <p className="text-sm text-black text-center">
-                          Click to upload photo / புகைப்படத்தை பதிவேற்ற கிளிக்
-                          செய்க
+                          Click to upload photo / புகைப்படத்தை பதிவேற்ற கிளிக் செய்க
                         </p>
                       </>
                     )}
-                    {/* ← uses handlePhotoChange instead of handleFileChange */}
                     <input
                       type="file"
                       name="photo"
@@ -609,91 +586,27 @@ const MatrimonyForm = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
                   {[
-                    {
-                      label: "முழு பெயர் / Full Name",
-                      value: formData.fullName,
-                    },
-                    {
-                      label: "பாலினம் / Gender",
-                      value: getEnumLabel(
-                        "gender",
-                        formData.gender,
-                        displayMode,
-                      ),
-                    },
-                    {
-                      label: "பிறந்த தேதி / Date of Birth",
-                      value: formData.dob,
-                    },
-                    {
-                      label: "பிறந்த நேரம் / Birth Time",
-                      value:
-                        `${formData.birthTime} ${formData.birthPeriod || ""}`.trim(),
-                    },
-                    {
-                      label: "பிறந்த இடம் / Birth Place",
-                      value: formData.birthPlace,
-                    },
-                    {
-                      label: "தொலைபேசி எண் / Phone Number",
-                      value: formData.phone,
-                    },
-                    {
-                      label: "திருமண நிலை / Marital Status",
-                      value: getEnumLabel(
-                        "maritalStatus",
-                        formData.maritalStatus,
-                        displayMode,
-                      ),
-                    },
+                    { label: "முழு பெயர் / Full Name", value: formData.fullName },
+                    { label: "பாலினம் / Gender", value: getEnumLabel("gender", formData.gender, displayMode) },
+                    { label: "பிறந்த தேதி / Date of Birth", value: formData.dob },
+                    { label: "பிறந்த நேரம் / Birth Time", value: `${formData.birthTime} ${formData.birthPeriod || ""}`.trim() },
+                    { label: "பிறந்த இடம் / Birth Place", value: formData.birthPlace },
+                    { label: "தொலைபேசி எண் / Phone Number", value: formData.phone },
+                    { label: "திருமண நிலை / Marital Status", value: getEnumLabel("maritalStatus", formData.maritalStatus, displayMode) },
                     { label: "கல்வி / Education", value: formData.education },
-                    {
-                      label: "தொழில் / Occupation",
-                      value: formData.occupation,
-                    },
-                    {
-                      label: "வேலை இடம் / Work Location",
-                      value: formData.workLocation,
-                    },
-                    {
-                      label: "தந்தை பெயர் / Father Name",
-                      value: formData.father,
-                    },
-                    {
-                      label: "தாய் பெயர் / Mother Name",
-                      value: formData.mother,
-                    },
-                    {
-                      label: "உடன்பிறப்புகள் / Siblings",
-                      value: formData.siblings,
-                    },
-                    {
-                      label: "இராசி / Raasi",
-                      value: getEnumLabel("raasi", formData.raasi, displayMode),
-                    },
-                    {
-                      label: "நட்சத்திரம் / Star",
-                      value: getEnumLabel("star", formData.star, displayMode),
-                    },
-                    {
-                      label: "தோஷம் / Dosham",
-                      value: getEnumLabel(
-                        "dosham",
-                        formData.dosham,
-                        displayMode,
-                      ),
-                    },
+                    { label: "தொழில் / Occupation", value: formData.occupation },
+                    { label: "வேலை இடம் / Work Location", value: formData.workLocation },
+                    { label: "தந்தை பெயர் / Father Name", value: formData.father },
+                    { label: "தாய் பெயர் / Mother Name", value: formData.mother },
+                    { label: "உடன்பிறப்புகள் / Siblings", value: formData.siblings },
+                    { label: "இராசி / Raasi", value: getEnumLabel("raasi", formData.raasi, displayMode) },
+                    { label: "நட்சத்திரம் / Star", value: getEnumLabel("star", formData.star, displayMode) },
+                    { label: "தோஷம் / Dosham", value: getEnumLabel("dosham", formData.dosham, displayMode) },
                     { label: "நகரம் / City", value: formData.city },
                     { label: "நாடு / Country", value: formData.country },
-                    {
-                      label: "கணக்கு தனியுரிமை / Privacy",
-                      value: formData.privacy,
-                    },
+                    { label: "கணக்கு தனியுரிமை / Privacy", value: formData.privacy },
                   ].map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col border-b border-gray-200 pb-1"
-                    >
+                    <div key={index} className="flex flex-col border-b border-gray-200 pb-1">
                       <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
                         {item.label}
                       </span>
@@ -715,6 +628,7 @@ const MatrimonyForm = () => {
 
                   {/* Media section */}
                   <div className="sm:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+
                     {/* Profile Photo Card */}
                     <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
                       <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
@@ -728,12 +642,9 @@ const MatrimonyForm = () => {
                             className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100"
                           />
                           <div className="flex flex-col gap-1">
-                            <span className="text-xs break-all opacity-70">
-                              {formData.photo?.name}
-                            </span>
-                            <span className="text-[10px] text-green-600 font-semibold">
-                              ✓ Uploaded to S3
-                            </span>
+                            <span className="text-xs break-all opacity-70">{formData.photo?.name}</span>
+                            <span className="text-[10px] text-green-600 font-semibold">✓ Uploaded to S3</span>
+                            {/* ✅ Shows the actual full S3 URL that will be saved to DB */}
                             <a
                               href={photoS3Url}
                               target="_blank"
@@ -744,17 +655,14 @@ const MatrimonyForm = () => {
                             </a>
                           </div>
                         </div>
-                      ) : formData.photo ? (
-                        // Fallback: local preview while still uploading
+                      ) : photoPreview ? (
                         <div className="flex items-center gap-3">
                           <img
                             src={photoPreview}
                             alt="Profile"
                             className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100"
                           />
-                          <span className="text-xs text-amber-500">
-                            Uploading…
-                          </span>
+                          <span className="text-xs text-amber-500">Uploading…</span>
                         </div>
                       ) : (
                         <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-sm italic opacity-50">
@@ -779,18 +687,13 @@ const MatrimonyForm = () => {
                           ) : (
                             <div className="w-24 h-24 bg-gray-50 flex flex-col items-center justify-center rounded-lg border-2 border-gray-100 text-[#1A5AF0]">
                               <DocumentCheckIcon className="w-8 h-8" />
-                              <span className="text-[8px] font-bold mt-1">
-                                DOC/PDF
-                              </span>
+                              <span className="text-[8px] font-bold mt-1">DOC/PDF</span>
                             </div>
                           )}
                           <div className="flex flex-col gap-1">
-                            <span className="text-xs break-all opacity-70">
-                              {formData.horoscope?.name}
-                            </span>
-                            <span className="text-[10px] text-green-600 font-semibold">
-                              ✓ Uploaded to S3
-                            </span>
+                            <span className="text-xs break-all opacity-70">{formData.horoscope?.name}</span>
+                            <span className="text-[10px] text-green-600 font-semibold">✓ Uploaded to S3</span>
+                            {/* ✅ Shows the actual full S3 URL that will be saved to DB */}
                             <a
                               href={horoscopeS3Url}
                               target="_blank"
@@ -805,9 +708,7 @@ const MatrimonyForm = () => {
                         <div className="flex items-center gap-3">
                           <div className="w-24 h-24 bg-gray-50 flex flex-col items-center justify-center rounded-lg border-2 border-gray-100 text-amber-500">
                             <DocumentCheckIcon className="w-8 h-8" />
-                            <span className="text-[8px] font-bold mt-1">
-                              Uploading…
-                            </span>
+                            <span className="text-[8px] font-bold mt-1">Uploading…</span>
                           </div>
                         </div>
                       ) : (
@@ -826,12 +727,10 @@ const MatrimonyForm = () => {
                       </span>
                       <span className="flex flex-col gap-1">
                         <span className="text-[12px] md:text-[13px] font-black text-black leading-relaxed">
-                          நீங்கள் பதிவிடும் விபரங்கள், நீங்கள் அனுமதித்த
-                          பின்னரே, மற்ற வரன்கள் பார்க்க முடியும்
+                          நீங்கள் பதிவிடும் விபரங்கள், நீங்கள் அனுமதித்த பின்னரே, மற்ற வரன்கள் பார்க்க முடியும்
                         </span>
                         <span className="text-[10px] uppercase tracking-wider font-bold text-[#1A5AF0]">
-                          Your details will be visible to others only after your
-                          approval.
+                          Your details will be visible to others only after your approval.
                         </span>
                       </span>
                     </p>
@@ -870,9 +769,18 @@ const MatrimonyForm = () => {
                   return;
                 }
 
-                // Warn if files are still uploading
                 if (isUploading) {
                   toast.error("Please wait — files are still uploading.");
+                  return;
+                }
+
+                // ── Warn if files were selected but S3 upload failed ──
+                if (formData.photo && !photoS3Url) {
+                  toast.error("Photo upload failed. Please re-upload the photo.");
+                  return;
+                }
+                if (formData.horoscope && !horoscopeS3Url) {
+                  toast.error("Horoscope upload failed. Please re-upload the horoscope.");
                   return;
                 }
 
@@ -880,9 +788,7 @@ const MatrimonyForm = () => {
                   (t) => (
                     <div
                       className={`transform-gpu origin-center ${
-                        t.visible
-                          ? "scale-100 opacity-100"
-                          : "scale-75 opacity-0"
+                        t.visible ? "scale-100 opacity-100" : "scale-75 opacity-0"
                       } text-center space-y-3`}
                     >
                       <p className="font-bold text-black flex justify-center gap-4 mt-3">
@@ -892,7 +798,8 @@ const MatrimonyForm = () => {
                         <button
                           onClick={() => {
                             toast.dismiss(t.id);
-                            handleSubmit(); // ← calls our wrapper that passes S3 URLs
+                            // ✅ handleSubmit passes S3 URLs → submitForm → DB stores full URL
+                            handleSubmit();
                             setTimeout(() => navigate("/"), 800);
                           }}
                           className="px-4 py-2 bg-[#1A5AF0] text-white rounded-lg font-bold cursor-pointer"
@@ -920,11 +827,7 @@ const MatrimonyForm = () => {
                   : "bg-[#1A5AF0] text-white hover:bg-blue-700 cursor-pointer"
               }`}
             >
-              {isUploading
-                ? "Uploading…"
-                : currentStep === 6
-                  ? "Submit"
-                  : "Next"}
+              {isUploading ? "Uploading…" : currentStep === 6 ? "Submit" : "Next"}
             </button>
           </div>
         </div>

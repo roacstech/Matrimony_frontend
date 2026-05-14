@@ -12,7 +12,7 @@ export const useMatrimonyForm = () => {
     dob: "",
     birthTime: "",
     birthPeriod: "",
-    birthPlace: "",   // ✅ ADD THIS
+    birthPlace: "",
     email: "",
     phone: "",
     maritalStatus: "",
@@ -36,7 +36,7 @@ export const useMatrimonyForm = () => {
     raasi: "",
     star: "",
     dosham: "",
-    horoscope: null,
+    horoscope: null, // File object — used only for UI display, NOT sent to backend
 
     // STEP 4
     address: "",
@@ -45,11 +45,10 @@ export const useMatrimonyForm = () => {
 
     // STEP 5
     privacy: "",
-    photo: null,
+    photo: null,     // File object — used only for UI display, NOT sent to backend
     remarks: "",
   });
 
-  // ✅ FIXED FIELD MAP
   const stepFields = [
     ["fullName", "gender", "dob", "birthTime", "birthPlace", "email", "phone", "maritalStatus"],
     ["education", "occupation", "income", "workLocation"],
@@ -74,6 +73,8 @@ export const useMatrimonyForm = () => {
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
+    // Stores File object in formData only for UI (filename display, preview)
+    // The actual upload to S3 happens in MatrimonyForm.jsx
     setFormData((p) => ({ ...p, [name]: files[0] }));
   };
 
@@ -101,10 +102,63 @@ export const useMatrimonyForm = () => {
     setCurrentStep((p) => Math.max(p - 1, 0));
   };
 
-  const submitForm = async () => {
+  // ✅ FIXED: accepts { photoUrl, horoscopeUrl } from MatrimonyForm.jsx
+  // These are the full S3 URLs uploaded before submit
+  const submitForm = async ({ photoUrl, horoscopeUrl } = {}) => {
     try {
       const token = localStorage.getItem("accesstoken");
-      const res = await submitFormAPI(formData, token);
+
+      // ✅ Build a clean JSON payload — no File objects, only S3 URLs
+      const payload = {
+        // STEP 0
+        fullName:              formData.fullName,
+        gender:                formData.gender,
+        dob:                   formData.dob,
+        birthTime:             formData.birthTime,
+        birthPeriod:           formData.birthPeriod,
+        birthPlace:            formData.birthPlace,
+        email:                 formData.email,
+        phone:                 formData.phone,
+        maritalStatus:         formData.maritalStatus,
+
+        // STEP 1
+        education:             formData.education,
+        occupation:            formData.occupation,
+        income:                formData.income,
+        workLocation:          formData.workLocation,
+
+        // STEP 2
+        father:                formData.father,
+        mother:                formData.mother,
+        grandfather:           formData.grandfather,
+        grandmother:           formData.grandmother,
+        motherSideGrandfather: formData.motherSideGrandfather,
+        motherSideGrandmother: formData.motherSideGrandmother,
+        siblings:              formData.siblings,
+
+        // STEP 3
+        raasi:                 formData.raasi,
+        star:                  formData.star,
+        dosham:                formData.dosham,
+
+        // STEP 4
+        address:               formData.address,
+        city:                  formData.city,
+        country:               formData.country,
+
+        // STEP 5
+        privacy:               formData.privacy,
+        remarks:               formData.remarks,
+
+        // ✅ S3 URLs — saved directly to DB as full URLs
+        // e.g. https://roacs-bucket.s3.ap-south-1.amazonaws.com/matrimony-profiles/photos/uuid.jpg
+        photoUrl:              photoUrl      || null,
+        horoscopeUrl:          horoscopeUrl  || null,
+      };
+
+      console.log("📤 FINAL PAYLOAD TO BACKEND =>", payload);
+
+      const res = await submitFormAPI(payload, token);
       toast.success(res.message || "Profile submitted");
     } catch (err) {
       toast.error(err.message || "Submit failed");

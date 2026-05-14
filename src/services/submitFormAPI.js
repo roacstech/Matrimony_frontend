@@ -2,29 +2,22 @@ import axios from "axios";
 
 const API_URL = `${import.meta.env.VITE_APP_API_URL}user/form/submit`;
 
-export const submitFormAPI = async (formData, token) => {
+// ✅ FIXED: sends JSON instead of multipart/form-data
+// Files are already uploaded to S3 before this is called.
+// payload.photoUrl and payload.horoscopeUrl are full S3 URLs like:
+// https://roacs-bucket.s3.ap-south-1.amazonaws.com/matrimony-profiles/photos/uuid.jpg
+export const submitFormAPI = async (payload, token) => {
   try {
-    const fd = new FormData();
-
-    // append all fields
-    Object.keys(formData).forEach((key) => {
-      if (formData[key] !== null && formData[key] !== "") {
-        fd.append(key, formData[key]);
+    const res = await axios.post(
+      API_URL,
+      payload, // ✅ plain JS object — axios automatically sets Content-Type: application/json
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // ✅ no Content-Type override needed — axios handles it for JSON
+        },
       }
-    });
-
-    // extra flags (backend expects)
-    if (formData.horoscope) {
-      fd.append("horoscopeUploaded", true);
-      fd.append("horoscopeFileName", formData.horoscope.name);
-    }
-
-    const res = await axios.post(API_URL, fd, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        // ❌ don't set Content-Type
-      },
-    });
+    );
 
     return res.data;
   } catch (err) {

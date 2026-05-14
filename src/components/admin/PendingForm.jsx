@@ -125,7 +125,8 @@ const PendingForms = () => {
                         <div className="w-9 h-9 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
                           {item.photo ? (
                             <img
-                              src={`${import.meta.env.VITE_IMG_URL}/photos/${item.photo}`}
+                              // ✅ photo is already a full S3 URL — use it directly
+                              src={item.photo}
                               alt="user"
                               className="w-full h-full object-cover"
                             />
@@ -134,7 +135,7 @@ const PendingForms = () => {
                           )}
                         </div>
                         <span className="text-sm font-semibold text-gray-800">
-                          {item.profile?.fullName || item.name || "N/A"}
+                          {item.profile?.fullName || item.name || item.fullName || "N/A"}
                         </span>
                       </div>
                     </td>
@@ -205,7 +206,8 @@ const PendingForms = () => {
               <div className="w-16 h-16 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center mb-3">
                 {selectedUser.photo ? (
                   <img
-                    src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`}
+                    // ✅ photo is a full S3 URL — use directly, no VITE_IMG_URL prefix needed
+                    src={selectedUser.photo}
                     className="w-full h-full object-cover"
                     alt="user"
                   />
@@ -271,7 +273,8 @@ const PendingForms = () => {
                     </span>
                   </div>
                   <a
-                    href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope.fileName}`}
+                    // ✅ horoscope.fileUrl is already the full S3 URL — use it directly
+                    href={selectedUser.horoscope.fileUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition"

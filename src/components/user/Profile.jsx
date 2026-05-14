@@ -210,7 +210,7 @@ const Profile = () => {
       <div className="bg-white border border-gray-100 rounded-xl p-5 md:p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-blue-900/5">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
           <div className="relative group">
-            <div className="w-4 h-24 rounded-xl border-4 border-[#F8FAFC] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md">
+            <div className="w-24 h-24 rounded-xl border-4 border-[#F8FAFC] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md">
               {user?.photo ? (
                 <img
                   src={resolvePhotoSrc(user.photo)}

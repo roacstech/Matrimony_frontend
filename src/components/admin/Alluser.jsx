@@ -157,7 +157,8 @@ const AllUsers = () => {
               <div className="w-14 h-14 rounded-xl bg-gray-100 overflow-hidden border border-gray-200 flex items-center justify-center flex-shrink-0">
                 {selectedUser?.photo ? (
                   <img
-                    src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`}
+                    // ✅ photo is already a full S3 URL — use directly
+                    src={selectedUser.photo}
                     alt="user"
                     className="w-full h-full object-cover"
                   />
@@ -264,7 +265,8 @@ const AllUsers = () => {
                   </div>
                   {selectedUser.horoscope?.uploaded && (
                     <a
-                      href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope.fileName}`}
+                      // ✅ horoscope.fileUrl is already the full S3 URL — use directly
+                      href={selectedUser.horoscope.fileUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition flex items-center gap-1.5"
@@ -372,7 +374,8 @@ const AllUsers = () => {
                         <div className="w-9 h-9 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
                           {u?.photo ? (
                             <img
-                              src={`${import.meta.env.VITE_IMG_URL}/photos/${u.photo}`}
+                              // ✅ photo is already a full S3 URL — use directly
+                              src={u.photo}
                               alt="user"
                               className="w-full h-full object-cover"
                             />
