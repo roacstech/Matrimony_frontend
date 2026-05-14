@@ -9,6 +9,13 @@ import AdminDashboardLayout from "./layouts/AdminDashboardLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 
+
+import { Buffer } from "buffer";
+import process from "process";
+
+window.Buffer = Buffer;
+window.process = process;
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>

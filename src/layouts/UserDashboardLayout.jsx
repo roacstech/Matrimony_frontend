@@ -83,7 +83,7 @@ const UserDashboardLayout = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#B3CCFB] flex overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-white flex overflow-x-hidden font-sans">
       {/* MOBILE OVERLAY */}
       {isSidebarOpen && (
         <div
@@ -116,7 +116,7 @@ const UserDashboardLayout = ({
             <div 
               key={item.path} 
               onClick={() => { navigate(item.path); setIsSidebarOpen(false); }} 
-              className={`flex items-center gap-4 px-6 py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[1.5px] cursor-pointer transition-all ${location.pathname === item.path ? "bg-[#1A5AF0] text-white shadow-lg" : "text-gray-400 hover:bg-[#B3CCFB]/20 hover:text-black"}`}
+              className={`flex items-center gap-4 px-6 py-4 rounded-[20px] text-[10px] font-black uppercase tracking-[1.5px] cursor-pointer transition-all ${location.pathname === item.path ? "bg-[#1A5AF0] text-white shadow-lg" : "text-gray-400 hover:bg-gray-100 hover:text-black"}`}
             >
               <span>{item.icon}</span>
               <span className="truncate">{item.name}</span>
@@ -143,7 +143,7 @@ const UserDashboardLayout = ({
 
             {showMenu && (
               <div className="absolute right-0 top-16 w-52 bg-white rounded-[24px] shadow-2xl border border-gray-100 z-50 overflow-hidden p-2">
-                <button onClick={() => { navigate("/user/dashboard/profile"); onAvatarClick(); }} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-black hover:bg-[#B3CCFB]/20 rounded-xl transition-colors">
+                <button onClick={() => { navigate("/user/dashboard/profile"); onAvatarClick(); }} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-black hover:bg-gray-100 rounded-xl transition-colors">
                   <Settings size={16} className="text-[#1A5AF0]" /> Profile Settings
                 </button>
                 <button onClick={() => { handleLogout(); onAvatarClick(); }} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50 rounded-xl transition-colors">
