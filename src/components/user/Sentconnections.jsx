@@ -5,7 +5,7 @@ import {
   getAcceptedConnections,
 } from "../../api/userApi";
 import { getEnumLabel } from "../../utils/convertHelper";
-import { XCircle } from "lucide-react";
+import { XCircle, Send } from "lucide-react";
 
 const SentConnections = () => {
   const [sent, setSent] = useState([]);
@@ -56,19 +56,32 @@ const SentConnections = () => {
       !acceptedReceived.some((a) => a.connectionId === c.connectionId)
   );
 
-  const getStatusStyle = (status) => {
+  const getStatusBadge = (status) => {
     switch (status) {
       case "Accepted":
-        return "bg-green-50 text-green-600 border border-green-100";
+        return (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-green-50 text-green-600 border border-green-100 uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> Accepted
+          </span>
+        );
       case "Rejected":
-        return "bg-rose-50 text-rose-500 border border-rose-100";
+        return (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-500 border border-rose-100 uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> Rejected
+          </span>
+        );
       default:
-        return "bg-yellow-50 text-yellow-600 border border-yellow-100";
+        return (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-yellow-50 text-yellow-600 border border-yellow-100 uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" /> Pending
+          </span>
+        );
     }
   };
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto min-h-screen relative">
+    <div className="space-y-5">
+
       {/* Toast */}
       {toast.show && (
         <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-[#111827] text-white px-6 py-3 rounded-xl shadow-2xl text-xs font-medium uppercase tracking-widest border border-blue-500/30">
@@ -76,65 +89,79 @@ const SentConnections = () => {
         </div>
       )}
 
-      {/* HEADER */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-[#111827]">Sent Requests</h2>
-          <p className="text-xs text-gray-400 mt-0.5">{filteredSent.length} pending requests</p>
+      {/* ── Top bar ── */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
+            <Send size={18} className="text-blue-500" />
+          </div>
+          <h2 className="text-lg font-bold text-gray-900">Sent Requests</h2>
         </div>
+        <span className="px-3 py-1 text-xs font-semibold text-blue-600 bg-blue-50 rounded-full border border-blue-100">
+          {filteredSent.length} pending
+        </span>
       </div>
 
-      {/* TABLE */}
-      <div className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm">
-
+      {/* ── Table ── */}
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[600px]">
+          <table className="w-full text-left min-w-[760px]">
             <thead>
-              <tr className="bg-gray-100 border-b border-gray-100 text-[10px] font-semibold text-black-400 uppercase tracking-widest">
-                <th className="px-6 py-4">Work / Occupation</th>
-                <th className="px-6 py-4">Location</th>
-                <th className="px-6 py-4">Raasi</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-center">Actions</th>
+              <tr className="border-b border-gray-100">
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Work / Occupation</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Location</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Raasi</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Status</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
-              {filteredSent.length === 0 && (
+            <tbody>
+              {filteredSent.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-black-300 font-medium">
+                  <td colSpan="5" className="text-center py-14 text-sm text-gray-400">
                     No sent requests found
                   </td>
                 </tr>
+              ) : (
+                filteredSent.map((c, idx) => (
+                  <tr
+                    key={c.connectionId}
+                    className={`border-b border-gray-50 hover:bg-gray-50 transition-colors ${
+                      idx % 2 === 1 ? "bg-gray-50/40" : "bg-white"
+                    }`}
+                  >
+                    {/* Occupation */}
+                    <td className="px-6 py-4 text-sm font-semibold text-gray-800">
+                      {c.receiver_work || "—"}
+                    </td>
+
+                    {/* Location */}
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {c.receiver_city || "—"}
+                    </td>
+
+                    {/* Raasi */}
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {getEnumLabel("raasi", c.receiver_raasi, displayMode)}
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-6 py-4">
+                      {getStatusBadge(c.status)}
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-6 py-4 text-center">
+                      <button
+                        onClick={() => handleWithdraw(c.connectionId)}
+                        className="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-rose-500 border border-rose-200 bg-rose-50 hover:bg-rose-500 hover:text-white rounded-lg transition-all"
+                      >
+                        <XCircle size={13} /> Cancel
+                      </button>
+                    </td>
+                  </tr>
+                ))
               )}
-              {filteredSent.map((c) => (
-                <tr key={c.connectionId} className="hover:bg-blue-50/20 transition-all">
-                  <td className="px-6 py-4 text-sm font-medium text-[#111827]">
-                    {c.receiver_work || "—"}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 font-medium">
-                    {c.receiver_city || "—"}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 font-medium">
-                    {getEnumLabel("raasi", c.receiver_raasi, displayMode)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-medium uppercase ${getStatusStyle(c.status)}`}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                      {c.status || "Pending"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <button
-                      onClick={() => handleWithdraw(c.connectionId)}
-                      className="cursor-pointer inline-flex items-center gap-1.5 px-4 py-2 bg-rose-50 text-rose-500 rounded-lg text-[10px] font-medium uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all"
-                    >
-                      <XCircle size={13} /> Cancel
-                    </button>
-                  </td>
-                </tr>
-              ))}
             </tbody>
           </table>
         </div>
@@ -143,4 +170,4 @@ const SentConnections = () => {
   );
 };
 
-export default SentConnections; 
+export default SentConnections;

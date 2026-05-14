@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
+import { IoChevronBackOutline } from "react-icons/io5";
+
 import {
   Camera,
   MapPin,
@@ -200,11 +202,15 @@ const Profile = () => {
   return (
     <div className="max-w-5xl mx-auto p-3 md:p-6 bg-transparent min-h-screen font-sans">
 
+      <button className="mb-5  text-black  inline-flex items-center gap-1 text-gray-500 hover:text-rose-500 hover:cursor-pointer transition-colors" onClick={() => window.history.back()}>
+       <IoChevronBackOutline />Back to Matches
+      </button>
+
       {/* ================= HEADER SECTION ================= */}
       <div className="bg-white border border-gray-100 rounded-xl p-5 md:p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-blue-900/5">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
           <div className="relative group">
-            <div className="w-24 h-24 rounded-xl border-4 border-[#F8FAFC] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md">
+            <div className="w-4 h-24 rounded-xl border-4 border-[#F8FAFC] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md">
               {user?.photo ? (
                 <img
                   src={resolvePhotoSrc(user.photo)}
