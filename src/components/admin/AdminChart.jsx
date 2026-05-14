@@ -97,15 +97,15 @@ const AdminChart = () => {
           </p>
         </div>
 
-       <div className="flex justify-center items-center">
-  <img
-    src={adminImage}
-    alt="Admin"
-    className="w-40 h-40 object-contain"
-  />
-</div>
+        <div className="flex justify-center items-center">
+          <img
+            src={adminImage}
+            alt="Admin"
+            className="w-40 h-40 object-contain"
+          />
+        </div>
       </div>
-    
+
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCard
