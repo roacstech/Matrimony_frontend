@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link2, Send, CheckCircle, RefreshCw, ChevronDown, ChevronUp, Filter, Search, X } from "lucide-react";
+import { getUserAllConnections } from "../../api/adminApi"; // ✅ real import
 
-// Mock helpers (replace with real imports in your project)
+// Replace with your actual getEnumLabel helper
 const getEnumLabel = (type, value) => value || "—";
-const getUserAllConnections = async () => ({
-  total: 5,
-  connections: [
-    { connectionId: 1, direction: "sent", status: "Accepted", from_user_name: "Arun Kumar", from_user_gender: "Male", from_user_occupation: "Engineer", from_user_city: "Chennai", to_user_name: "Priya S", to_user_gender: "Female", to_user_city: "Bangalore", created_at: "2024-03-10" },
-    { connectionId: 2, direction: "received", status: "Sent", from_user_name: "Karthik R", from_user_gender: "Male", from_user_occupation: "Doctor", from_user_city: "Coimbatore", to_user_name: "Meena T", to_user_gender: "Female", to_user_city: "Madurai", created_at: "2024-03-12" },
-    { connectionId: 3, direction: "sent", status: "Rejected", from_user_name: "Suresh B", from_user_gender: "Male", from_user_occupation: "Teacher", from_user_city: "Trichy", to_user_name: "Anitha K", to_user_gender: "Female", to_user_city: "Salem", created_at: "2024-03-14" },
-    { connectionId: 4, direction: "received", status: "Accepted", from_user_name: "Divya M", from_user_gender: "Female", from_user_occupation: "Nurse", from_user_city: "Erode", to_user_name: "Rajesh P", to_user_gender: "Male", to_user_city: "Vellore", created_at: "2024-03-15" },
-    { connectionId: 5, direction: "sent", status: "Sent", from_user_name: "Vinoth C", from_user_gender: "Male", from_user_occupation: "Architect", from_user_city: "Ooty", to_user_name: "Kavitha L", to_user_gender: "Female", to_user_city: "Kochi", created_at: "2024-03-16" },
-  ],
-});
 
 const ConnectionStatus = () => {
   const [allConnections, setAllConnections] = useState([]);
@@ -33,6 +24,7 @@ const ConnectionStatus = () => {
     setLoading(true);
     setError(null);
     try {
+      // ✅ Real API call — returns { total, connections[] }
       const data = await getUserAllConnections();
       const connections = data?.connections || [];
       setAllConnections(connections);
@@ -108,24 +100,28 @@ const ConnectionStatus = () => {
     return <span className="text-gray-400 text-xs">—</span>;
   };
 
+  const DetailRow = ({ label, value }) => (
+    <div>
+      <p className="text-[9px] text-gray-400 uppercase font-semibold">{label}</p>
+      <p className="text-xs text-gray-700 font-medium">{value || "—"}</p>
+    </div>
+  );
+
   // Mobile card for each connection
   const MobileCard = ({ c, idx }) => {
     const isExpanded = expandedCard === c.connectionId;
     return (
       <div className={`border border-gray-100 rounded-2xl overflow-hidden transition-all ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/40"}`}>
-        {/* Card Header - always visible */}
         <button
           className="w-full text-left px-4 py-3.5 flex items-start justify-between gap-3"
           onClick={() => setExpandedCard(isExpanded ? null : c.connectionId)}
         >
           <div className="flex-1 min-w-0">
-            {/* Sender → Receiver */}
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-sm font-bold text-gray-800 truncate">{c.from_user_name || "—"}</span>
               <span className="text-gray-300 font-bold text-xs">→</span>
               <span className="text-sm font-bold text-gray-800 truncate">{c.to_user_name || "—"}</span>
             </div>
-            {/* Badges row */}
             <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
               {getDirectionBadge(c)}
               {getStatusBadge(c.status)}
@@ -141,11 +137,9 @@ const ConnectionStatus = () => {
           </span>
         </button>
 
-        {/* Expanded details */}
         {isExpanded && (
           <div className="px-4 pb-4 border-t border-gray-100">
             <div className="grid grid-cols-2 gap-3 mt-3">
-              {/* Sender section */}
               <div className="bg-purple-50/50 rounded-xl p-3 space-y-1.5">
                 <p className="text-[10px] font-bold text-purple-500 uppercase tracking-wide mb-2">Sender</p>
                 <DetailRow label="Name" value={c.from_user_name} />
@@ -153,7 +147,6 @@ const ConnectionStatus = () => {
                 <DetailRow label="Occupation" value={c.from_user_occupation} />
                 <DetailRow label="City" value={c.from_user_city} />
               </div>
-              {/* Receiver section */}
               <div className="bg-blue-50/50 rounded-xl p-3 space-y-1.5">
                 <p className="text-[10px] font-bold text-blue-500 uppercase tracking-wide mb-2">Receiver</p>
                 <DetailRow label="Name" value={c.to_user_name} />
@@ -167,17 +160,10 @@ const ConnectionStatus = () => {
     );
   };
 
-  const DetailRow = ({ label, value }) => (
-    <div>
-      <p className="text-[9px] text-gray-400 uppercase font-semibold">{label}</p>
-      <p className="text-xs text-gray-700 font-medium">{value || "—"}</p>
-    </div>
-  );
-
   const activeFilterCount = [filterType !== "all", filterStatus !== "all", searchTerm !== ""].filter(Boolean).length;
 
   return (
-    <div className="space-y-4  max-w-7xl mx-auto">
+    <div className="space-y-4 max-w-7xl mx-auto">
 
       {/* ── Top bar ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -188,7 +174,6 @@ const ConnectionStatus = () => {
           <h2 className="text-lg font-bold text-gray-900">Connection Status</h2>
         </div>
 
-        {/* Stats + Refresh */}
         <div className="flex items-center gap-2 flex-wrap">
           <span className="px-3 py-1 text-xs font-semibold text-blue-600 bg-blue-50 rounded-full border border-blue-100">
             Total: {stats.total}
@@ -210,7 +195,6 @@ const ConnectionStatus = () => {
 
       {/* ── Search + Filter toggle ── */}
       <div className="flex gap-2">
-        {/* Search */}
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
           <input
@@ -265,7 +249,7 @@ const ConnectionStatus = () => {
 
       {/* ── Mobile filter panel (collapsible) ── */}
       {showFilters && (
-        <div className="sm:hidden flex flex-col gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 animate-in">
+        <div className="sm:hidden flex flex-col gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">Filters</span>
             {activeFilterCount > 0 && (
