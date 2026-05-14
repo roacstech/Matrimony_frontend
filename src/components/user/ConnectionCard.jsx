@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { MdOutlinePublic } from "react-icons/md";
+import { RiGitRepositoryPrivateFill } from "react-icons/ri";
+
 
 import {
   getVisibleConnections,
@@ -136,7 +139,7 @@ const ConnectionCard = () => {
           .map((u) => (
             <div
               key={u.id}
-              className="group relative bg-white rounded-[24px] xs:rounded-[28px] sm:rounded-[32px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#1A5AF0]/30 transition-all duration-500 flex flex-col w-full h-fit pt-10 xs:pt-11 sm:pt-12 pb-4 xs:pb-5 sm:pb-6 px-4 xs:px-5 sm:px-6"
+              className="group relative bg-white rounded-[12px] xs:rounded-[14px] sm:rounded-[10px] border border-[#EEEEEE] shadow-sm hover:shadow-2xl hover:border-[#1A5AF0]/30 transition-all duration-500 flex flex-col w-full h-fit pt-10 xs:pt-11 sm:pt-12 pb-4 xs:pb-5 sm:pb-6 px-4 xs:px-5 sm:px-6"
             >
               {/* FLOATING STATUS BADGE */}
               <div
@@ -147,11 +150,19 @@ const ConnectionCard = () => {
                   color: "#1A5AF0",
                 }}
               >
-                <span className="text-[8px] xs:text-[9px] font-black uppercase tracking-[1px] sm:tracking-[1.5px] whitespace-nowrap leading-none">
-                  {u.privacy === "Public"
-                    ? "📡 Public Mode"
-                    : "🔐 Private Mode"}
-                </span>
+                <span className="text-[8px] xs:text-[9px] font-black uppercase tracking-[1px] sm:tracking-[1.5px] whitespace-nowrap leading-none flex items-center gap-1">
+  {u.privacy === "Public" ? (
+    <>
+      <MdOutlinePublic size={12} />
+      <span>Public Mode</span>
+    </>
+  ) : (
+    <span>
+      <RiGitRepositoryPrivateFill size={12} />
+      <span>Private Mode</span>
+    </span>
+  )}
+</span>
               </div>
 
               {/* DETAILS GRID */}
