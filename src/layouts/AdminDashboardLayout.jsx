@@ -146,9 +146,9 @@ const AdminDashboardLayout = () => {
         </header>
 
         {/* PAGE CONTENT */}
-        <main className="flex-1 p-4 lg:p-6 overflow-y-auto bg-[#F8FAFC]">
+        <main className="flex-1 p-4 lg:p-0 overflow-y-auto">
           <div className="max-w-[1400px] mx-auto">
-            <div className="bg-white rounded-3xl p-5 lg:p-8 shadow border border-gray-100 min-h-[calc(100vh-110px)]">
+            <div className=" p-5 lg:p-8  min-h-[calc(100vh-110px)]">
               <Outlet />
             </div>
           </div>
