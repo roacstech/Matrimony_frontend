@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import ConnectionCard from "../components/user/ConnectionCard";
-import ReceivedConnections from "../components/user/ReceivedConnections";
-import SentConnections from "../components/user/SentConnections";
+import ReceivedConnections from "../../components/user/ReceivedConnections";
+import SentConnections from "../../components/user/SentConnections";
 import Profile from "../components/user/Profile";
 import Notifications from "../components/user/Notifications";
 import UserDashboard from "../components/user/UserDashboard";
