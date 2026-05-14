@@ -87,7 +87,6 @@ const ConnectionCard = () => {
 
   return (
     <div className="p-3 xs:p-4 sm:p-5 md:p-6 lg:p-8 bg-transparent space-y-5 sm:space-y-8 lg:space-y-10 font-sans overflow-x-hidden w-full min-h-screen">
-
       {/* ================= TABS ================= */}
       <div className="flex items-center">
         <span
@@ -130,15 +129,20 @@ const ConnectionCard = () => {
               <div
                 className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1 rounded-full shadow-sm border border-white"
                 style={{
-                  backgroundColor: u.privacy === "Public" ? PRIMARY_LIGHT : "#F3F4F6",
+                  backgroundColor:
+                    u.privacy === "Public" ? PRIMARY_LIGHT : "#F3F4F6",
                   color: PRIMARY,
                 }}
               >
                 <span className="text-[9px] font-semibold uppercase tracking-wide whitespace-nowrap flex items-center gap-1">
                   {u.privacy === "Public" ? (
-                    <><MdOutlinePublic size={11} /> Public Mode</>
+                    <>
+                      <MdOutlinePublic size={11} /> Public Mode
+                    </>
                   ) : (
-                    <><RiGitRepositoryPrivateFill size={11} /> Private Mode</>
+                    <>
+                      <RiGitRepositoryPrivateFill size={11} /> Private Mode
+                    </>
                   )}
                 </span>
               </div>
@@ -186,29 +190,29 @@ const ConnectionCard = () => {
 
               {/* PUBLIC — VIEW PROFILE */}
               {u.privacy === "Public" && (
-  <button
-    onClick={() => handleViewProfile(u.user_id)}
-    className="mt-6 w-full py-3 text-white text-[12px] font-semibold uppercase tracking-widest rounded-lg transition-all shadow-sm cursor-pointer"
-    style={{ backgroundColor: PRIMARY }}
-    onMouseOver={(e) => (e.currentTarget.style.opacity = "0.9")}
-    onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
-  >
-    View Profile
-  </button>
-)}
+                <button
+                  onClick={() => handleViewProfile(u.user_id)}
+                  className="mt-6 w-full py-3 text-white text-[12px] font-semibold uppercase tracking-widest rounded-lg transition-all shadow-sm cursor-pointer"
+                  style={{ backgroundColor: PRIMARY }}
+                  onMouseOver={(e) => (e.currentTarget.style.opacity = "0.9")}
+                  onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
+                >
+                  View Profile
+                </button>
+              )}
 
               {/* PRIVATE — ACTION BUTTONS */}
               {u.privacy === "Private" && (
                 <div className="mt-5 pt-4 border-t border-dashed border-[#EEEEEE]">
                   {u.connection_status === "Not Sent" && (
-  <button
-    onClick={() => handleConnect(u.id)}
-    className="w-full cursor-pointer text-white py-3 rounded-lg text-[11px] font-semibold uppercase tracking-widest transition-all shadow-sm"
-    style={{ backgroundColor: PRIMARY }}
-  >
-    Connect Now
-  </button>
-)}
+                    <button
+                      onClick={() => handleConnect(u.id)}
+                      className="w-full cursor-pointer text-white py-3 rounded-lg text-[11px] font-semibold uppercase tracking-widest transition-all shadow-sm"
+                      style={{ backgroundColor: PRIMARY }}
+                    >
+                      Connect Now
+                    </button>
+                  )}
                   {u.connection_status === "Sent" && (
                     <button
                       disabled
@@ -244,7 +248,6 @@ const ConnectionCard = () => {
       {selectedUser && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start xs:items-center justify-center z-[100] p-3 sm:p-4 overflow-y-auto">
           <div className="relative bg-white rounded-xl p-5 sm:p-8 w-full sm:max-w-[650px] max-h-[92vh] overflow-y-auto shadow-2xl border border-[#EEEEEE] my-2">
-
             {/* CLOSE BUTTON */}
             <button
               onClick={() => setSelectedUser(null)}
@@ -276,7 +279,8 @@ const ConnectionCard = () => {
                 className="text-center text-[10px] mt-2 uppercase tracking-widest flex items-center gap-1"
                 style={{ color: PRIMARY }}
               >
-                <FaMapMarkerAlt size={11} /> {selectedUser.city}, {selectedUser.country}
+                <FaMapMarkerAlt size={11} /> {selectedUser.city},{" "}
+                {selectedUser.country}
               </p>
               <p className="text-center text-[11px] text-gray-400 mt-1">
                 {selectedUser.email}
@@ -285,7 +289,6 @@ const ConnectionCard = () => {
 
             {/* CONTENT GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-
               {/* Left — Personal Info */}
               <div className="space-y-4">
                 <h4
@@ -297,23 +300,34 @@ const ConnectionCard = () => {
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                   <PopupDetail
                     label="Gender / பாலினம்"
-                    value={getEnumLabel("gender", selectedUser.gender, displayMode)}
+                    value={getEnumLabel(
+                      "gender",
+                      selectedUser.gender,
+                      displayMode,
+                    )}
                   />
                   <PopupDetail
                     label="DOB / பிறந்த தேதி"
                     value={
                       selectedUser?.dob
-                        ? new Date(selectedUser.dob).toLocaleDateString("en-GB", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          })
+                        ? new Date(selectedUser.dob).toLocaleDateString(
+                            "en-GB",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )
                         : "—"
                     }
                   />
                   <PopupDetail
                     label="Age / வயது"
-                    value={selectedUser?.dob ? `${calculateAge(selectedUser.dob)} Years` : "—"}
+                    value={
+                      selectedUser?.dob
+                        ? `${calculateAge(selectedUser.dob)} Years`
+                        : "—"
+                    }
                   />
                   <PopupDetail
                     label="Birth Place / பிறந்த இடம்"
@@ -323,21 +337,40 @@ const ConnectionCard = () => {
                     label="Birth Time / பிறந்த நேரம்"
                     value={
                       selectedUser?.birth_time
-                        ? new Date(`1970-01-01T${selectedUser.birth_time}`).toLocaleTimeString(
-                            "en-US",
-                            { hour: "numeric", minute: "2-digit", hour12: true }
-                          )
+                        ? new Date(
+                            `1970-01-01T${selectedUser.birth_time}`,
+                          ).toLocaleTimeString("en-US", {
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                          })
                         : "—"
                     }
                   />
                   <PopupDetail
                     label="Marital Status / திருமண நிலை"
-                    value={getEnumLabel("maritalStatus", selectedUser.marital_status, displayMode)}
+                    value={getEnumLabel(
+                      "maritalStatus",
+                      selectedUser.marital_status,
+                      displayMode,
+                    )}
                   />
-                  <PopupDetail label="Email / மின்னஞ்சல்" value={selectedUser.email} />
-                  <PopupDetail label="Phone / தொலைபேசி" value={selectedUser.phone} />
-                  <PopupDetail label="Occupation / தொழில்" value={selectedUser.occupation} />
-                  <PopupDetail label="Income / வருமானம்" value={selectedUser.income} />
+                  <PopupDetail
+                    label="Email / மின்னஞ்சல்"
+                    value={selectedUser.email}
+                  />
+                  <PopupDetail
+                    label="Phone / தொலைபேசி"
+                    value={selectedUser.phone}
+                  />
+                  <PopupDetail
+                    label="Occupation / தொழில்"
+                    value={selectedUser.occupation}
+                  />
+                  <PopupDetail
+                    label="Income / வருமானம்"
+                    value={selectedUser.income}
+                  />
                   <PopupDetail
                     label="Work Location / வேலை இடம்"
                     value={selectedUser.work_location}
@@ -366,10 +399,22 @@ const ConnectionCard = () => {
                 >
                   Family & Details
                 </h4>
-                <PopupDetail label="Father / தந்தை" value={selectedUser.father_name} />
-                <PopupDetail label="Mother / அம்மா" value={selectedUser.mother_name} />
-                <PopupDetail label="Grandfather / தாத்தா" value={selectedUser.grandfather_name} />
-                <PopupDetail label="Grandmother / பாட்டி" value={selectedUser.grandmother_name} />
+                <PopupDetail
+                  label="Father / தந்தை"
+                  value={selectedUser.father_name}
+                />
+                <PopupDetail
+                  label="Mother / அம்மா"
+                  value={selectedUser.mother_name}
+                />
+                <PopupDetail
+                  label="Grandfather / தாத்தா"
+                  value={selectedUser.grandfather_name}
+                />
+                <PopupDetail
+                  label="Grandmother / பாட்டி"
+                  value={selectedUser.grandmother_name}
+                />
                 <PopupDetail
                   label="Mother's Grandfather / தாய்வழி தாத்தா"
                   value={selectedUser.mother_side_grandfather_name}
@@ -455,11 +500,9 @@ const ConnectionCard = () => {
                 </div>
               )}
             </div>
-
           </div>
         </div>
       )}
-
     </div>
   );
 };

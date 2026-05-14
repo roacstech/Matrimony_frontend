@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import toast from "react-hot-toast";
-import { MdSpaceDashboard } from "react-icons/md";
+import { RiDiamondRingFill } from "react-icons/ri";
 import { FaLink } from "react-icons/fa";
 import {
   Settings,
   LogOut,
   Menu,
-  X,
   ChevronDown,
   Inbox,
   Send,
@@ -15,38 +14,14 @@ import {
 import { performLogout } from "../Data/logout";
 import { getUserProfile } from "../api/userApi";
 
-const navItems = [
-  {
-    name: "Dashboard",
-    path: "/user/dashboard",
-    icon: <MdSpaceDashboard size={18} />,
-  },
-  {
-    name: "My Connections",
-    // path: "/user/dashboard/my-connection",
-    icon: <FaLink size={18} />,
-    children: [
-      {
-        name: "Received",
-        path: "/user/dashboard/my-connection/received",
-        icon: <Inbox size={13} />,
-      },
-      {
-        name: "Sent",
-        path: "/user/dashboard/my-connection/sent",
-        icon: <Send size={13} />,
-      },
-    ],
-  },
-];
-
 const UserDashboardLayout = ({ showMenu, onAvatarClick, children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
-  const [user, setUserData] = useState([]);
-  const menuRef = useRef(null);
+  const [isProfileDropdown, setProfileDropdown] = useState(false);
+  const [user, setUserData] = useState({});
+  const profileRef = useRef(null);
   const userId = localStorage.getItem("userid");
 
   useEffect(() => {
@@ -63,32 +38,32 @@ const UserDashboardLayout = ({ showMenu, onAvatarClick, children }) => {
 
   // Auto-open submenu if current path matches a child
   useEffect(() => {
-    navItems.forEach((item) => {
-      if (item.children) {
-        const isChildActive = item.children.some((child) =>
-          location.pathname.startsWith(child.path)
-        );
-        if (isChildActive) setOpenMenu(item.path);
-      }
-    });
+    const MY_CONNECTIONS_KEY = "my-connections";
+    const isConnectionChild = [
+      "/user/dashboard/my-connection/received",
+      "/user/dashboard/my-connection/sent",
+    ].some((p) => location.pathname.startsWith(p));
+    if (isConnectionChild) setOpenMenu(MY_CONNECTIONS_KEY);
   }, [location.pathname]);
 
+  // Close profile dropdown on outside click
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showMenu && menuRef.current && !menuRef.current.contains(event.target)) {
-        toast.dismiss();
-        onAvatarClick();
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileDropdown(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showMenu, onAvatarClick]);
+  }, []);
 
   const handleLogout = () => {
     toast(
       (t) => (
         <div className="flex flex-col gap-4 p-2">
-          <p className="text-sm font-medium text-center">Logout செய்ய வேண்டுமா?</p>
+          <p className="text-sm font-black text-black text-center">
+            Are you sure you want to logout?
+          </p>
           <div className="flex gap-3 justify-center">
             <button
               onClick={() => {
@@ -96,15 +71,15 @@ const UserDashboardLayout = ({ showMenu, onAvatarClick, children }) => {
                 performLogout(navigate);
                 toast.success("Logged out successfully");
               }}
-              className="cursor-pointer px-4 py-2 bg-[#d6e4ff] text-blue-500 rounded-xl text-xs font-medium tracking-widest hover:bg-[#c0d4ff]"
+              className="cursor-pointer px-4 py-2 bg-[#1A5AF0] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-700"
             >
-              Yes
+              OK
             </button>
             <button
               onClick={() => toast.dismiss(t.id)}
-              className="cursor-pointer px-4 py-2 bg-gray-100 text-black rounded-xl text-xs font-medium tracking-widest hover:bg-gray-200"
+              className="cursor-pointer px-4 py-2 bg-gray-100 text-black rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-200"
             >
-              No
+              Cancel
             </button>
           </div>
         </div>
@@ -113,164 +88,197 @@ const UserDashboardLayout = ({ showMenu, onAvatarClick, children }) => {
     );
   };
 
+  // Handles both full S3 URLs and legacy relative filenames
+  const resolvePhotoSrc = (photo) => {
+    if (!photo) return null;
+    if (photo.startsWith("http")) return photo;
+    return `${import.meta.env.VITE_IMG_URL}/photos/${photo}`;
+  };
+
+  const closeSidebar = () => setIsSidebarOpen(false);
+
+  const connectionChildren = [
+    {
+      name: "Received",
+      path: "/user/dashboard/my-connection/received",
+      icon: <Inbox size={16} />,
+    },
+    {
+      name: "Sent",
+      path: "/user/dashboard/my-connection/sent",
+      icon: <Send size={16} />,
+    },
+  ];
+
+  const isConnectionActive = connectionChildren.some((c) =>
+    location.pathname.startsWith(c.path)
+  );
+  const isConnectionOpen = openMenu === "my-connections";
+
   return (
-    <div className="min-h-screen bg-white flex overflow-x-hidden font-sans">
+    <div className="min-h-screen flex bg-[#F8FAFC] font-sans overflow-hidden">
+
       {/* MOBILE OVERLAY */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
-          onClick={() => { setIsSidebarOpen(false); toast.dismiss(); }}
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={closeSidebar}
         />
       )}
 
       {/* SIDEBAR */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-50 h-screen w-[280px] bg-[#222] flex flex-col transition-transform duration-300 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        }`}
+        className={`fixed lg:sticky top-0 left-0 z-50 h-screen bg-[#0F172A] text-white border-r border-gray-800 flex flex-col transition-all duration-300
+          w-[260px] ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
-        {/* PROFILE */}
-        <div className="px-8 py-10 flex flex-col items-center relative">
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden absolute top-4 right-4 p-2 text-gray-400 cursor-pointer"
-          >
-            <X size={20} />
-          </button>
-          <div className="w-16 h-16 rounded-[50px] bg-[#d6e4ff] flex items-center justify-center shadow-xl border border-white overflow-hidden mb-4">
-            <img
-              src={`${import.meta.env.VITE_IMG_URL}/photos/${user.photo}`}
-              alt="user"
-              className="w-full h-full object-cover"
-            />
+        {/* LOGO AREA */}
+        <div className="h-16 border-b border-gray-800 flex items-center px-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#1A5AF0] rounded-xl flex items-center justify-center text-white font-bold text-xl">
+              D
+            </div>
+            <span className="text-xl font-bold tracking-tight">Dasabalanjika</span>
           </div>
-          <h2 className="text-xs font-semibold text-white tracking-tight uppercase text-center px-2">
-            {user?.full_name || "User"}
-          </h2>
-          <p className="text-[9px] font-medium text-[#d6e4ff] uppercase tracking-[2px] mt-1">
-            Welcome Back
-          </p>
         </div>
 
-        {/* NAV */}
-        <nav className="flex-1 py-6 space-y-1">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            const isParentOfActive =
-              item.children &&
-              item.children.some((child) => location.pathname.startsWith(child.path));
-            const isOpen = openMenu === item.path;
+        {/* PROFILE SECTION */}
+        <div className="px-5 pt-6 pb-5 border-b border-gray-800 flex flex-col items-center">
+          <img
+            src={resolvePhotoSrc(user.photo)}
+            alt="user"
+            className="w-16 h-16 rounded-full border-2 border-gray-600 object-cover"
+          />
+          <h3 className="mt-3 font-semibold text-base text-center">
+            {user?.full_name || "User"}
+          </h3>
+          <p className="text-xs text-gray-400">Member</p>
+        </div>
 
-            return (
-              <div key={item.path}>
-                {/* MAIN ITEM */}
-                <div
-                  onClick={() => {
-                    if (item.children) {
-                      setOpenMenu(isOpen ? null : item.path);
-                    } else {
-                      navigate(item.path);
-                      setIsSidebarOpen(false);
-                    }
-                  }}
-                  className={`flex items-center justify-between px-6 py-4 text-[12px] font-medium uppercase tracking-[1.5px] cursor-pointer transition-all
-                    ${isActive || isParentOfActive
-                      ? "bg-[#e3ebfa] text-blue-500 border-r-4 border-[#1A5AF0]"
-                      : "text-gray-100 hover:bg-[#e3ebfa] hover:text-blue-500"
-                    }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <span>{item.icon}</span>
-                    <span className="truncate">{item.name}</span>
-                  </div>
-                  {item.children && (
-                    <ChevronDown
-                      size={14}
-                      className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-                    />
-                  )}
-                </div>
+        {/* NAVIGATION */}
+        <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+          {/* Dashboard */}
+          <NavLink
+            to="/user/dashboard"
+            end
+            onClick={closeSidebar}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all
+              ${isActive
+                ? "bg-[#1A5AF0] text-white"
+                : "text-gray-300 hover:bg-gray-800"
+              }`
+            }
+          >
+            <RiDiamondRingFill size={18} />
+            <span>Matches</span>
+          </NavLink>
 
-                {/* SUBMENU */}
-                {item.children && isOpen && (
-                  <div className="ml-8 border-l border-gray-600 pl-3 py-1 space-y-0.5">
-                    {item.children.map((child) => {
-                      const isChildActive = location.pathname.startsWith(child.path);
-                      return (
-                        <div
-                          key={child.path}
-                          onClick={() => { navigate(child.path); setIsSidebarOpen(false); }}
-                          className={`flex items-center gap-2.5 px-4 py-2.5 text-[11px] font-medium uppercase tracking-widest cursor-pointer rounded-lg transition-all
-                            ${isChildActive
-                              ? "text-blue-400 bg-white/10"
-                              : "text-gray-400 hover:text-blue-300 hover:bg-white/5"
-                            }`}
-                        >
-                          <span>{child.icon}</span>
-                          {child.name}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+          {/* My Connections (with submenu) */}
+          <div>
+            <button
+              onClick={() =>
+                setOpenMenu(isConnectionOpen ? null : "my-connections")
+              }
+              className={`cursor-pointer w-full flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all
+                ${isConnectionActive
+                  ? "bg-[#1A5AF0] text-white"
+                  : "text-gray-300 hover:bg-gray-800"
+                }`}
+            >
+              <div className="flex items-center gap-3">
+                <FaLink size={16} />
+                <span>My Connections</span>
               </div>
-            );
-          })}
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 ${isConnectionOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {isConnectionOpen && (
+              <div className="ml-4 mt-1 border-l border-gray-700 pl-3 space-y-0.5">
+                {connectionChildren.map((child) => {
+                  const isChildActive = location.pathname.startsWith(child.path);
+                  return (
+                    <NavLink
+                      key={child.path}
+                      to={child.path}
+                      onClick={closeSidebar}
+                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition-all
+                        ${isChildActive
+                          ? "text-white bg-white/10"
+                          : "text-gray-400 hover:text-white hover:bg-white/5"
+                        }`}
+                    >
+                      {child.icon}
+                      {child.name}
+                    </NavLink>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </nav>
       </aside>
 
-      {/* MAIN AREA */}
+      {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
+
         {/* HEADER */}
-        <header className="h-20 lg:h-24 px-6 lg:px-12 flex justify-between items-center bg-transparent">
-          <div className="flex items-center gap-4">
+        <header className="h-16 px-5 lg:px-8 flex items-center justify-between bg-white border-b border-gray-100">
+          <div className="flex items-center gap-3">
             <button
-              className="lg:hidden p-2.5 bg-white shadow-sm border border-gray-100 rounded-xl text-[#d6e4ff] cursor-pointer"
               onClick={() => setIsSidebarOpen(true)}
+              className="cursor-pointer lg:hidden p-2 rounded-lg hover:bg-gray-100"
             >
-              <Menu size={20} />
+              <Menu size={24} />
             </button>
-            <h2 className="text-xl lg:text-2xl font-black text-black tracking-tight">
-              தாசபளஞ்சிக கல்யாணமாலை
-            </h2>
+            <p className="font-semibold text-gray-800">தாசபளஞ்சிக கல்யாணமாலை</p>
           </div>
 
-          <div className="flex items-center gap-3 relative" ref={menuRef}>
-            <div
-              onClick={onAvatarClick}
-              className="cursor-pointer bg-white p-1 rounded-full border border-gray-100 shadow-sm hover:border-[#d6e4ff] transition-all"
-            >
-              <img
-                src={`${import.meta.env.VITE_IMG_URL}/photos/${user.photo}`}
-                alt="user"
-                className="w-9 h-9 rounded-full object-cover"
-              />
-            </div>
+          {/* PROFILE DROPDOWN */}
+          <div className="relative" ref={profileRef}>
+            <img
+              src={resolvePhotoSrc(user.photo)}
+              alt="user"
+              className="w-9 h-9 rounded-full cursor-pointer border border-gray-200 hover:border-[#1A5AF0] object-cover"
+              onClick={() => setProfileDropdown(!isProfileDropdown)}
+            />
 
-            {showMenu && (
-              <div className="absolute right-0 top-14 w-52 bg-[#f5f7fa] rounded-[8px] shadow-lg border border-gray-100 z-50 overflow-hidden">
+            {isProfileDropdown && (
+              <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-200 shadow-lg rounded-2xl py-1 z-50 overflow-hidden">
+                {/* User Info */}
                 <div className="flex flex-col items-center gap-1.5 px-4 py-4 border-b border-gray-100">
                   <img
-                    src={`${import.meta.env.VITE_IMG_URL}/photos/${user.photo}`}
+                    src={resolvePhotoSrc(user.photo)}
                     alt="user"
                     className="w-14 h-14 rounded-full object-cover border-2 border-gray-100 shadow-sm"
                   />
-                  <p className="text-[12px] font-semibold text-gray-800 uppercase tracking-wide text-center">
+                  <p className="text-xs font-semibold text-gray-800 uppercase tracking-wide text-center mt-1">
                     {user?.full_name || "User"}
                   </p>
                 </div>
+                {/* Actions */}
                 <div className="p-2">
                   <button
-                    onClick={() => { navigate("/user/dashboard/profile"); onAvatarClick(); }}
-                    className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-[12px] font-medium tracking-widest text-black hover:text-blue-500 rounded-xl transition-colors"
+                    onClick={() => {
+                      navigate("/user/dashboard/profile");
+                      setProfileDropdown(false);
+                    }}
+                    className="cursor-pointer flex w-full items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl text-sm transition-colors"
                   >
-                    <Settings size={16} className="text-[#818CF8]" /> Profile Settings
+                    <Settings size={16} className="text-indigo-400" />
+                    <span>Profile Settings</span>
                   </button>
                   <button
-                    onClick={() => { handleLogout(); onAvatarClick(); }}
-                    className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-[12px] font-medium tracking-widest text-rose-600 rounded-xl transition-colors"
+                    onClick={() => {
+                      handleLogout();
+                      setProfileDropdown(false);
+                    }}
+                    className="cursor-pointer flex w-full items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl text-sm transition-colors"
                   >
-                    <LogOut size={16} /> Logout
+                    <LogOut size={16} />
+                    <span>Logout</span>
                   </button>
                 </div>
               </div>
@@ -278,10 +286,12 @@ const UserDashboardLayout = ({ showMenu, onAvatarClick, children }) => {
           </div>
         </header>
 
-        {/* CONTENT */}
-        <main className="flex-1 px-4 lg:px-12 pb-6 lg:pb-10 overflow-y-auto">
-          <div className="max-w-[1400px] mx-auto h-full">
-            <div className="min-h-full">{children}</div>
+        {/* PAGE CONTENT */}
+        <main className="flex-1 p-4 lg:p-6 overflow-y-auto bg-[#F8FAFC]">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="bg-white rounded-3xl p-5 lg:p-8 shadow border border-gray-100 min-h-[calc(100vh-110px)]">
+              {children}
+            </div>
           </div>
         </main>
       </div>
