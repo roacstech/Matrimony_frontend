@@ -261,7 +261,11 @@ const ConnectionCard = () => {
             <div className="flex flex-col items-center mb-6 clear-both">
               <div className="relative mb-4">
                 <img
-                  src={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`}
+src={
+  selectedUser.photo?.startsWith("http")
+    ? selectedUser.photo
+    : `${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.photo}`
+}
                   alt=""
                   className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl shadow-lg border-4 border-[#F8FAFC] object-cover"
                 />
@@ -483,7 +487,11 @@ const ConnectionCard = () => {
                     </p>
                   </div>
                   <a
-                    href={`${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope_file_name}`}
+                 href={
+  selectedUser.horoscope_file_url
+    ? selectedUser.horoscope_file_url
+    : `${import.meta.env.VITE_IMG_URL}/photos/${selectedUser.horoscope_file_name}`
+}
                     target="_blank"
                     rel="noreferrer"
                     className="px-5 py-2 text-[10px] text-white rounded-lg font-semibold uppercase tracking-widest hover:opacity-90 transition-all shadow-sm"
