@@ -312,8 +312,8 @@ const ConnectionStatus = () => {
 
       {/* ── DESKTOP: Table layout ── */}
       <div className="hidden sm:block bg-white border border-gray-200 rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[1300px]">
+       <div className="overflow-x-auto [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full">
+          <table className="w-full text-left min-w-0">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
                 <th className="px-5 py-4 text-xs font-semibold text-gray-500">#</th>
@@ -372,7 +372,7 @@ const ConnectionStatus = () => {
         </div>
 
         {!loading && filteredConnections.length > 0 && (
-          <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/50">
+        <div className="px-4 py-2 border-t border-gray-100 bg-gray-50/50">
             <p className="text-xs text-gray-400">
               Showing <span className="font-semibold text-gray-600">{filteredConnections.length}</span> of <span className="font-semibold text-gray-600">{stats.total}</span> connections
             </p>
