@@ -15,7 +15,7 @@ export const getPendingForms = async () => {
   try {
     const res = await fetch(`${import.meta.env.VITE_APP_API_URL}admin/forms/pending`);
     const data = await res.json();
-    return data.data.data; // ✅ this is the array of pending users
+    return data.data; // ✅ single .data after controller fix
   } catch (err) {
     console.error(err);
     return [];
