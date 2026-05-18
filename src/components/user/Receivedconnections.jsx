@@ -9,16 +9,19 @@ import {
 import { viewProfile } from "../../api/profilesApi";
 import { getEnumLabel } from "../../utils/convertHelper";
 import { calculateAge } from "../../utils/dateHelper";
-import { X, CheckCircle, XCircle, Eye, Inbox } from "lucide-react";
+import { X, CheckCircle, XCircle, Eye, Inbox, Download } from "lucide-react";
 
 const Receivedconnections = () => {
   const [received, setReceived] = useState([]);
   const [acceptedReceived, setAcceptedReceived] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [toast, setToast] = useState({ show: false, msg: "" });
+  const [fullImageUrl, setFullImageUrl] = useState(null); // ✅ NEW
 
   const Img_Url = import.meta.env.VITE_IMG_URL;
   const displayMode = "both";
+
+  const closeFullImage = () => setFullImageUrl(null); // ✅ NEW
 
   const resolvePhotoSrc = (photo) => {
     if (!photo) return null;
@@ -266,7 +269,14 @@ const Receivedconnections = () => {
 
             {/* Avatar + name */}
             <div className="flex flex-col items-center mb-8">
-              <div className="w-16 h-16 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center mb-3">
+              <div
+                onClick={() => selectedUser.photo && setFullImageUrl(resolvePhotoSrc(selectedUser.photo))}
+                className={`w-16 h-16 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center mb-3 ${
+                  selectedUser.photo
+                    ? "cursor-pointer hover:ring-2 hover:ring-blue-400 hover:scale-105 transition-all"
+                    : ""
+                }`}
+              >
                 {selectedUser.photo ? (
                   <img
                     src={resolvePhotoSrc(selectedUser.photo)}
@@ -279,6 +289,11 @@ const Receivedconnections = () => {
                   </span>
                 )}
               </div>
+              {selectedUser.photo && (
+                <p className="text-[10px] text-gray-400 mt-1 italic cursor-pointer hover:text-blue-500" onClick={() => setFullImageUrl(resolvePhotoSrc(selectedUser.photo))}>
+                  Click photo to view full size
+                </p>
+              )}
               <h2 className="text-2xl font-bold text-gray-900">{selectedUser.full_name}</h2>
               <p className="text-sm text-blue-600 mt-1">
                 {selectedUser.city}, {selectedUser.country}
@@ -350,6 +365,50 @@ const Receivedconnections = () => {
               <InfoRow label="Remarks / குறிப்புகள்" value={selectedUser.remarks} />
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ✅ Full-size Image Lightbox */}
+      {fullImageUrl && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[130] p-4"
+          onClick={closeFullImage} // click anywhere outside image to close
+        >
+          {/* Close button */}
+          <button
+            onClick={closeFullImage}
+            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all border border-white/20"
+          >
+            <X size={18} />
+          </button>
+
+          {/* Image — clicking image itself does NOT close */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-[90vw] max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+          >
+            <img
+              src={fullImageUrl}
+              alt="Full size profile"
+              className="max-w-[90vw] max-h-[85vh] object-contain rounded-2xl"
+            />
+
+            {/* Bottom download link */}
+            <a
+              href={fullImageUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/50 hover:bg-black/70 text-white text-xs font-semibold rounded-lg transition-all backdrop-blur-sm border border-white/10"
+            >
+              <Download size={12} /> Open original
+            </a>
+          </div>
+
+          {/* Click outside hint */}
+          <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/40 text-xs">
+            Click outside to close
+          </p>
         </div>
       )}
     </div>

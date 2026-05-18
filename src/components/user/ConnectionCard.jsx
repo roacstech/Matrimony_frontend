@@ -14,7 +14,7 @@ import {
   FaMapMarkerAlt,
   FaHome,
 } from "react-icons/fa";
-import { X, Globe, Lock } from "lucide-react";
+import { X, Globe, Lock, HeartOff } from "lucide-react";
 
 import {
   getVisibleConnections,
@@ -32,13 +32,21 @@ const ConnectionCard = () => {
   const [activeTab, setActiveTab] = useState("Public");
   const [selectedUser, setSelectedUser] = useState(null);
   const [myGender, setMyGender] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const displayMode = "both";
 
   useEffect(() => {
     async function loadData() {
-      const res = await getVisibleConnections();
-      if (res.success) setConnections(res.data);
+      setLoading(true);
+      try {
+        const res = await getVisibleConnections();
+        if (res.success) setConnections(res.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     }
     loadData();
   }, []);
@@ -85,6 +93,13 @@ const ConnectionCard = () => {
     return false;
   };
 
+  const filteredConnections = connections.filter((u) => {
+    if (u.is_active !== 1) return false;
+    if (u.privacy !== activeTab) return false;
+    if (!genderFilter(u.gender)) return false;
+    return true;
+  });
+
   return (
     <div className="p-3 xs:p-4 sm:p-5 md:p-6 lg:p-8 bg-transparent space-y-5 sm:space-y-8 lg:space-y-10 font-sans overflow-x-hidden w-full min-h-screen">
       {/* ================= TABS ================= */}
@@ -112,15 +127,14 @@ const ConnectionCard = () => {
       </div>
 
       {/* ================= CARD GRID ================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 md:gap-8 w-full md:max-w-6xl mx-auto">
-        {connections
-          .filter((u) => {
-            if (u.is_active !== 1) return false;
-            if (u.privacy !== activeTab) return false;
-            if (!genderFilter(u.gender)) return false;
-            return true;
-          })
-          .map((u) => (
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20 w-full">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2" style={{ borderColor: PRIMARY }}></div>
+          <p className="text-[11px] text-gray-400 mt-4 uppercase tracking-widest font-semibold">Loading Matches...</p>
+        </div>
+      ) : filteredConnections.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 md:gap-8 w-full md:max-w-6xl mx-auto">
+          {filteredConnections.map((u) => (
             <div
               key={u.id}
               className="group relative bg-white rounded-xl border border-[#EEEEEE] shadow-sm hover:shadow-lg hover:border-[#4361EE]/30 transition-all duration-300 flex flex-col w-full h-fit pt-10 pb-5 px-5"
@@ -242,7 +256,36 @@ const ConnectionCard = () => {
               )}
             </div>
           ))}
-      </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center text-center p-8 sm:p-12 bg-white rounded-2xl border border-[#EEEEEE] shadow-sm max-w-md mx-auto transition-all duration-300 hover:shadow-md mt-6 sm:mt-10">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-5 animate-pulse">
+            <HeartOff size={28} className="sm:size-8" />
+          </div>
+          <h3 className="text-base sm:text-lg font-bold text-gray-800 tracking-tight">
+            No Public Matches Found
+          </h3>
+          <p className="text-[13px] sm:text-sm text-gray-500 font-medium mt-2 leading-relaxed max-w-sm">
+            {activeTab === "Public"
+              ? "பொதுப் பிரிவில் பொருத்தங்கள் எதுவும் இல்லை, தயவுசெய்து தனிப்பட்ட பிரிவை பார்க்கவும்."
+              : "தனிப்பட்ட பிரிவில் பொருத்தங்கள் எதுவும் இல்லை, தயவுசெய்து பொதுப் பிரிவை பார்க்கவும்."}
+          </p>
+          <p className="text-[11px] sm:text-xs text-gray-400 mt-1 leading-relaxed max-w-sm">
+            {activeTab === "Public"
+              ? "There is no public account, please visit the private mode."
+              : "There is no private account, please visit the public mode."}
+          </p>
+          <div className="mt-6">
+            <button 
+              onClick={() => setActiveTab(activeTab === "Public" ? "Private" : "Public")}
+              className="px-4 py-2 text-[10px] text-white rounded-lg font-semibold uppercase tracking-wider transition-all shadow-sm hover:opacity-90 active:scale-95 cursor-pointer"
+              style={{ backgroundColor: PRIMARY }}
+            >
+              Switch to {activeTab === "Public" ? "Private" : "Public"} Mode
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ================= VIEW PROFILE POPUP ================= */}
       {selectedUser && (

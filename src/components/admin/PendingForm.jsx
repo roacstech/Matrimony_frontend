@@ -20,11 +20,11 @@ const formatTime12h = (time) => {
 };
 
 const PendingForms = () => {
-  const [pending, setPending] = useState([]);
+  const [pending, setPending]           = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [loadingProfile, setLoadingProfile] = useState(false);
-  // Track loading per row: { [id]: 'approve' | 'reject' | null }
-  const [actionLoading, setActionLoading] = useState({});
+  const [_loadingProfile, setLoadingProfile] = useState(false);
+  const [actionLoading, setActionLoading]   = useState({});
+  const [fullImageUrl, setFullImageUrl]     = useState(null); // ✅ NEW — fullscreen image state
   const displayMode = "both";
 
   /* ================= LOAD PENDING ================= */
@@ -81,7 +81,8 @@ const PendingForms = () => {
     }
   };
 
-  const closeModal = () => setSelectedUser(null);
+  const closeModal      = () => setSelectedUser(null);
+  const closeFullImage  = () => setFullImageUrl(null); // ✅ NEW
 
   return (
     <div className="space-y-5">
@@ -127,28 +128,29 @@ const PendingForms = () => {
                       idx % 2 === 1 ? "bg-gray-50/40" : "bg-white"
                     }`}
                   >
-                    {/* Profile — use full_name from the submitted form */}
+                    {/* Profile */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        {/* ✅ Clickable avatar in table row */}
+                        <div
+                          onClick={() => item.photo && setFullImageUrl(item.photo)}
+                          className={`w-9 h-9 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden ${
+                            item.photo ? "cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all" : ""
+                          }`}
+                        >
                           {item.photo ? (
-                            <img
-                              src={item.photo}
-                              alt="user"
-                              className="w-full h-full object-cover"
-                            />
+                            <img src={item.photo} alt="user" className="w-full h-full object-cover" />
                           ) : (
                             <User size={16} className="text-gray-400" />
                           )}
                         </div>
-                        {/* ✅ full_name is the name filled in the form (not the register name) */}
                         <span className="text-sm font-semibold text-gray-800">
                           {item.full_name || "N/A"}
                         </span>
                       </div>
                     </td>
 
-                    {/* Phone — from form data */}
+                    {/* Phone */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5 text-sm text-gray-600">
                         <Phone size={13} className="text-gray-400 flex-shrink-0" />
@@ -156,7 +158,7 @@ const PendingForms = () => {
                       </div>
                     </td>
 
-                    {/* City — from form data */}
+                    {/* City */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5 text-sm text-gray-600">
                         <MapPin size={13} className="text-gray-400 flex-shrink-0" />
@@ -168,7 +170,7 @@ const PendingForms = () => {
                     <td className="px-6 py-4 text-center">
                       <button
                         onClick={() => handleView(item)}
-                        className="inline-flex items-center gap-1.5  cursor-pointer px-3.5 py-1.5 text-xs font-semibold text-blue-600 border border-blue-200 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-all"
+                        className="inline-flex items-center gap-1.5 cursor-pointer px-3.5 py-1.5 text-xs font-semibold text-blue-600 border border-blue-200 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-all"
                       >
                         <Eye size={13} /> View
                       </button>
@@ -230,11 +232,16 @@ const PendingForms = () => {
         </div>
       </div>
 
-      {/* ── Modal ── */}
+      {/* ── Profile Detail Modal ── */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-[900px] max-w-full max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl p-6 md:p-10 relative border border-gray-200">
-
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={closeModal} // click backdrop to close
+        >
+          <div
+            className="bg-white w-[900px] max-w-full max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl p-6 md:p-10 relative border border-gray-200"
+            onClick={(e) => e.stopPropagation()} // prevent backdrop click from firing inside
+          >
             {/* Close */}
             <button
               onClick={closeModal}
@@ -243,20 +250,24 @@ const PendingForms = () => {
               <X size={16} />
             </button>
 
-            {/* Avatar + name */}
+            {/* ✅ Clickable avatar inside profile modal */}
             <div className="flex flex-col items-center mb-8">
-              <div className="w-16 h-16 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center mb-3">
+              <div
+                onClick={() =>
+                  (selectedUser.photo) && setFullImageUrl(selectedUser.photo)
+                }
+                className={`w-16 h-16 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center mb-3 ${
+                  selectedUser.photo
+                    ? "cursor-pointer hover:ring-2 hover:ring-blue-400 hover:scale-105 transition-all"
+                    : ""
+                }`}
+              >
                 {selectedUser.photo ? (
-                  <img
-                    src={selectedUser.photo}
-                    className="w-full h-full object-cover"
-                    alt="user"
-                  />
+                  <img src={selectedUser.photo} className="w-full h-full object-cover" alt="user" />
                 ) : (
                   <User size={24} className="text-gray-400" />
                 )}
               </div>
-              {/* ✅ full_name from the submitted form */}
               <h2 className="text-2xl font-bold text-gray-900">
                 {selectedUser.full_name || selectedUser.fullName || "—"}
               </h2>
@@ -264,6 +275,12 @@ const PendingForms = () => {
                 {selectedUser.city}, {selectedUser.country}
               </p>
               <p className="text-xs text-gray-400 mt-0.5">{selectedUser.phone}</p>
+              {/* ✅ Hint text shown only when photo exists */}
+              {selectedUser.photo && (
+                <p className="text-[10px] text-gray-400 mt-1 italic">
+                  Click photo to view full size
+                </p>
+              )}
             </div>
 
             {/* Two-column info */}
@@ -274,44 +291,18 @@ const PendingForms = () => {
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-3">
                   Personal Info
                 </p>
-                <InfoRow
-                  label="Gender / பாலினம்"
-                  value={getEnumLabel("gender", selectedUser.gender, displayMode)}
-                />
-                <InfoRow
-                  label="DOB / பிறந்த தேதி"
-                  value={selectedUser.dob?.split("T")[0]}
-                />
-                <InfoRow
-                  label="Age / வயது"
-                  value={selectedUser?.dob ? `${calculateAge(selectedUser.dob)} Years` : "—"}
-                />
-                <InfoRow
-                  label="Birth Place / பிறந்த இடம்"
-                  value={selectedUser.birth_place || selectedUser.birthPlace}
-                />
-                <InfoRow
-                  label="Birth Time / பிறந்த நேரம்"
-                  value={formatTime12h(selectedUser.birth_time || selectedUser.birthTime)}
-                />
-                <InfoRow
-                  label="Marital Status / திருமண நிலை"
-                  value={getEnumLabel(
-                    "maritalStatus",
-                    selectedUser.marital_status || selectedUser.maritalStatus,
-                    displayMode,
-                  )}
-                />
+                <InfoRow label="Gender / பாலினம்" value={getEnumLabel("gender", selectedUser.gender, displayMode)} />
+                <InfoRow label="DOB / பிறந்த தேதி" value={selectedUser.dob?.split("T")[0]} />
+                <InfoRow label="Age / வயது" value={selectedUser?.dob ? `${calculateAge(selectedUser.dob)} Years` : "—"} />
+                <InfoRow label="Birth Place / பிறந்த இடம்" value={selectedUser.birth_place || selectedUser.birthPlace} />
+                <InfoRow label="Birth Time / பிறந்த நேரம்" value={formatTime12h(selectedUser.birth_time || selectedUser.birthTime)} />
+                <InfoRow label="Marital Status / திருமண நிலை" value={getEnumLabel("maritalStatus", selectedUser.marital_status || selectedUser.maritalStatus, displayMode)} />
                 <InfoRow label="Email / மின்னஞ்சல்" value={selectedUser.email} />
                 <InfoRow label="Phone / தொலைபேசி எண்" value={selectedUser.phone} />
                 <InfoRow label="Monthly Income / மாத வருமானம்" value={selectedUser.income} />
-                <InfoRow
-                  label="Work Location / வேலை இடம்"
-                  value={selectedUser.work_location || selectedUser.workLocation}
-                />
+                <InfoRow label="Work Location / வேலை இடம்" value={selectedUser.work_location || selectedUser.workLocation} />
                 <InfoRow label="Education / கல்வி" value={selectedUser.education} />
 
-                {/* Address — below Education in left col */}
                 <div className="mt-5">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-3">
                     Address Details
@@ -327,73 +318,35 @@ const PendingForms = () => {
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-3">
                   Family & Details
                 </p>
-                <InfoRow
-                  label="Father / தந்தை பெயர்"
-                  value={selectedUser.father_name || selectedUser.father}
-                />
-                <InfoRow
-                  label="Mother / தாய் பெயர்"
-                  value={selectedUser.mother_name || selectedUser.mother}
-                />
-                <InfoRow
-                  label="Grandfather / தாத்தா பெயர்"
-                  value={selectedUser.grandfather_name || selectedUser.grandfather}
-                />
-                <InfoRow
-                  label="Grandmother / பாட்டி பெயர்"
-                  value={selectedUser.grandmother_name || selectedUser.grandmother}
-                />
-                <InfoRow
-                  label="Mother Side GF / தாய்வழி தாத்தா"
-                  value={
-                    selectedUser.mother_side_grandfather_name ||
-                    selectedUser.motherSideGrandfather
-                  }
-                />
-                <InfoRow
-                  label="Mother Side GM / தாய்வழி பாட்டி"
-                  value={
-                    selectedUser.mother_side_grandmother_name ||
-                    selectedUser.motherSideGrandmother
-                  }
-                />
+                <InfoRow label="Father / தந்தை பெயர்" value={selectedUser.father_name || selectedUser.father} />
+                <InfoRow label="Mother / தாய் பெயர்" value={selectedUser.mother_name || selectedUser.mother} />
+                <InfoRow label="Grandfather / தாத்தா பெயர்" value={selectedUser.grandfather_name || selectedUser.grandfather} />
+                <InfoRow label="Grandmother / பாட்டி பெயர்" value={selectedUser.grandmother_name || selectedUser.grandmother} />
+                <InfoRow label="Mother Side GF / தாய்வழி தாத்தா" value={selectedUser.mother_side_grandfather_name || selectedUser.motherSideGrandfather} />
+                <InfoRow label="Mother Side GM / தாய்வழி பாட்டி" value={selectedUser.mother_side_grandmother_name || selectedUser.motherSideGrandmother} />
                 <InfoRow label="Siblings / உடன்பிறப்புகள்" value={selectedUser.siblings} />
-                <InfoRow
-                  label="Raasi / இராசி"
-                  value={getEnumLabel("raasi", selectedUser.raasi, displayMode)}
-                />
-                <InfoRow
-                  label="Star / நட்சத்திரம்"
-                  value={getEnumLabel("star", selectedUser.star, displayMode)}
-                />
-                <InfoRow
-                  label="Dosham / தோஷாம்"
-                  value={getEnumLabel("dosham", selectedUser.dosham, displayMode)}
-                />
+                <InfoRow label="Raasi / இராசி" value={getEnumLabel("raasi", selectedUser.raasi, displayMode)} />
+                <InfoRow label="Star / நட்சத்திரம்" value={getEnumLabel("star", selectedUser.star, displayMode)} />
+                <InfoRow label="Dosham / தோஷாம்" value={getEnumLabel("dosham", selectedUser.dosham, displayMode)} />
 
-                {/* Horoscope — inside right col */}
+                {/* Horoscope */}
                 <div className="mt-5">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-3">
                     Jadhagam File / ஜாதகம்
                   </p>
-                  {selectedUser.horoscope?.uploaded ||
-                  selectedUser.horoscope_uploaded === 1 ? (
+                  {selectedUser.horoscope?.uploaded || selectedUser.horoscope_uploaded === 1 ? (
                     <div className="flex items-center justify-between bg-gray-50 border border-gray-200 px-3 py-2.5 rounded-xl">
                       <div className="flex items-center gap-2 min-w-0">
                         <div className="p-1.5 bg-white border border-gray-200 rounded-lg text-blue-600 flex-shrink-0">
                           <FileText size={14} />
                         </div>
                         <span className="text-xs font-medium text-gray-700 truncate max-w-[160px]">
-                          {selectedUser.horoscope?.fileName ||
-                            selectedUser.horoscope_file_name ||
-                            "Horoscope"}
+                          {selectedUser.horoscope?.fileName || selectedUser.horoscope_file_name || "Horoscope"}
                         </span>
                       </div>
+                      
                       <a
-                        href={
-                          selectedUser.horoscope?.fileUrl ||
-                          selectedUser.horoscope_file_url
-                        }
+                        href={selectedUser.horoscope?.fileUrl || selectedUser.horoscope_file_url}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition flex-shrink-0 ml-2"
@@ -406,7 +359,7 @@ const PendingForms = () => {
                   )}
                 </div>
 
-                {/* Remarks — label + value stacked vertically */}
+                {/* Remarks */}
                 <div className="mt-5">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-2">
                     Remarks / குறிப்புகள்
@@ -418,6 +371,50 @@ const PendingForms = () => {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ✅ Full-size Image Lightbox */}
+      {fullImageUrl && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[60] p-4"
+          onClick={closeFullImage} // click anywhere outside image to close
+        >
+          {/* Close button */}
+          <button
+            onClick={closeFullImage}
+            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all border border-white/20"
+          >
+            <X size={18} />
+          </button>
+
+          {/* Image — clicking image itself does NOT close */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-[90vw] max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+          >
+            <img
+              src={fullImageUrl}
+              alt="Full size profile"
+              className="max-w-[90vw] max-h-[85vh] object-contain rounded-2xl"
+            />
+
+            {/* Bottom download link */}
+            <a
+              href={fullImageUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/50 hover:bg-black/70 text-white text-xs font-semibold rounded-lg transition-all backdrop-blur-sm border border-white/10"
+            >
+              <Download size={12} /> Open original
+            </a>
+          </div>
+
+          {/* Click outside hint */}
+          <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/40 text-xs">
+            Click outside to close
+          </p>
         </div>
       )}
     </div>

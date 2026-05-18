@@ -13,6 +13,7 @@ import {
   Upload,
   Check,
   X,
+  Download,
 } from "lucide-react";
 import {
   getUserProfile,
@@ -66,6 +67,9 @@ const Profile = () => {
   const [edit,       setEdit]       = useState(false);
   const [loading,    setLoading]    = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [fullImageUrl, setFullImageUrl] = useState(null); // ✅ NEW
+
+  const closeFullImage = () => setFullImageUrl(null); // ✅ NEW
 
   const fileInputRef  = useRef(null);
   const horoscopeRef  = useRef(null);
@@ -210,7 +214,12 @@ const Profile = () => {
       <div className="bg-white border border-gray-100 rounded-xl p-5 md:p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-blue-900/5">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
           <div className="relative group">
-            <div className="w-24 h-24 rounded-xl border-4 border-[#F8FAFC] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md">
+            <div
+              onClick={() => !edit && user?.photo && setFullImageUrl(resolvePhotoSrc(user.photo))}
+              className={`w-24 h-24 rounded-xl border-4 border-[#F8FAFC] overflow-hidden bg-gray-50 flex items-center justify-center shadow-md ${
+                !edit && user?.photo ? "cursor-pointer hover:ring-2 hover:ring-blue-400 hover:scale-105 transition-all" : ""
+              }`}
+            >
               {user?.photo ? (
                 <img
                   src={resolvePhotoSrc(user.photo)}
@@ -223,6 +232,11 @@ const Profile = () => {
                 </span>
               )}
             </div>
+            {!edit && user?.photo && (
+              <p className="text-[9px] text-gray-400 mt-1 italic text-center cursor-pointer hover:text-[#1A5AF0] transition-colors" onClick={() => setFullImageUrl(resolvePhotoSrc(user.photo))}>
+                Click photo to view full size
+              </p>
+            )}
 
             <div
               className={`absolute -bottom-1 -right-1 px-3 py-1 rounded-md text-[8px] font-semibold uppercase border-2 border-white shadow-md ${
@@ -632,6 +646,50 @@ const Profile = () => {
           </div>
         </Section>
       </div>
+
+      {/* ✅ Full-size Image Lightbox */}
+      {fullImageUrl && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[130] p-4"
+          onClick={closeFullImage} // click anywhere outside image to close
+        >
+          {/* Close button */}
+          <button
+            onClick={closeFullImage}
+            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all border border-white/20"
+          >
+            <X size={18} />
+          </button>
+
+          {/* Image — clicking image itself does NOT close */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-[90vw] max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+          >
+            <img
+              src={fullImageUrl}
+              alt="Full size profile"
+              className="max-w-[90vw] max-h-[85vh] object-contain rounded-2xl"
+            />
+
+            {/* Bottom download link */}
+            <a
+              href={fullImageUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/50 hover:bg-black/70 text-white text-xs font-semibold rounded-lg transition-all backdrop-blur-sm border border-white/10"
+            >
+              <Download size={12} /> Open original
+            </a>
+          </div>
+
+          {/* Click outside hint */}
+          <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/40 text-xs">
+            Click outside to close
+          </p>
+        </div>
+      )}
     </div>
   );
 };

@@ -11,6 +11,7 @@ import {
 import { viewProfile } from "../../api/profilesApi";
 import { getEnumOptions, getEnumLabel } from "../../utils/convertHelper";
 import { calculateAge } from "../../utils/dateHelper";
+import { X, Download } from "lucide-react"; // ✅ NEW
 
 const MyConnection = () => {
   const [received, setReceived] = useState([]);
@@ -18,8 +19,11 @@ const MyConnection = () => {
   const [acceptedReceived, setAcceptedReceived] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [toast, setToast] = useState({ show: false, msg: "" });
+  const [fullImageUrl, setFullImageUrl] = useState(null); // ✅ NEW
 
   const Img_Url = import.meta.env.VITE_IMG_URL;
+
+  const closeFullImage = () => setFullImageUrl(null); // ✅ NEW
 
   const triggerToast = (msg) => {
     setToast({ show: true, msg });
@@ -277,9 +281,20 @@ const MyConnection = () => {
             <div className="flex flex-col items-center mb-12 text-center">
               <div className="relative">
                 <img
+                  onClick={() => selectedUser?.photo && setFullImageUrl(`${Img_Url}/photos/${selectedUser.photo}`)}
                   src={`${Img_Url}/photos/${selectedUser.photo}`}
-                  className="w-28 h-28 object-cover rounded-3xl shadow-2xl mb-4 bg-gray-100 border-4 border-white"
+                  className={`w-28 h-28 object-cover rounded-3xl shadow-2xl mb-4 bg-gray-100 border-4 border-white ${
+                    selectedUser?.photo ? "cursor-pointer hover:ring-2 hover:ring-blue-400 hover:scale-105 transition-all" : ""
+                  }`}
                 />
+                {selectedUser?.photo && (
+                  <p
+                    className="text-[10px] text-gray-400 mt-1 italic cursor-pointer hover:text-blue-500"
+                    onClick={() => setFullImageUrl(`${Img_Url}/photos/${selectedUser.photo}`)}
+                  >
+                    Click photo to view full size
+                  </p>
+                )}
                 <div className="absolute -bottom-1 -right-1 bg-[#1A5AF0] w-6 h-6 rounded-full border-4 border-white" />
               </div>
               <h2 className="text-2xl font-semibold text-[#111827] tracking-tight">
@@ -354,6 +369,51 @@ const MyConnection = () => {
               </Section>
             </div>
           </div>
+        </div>
+      )}
+    </div>
+
+      {/* ✅ Full-size Image Lightbox */}
+      {fullImageUrl && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[130] p-4"
+          onClick={closeFullImage} // click anywhere outside image to close
+        >
+          {/* Close button */}
+          <button
+            onClick={closeFullImage}
+            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all border border-white/20"
+          >
+            <X size={18} />
+          </button>
+
+          {/* Image — clicking image itself does NOT close */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-[90vw] max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+          >
+            <img
+              src={fullImageUrl}
+              alt="Full size profile"
+              className="max-w-[90vw] max-h-[85vh] object-contain rounded-2xl"
+            />
+
+            {/* Bottom download link */}
+            <a
+              href={fullImageUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/50 hover:bg-black/70 text-white text-xs font-semibold rounded-lg transition-all backdrop-blur-sm border border-white/10"
+            >
+              <Download size={12} /> Open original
+            </a>
+          </div>
+
+          {/* Click outside hint */}
+          <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/40 text-xs">
+            Click outside to close
+          </p>
         </div>
       )}
     </div>

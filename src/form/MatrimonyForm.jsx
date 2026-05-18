@@ -53,8 +53,6 @@ const uploadFileToS3 = async (file, folder) => {
 };
 
 // ─── 12-hour time picker component ───────────────────────────────────────────
-// Uses local state to avoid re-render selection loss.
-// Emits combined "HH:MM AM/PM" string via onChange({ target: { name, value } })
 const TimePicker12Hr = ({ name, value, onChange }) => {
   const parseTime = (val) => {
     if (!val) return { hour: "", minute: "", period: "AM" };
@@ -68,7 +66,6 @@ const TimePicker12Hr = ({ name, value, onChange }) => {
   const [minute, setMinute] = useState(parsed.minute);
   const [period, setPeriod] = useState(parsed.period);
 
-  // Sync local state if parent value changes externally
   useEffect(() => {
     const p = parseTime(value);
     setHour(p.hour);
@@ -82,55 +79,27 @@ const TimePicker12Hr = ({ name, value, onChange }) => {
     }
   };
 
-  const handleHour = (e) => {
-    const h = e.target.value;
-    setHour(h);
-    emitChange(h, minute, period);
-  };
+  const handleHour = (e) => { const h = e.target.value; setHour(h); emitChange(h, minute, period); };
+  const handleMinute = (e) => { const m = e.target.value; setMinute(m); emitChange(hour, m, period); };
+  const handlePeriod = (e) => { const p = e.target.value; setPeriod(p); emitChange(hour, minute, p); };
 
-  const handleMinute = (e) => {
-    const m = e.target.value;
-    setMinute(m);
-    emitChange(hour, m, period);
-  };
-
-  const handlePeriod = (e) => {
-    const p = e.target.value;
-    setPeriod(p);
-    emitChange(hour, minute, p);
-  };
-
-  const hours = Array.from({ length: 12 }, (_, i) =>
-    String(i + 1).padStart(2, "0"),
-  );
-  const minutes = Array.from({ length: 60 }, (_, i) =>
-    String(i).padStart(2, "0"),
-  );
+  const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
+  const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
 
   const selectClass =
     "h-full rounded-xl border border-gray-300 px-2 py-3 text-black focus:outline-none focus:ring-2 focus:ring-[#1A5AF0] bg-white text-sm";
 
   return (
     <div className="flex items-center gap-2 w-full h-full">
-      {/* Hour */}
       <select value={hour} onChange={handleHour} className={`${selectClass} flex-1`}>
         <option value="">HH</option>
-        {hours.map((h) => (
-          <option key={h} value={h}>{h}</option>
-        ))}
+        {hours.map((h) => <option key={h} value={h}>{h}</option>)}
       </select>
-
       <span className="text-gray-400 font-bold select-none">:</span>
-
-      {/* Minute */}
       <select value={minute} onChange={handleMinute} className={`${selectClass} flex-1`}>
         <option value="">MM</option>
-        {minutes.map((m) => (
-          <option key={m} value={m}>{m}</option>
-        ))}
+        {minutes.map((m) => <option key={m} value={m}>{m}</option>)}
       </select>
-
-      {/* AM / PM */}
       <select value={period} onChange={handlePeriod} className={`${selectClass} w-20`}>
         <option value="AM">AM</option>
         <option value="PM">PM</option>
@@ -152,10 +121,10 @@ const MatrimonyForm = () => {
   } = useMatrimonyForm();
 
   // ── S3 upload state ──────────────────────────────────────────────────────────
-  const [isUploading, setIsUploading] = useState(false);
-  const [photoS3Url, setPhotoS3Url] = useState(null);
+  const [isUploading, setIsUploading]       = useState(false);
+  const [photoS3Url, setPhotoS3Url]         = useState(null);
   const [horoscopeS3Url, setHoroscopeS3Url] = useState(null);
-  const [photoPreview, setPhotoPreview] = useState(null);
+  const [photoPreview, setPhotoPreview]     = useState(null);
   const [horoscopePreview, setHoroscopePreview] = useState(null);
 
   const displayMode = "both";
@@ -225,10 +194,97 @@ const MatrimonyForm = () => {
     });
   };
 
+  // ── Next / Submit click handler ──────────────────────────────────────────────
+  const handleNextOrSubmit = () => {
+    // ── Moving forward (not final submit) ───────────────────────────────────
+    if (currentStep !== 6) {
+
+      // Step 3: Horoscope is required
+      if (currentStep === 3) {
+        if (!formData.horoscope) {
+          toast.error("ஜாதகம் கட்டாயம் / Horoscope is required. Please upload before proceeding.");
+          return;
+        }
+        if (formData.horoscope && !horoscopeS3Url) {
+          toast.error("Horoscope is still uploading. Please wait…");
+          return;
+        }
+      }
+
+      // Step 5: Photo is required
+      if (currentStep === 5) {
+        if (!formData.photo) {
+          toast.error("புகைப்படம் கட்டாயம் / Profile photo is required. Please upload before proceeding.");
+          return;
+        }
+        if (formData.photo && !photoS3Url) {
+          toast.error("Photo is still uploading. Please wait…");
+          return;
+        }
+      }
+
+      nextStep();
+      return;
+    }
+
+    // ── Final submit (Step 6) ────────────────────────────────────────────────
+    if (isUploading) {
+      toast.error("Please wait — files are still uploading.");
+      return;
+    }
+
+    if (!formData.photo || !photoS3Url) {
+      toast.error("Profile photo is required. Please go back to Step 6 and upload a photo.");
+      return;
+    }
+
+    if (!formData.horoscope || !horoscopeS3Url) {
+      toast.error("Horoscope is required. Please go back to Step 4 and upload your horoscope.");
+      return;
+    }
+
+    // Confirm dialog
+    toast(
+      (t) => (
+        <div
+          className={`transform-gpu origin-center ${
+            t.visible ? "scale-100 opacity-100" : "scale-75 opacity-0"
+          } text-center space-y-3`}
+        >
+          <p className="font-bold text-black flex justify-center gap-4 mt-3">
+            Are you sure to submit?
+          </p>
+          <div className="flex justify-center gap-4 mt-3">
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                handleSubmit();
+                setTimeout(() => navigate("/"), 800);
+              }}
+              className="px-4 py-2 bg-[#1A5AF0] text-white rounded-lg font-bold cursor-pointer"
+            >
+              Confirm
+            </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-4 py-2 bg-gray-100 text-black rounded-lg font-bold cursor-pointer"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        position: "top-center",
+        style: { marginTop: "30vh", zIndex: 9999 },
+      },
+    );
+  };
+
   const input =
     "w-full px-4 py-3 rounded-xl border border-gray-300 bg-white text-black focus:outline-none focus:ring-2 focus:ring-[#1A5AF0]";
   const uploadBox =
-    "relative w-40 h-40 rounded-2xl bg-gray-50 flex items-center justify-center overflow-hidden shadow-md cursor-pointer mx-auto mt-4 border-2 border-dashed border-[#1A5AF0]/30";
+    "relative w-40 h-40 rounded-2xl bg-gray-50 flex items-center justify-center overflow-hidden shadow-md cursor-pointer mx-auto mt-4 border-2 border-dashed";
 
   return (
     <div
@@ -254,13 +310,7 @@ const MatrimonyForm = () => {
                 >
                   {i + 1}
                 </div>
-                <span
-                  className={
-                    i === currentStep
-                      ? "font-bold text-black"
-                      : "opacity-70 text-sm"
-                  }
-                >
+                <span className={i === currentStep ? "font-bold text-black" : "opacity-70 text-sm"}>
                   {s}
                 </span>
               </li>
@@ -298,17 +348,10 @@ const MatrimonyForm = () => {
                   onChange={handleChange}
                   value={formData.fullName}
                 />
-                <select
-                  className={input}
-                  name="gender"
-                  onChange={handleChange}
-                  value={formData.gender}
-                >
+                <select className={input} name="gender" onChange={handleChange} value={formData.gender}>
                   <option value="">Gender / பாலினம்</option>
                   {getEnumOptions("gender", displayMode).map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
 
@@ -329,54 +372,20 @@ const MatrimonyForm = () => {
                   />
                 </div>
 
-                {/* ── 12-hour Birth Time picker ── */}
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs text-black/60 px-1">
-                    Birth Time / பிறந்த நேரம்
-                  </span>
+                  <span className="text-xs text-black/60 px-1">Birth Time / பிறந்த நேரம்</span>
                   <div className="w-full h-[50px]">
-                    <TimePicker12Hr
-                      name="birthTime"
-                      value={formData.birthTime}
-                      onChange={handleChange}
-                    />
+                    <TimePicker12Hr name="birthTime" value={formData.birthTime} onChange={handleChange} />
                   </div>
                 </div>
 
-                <input
-                  className={input}
-                  name="birthPlace"
-                  placeholder="Birth Place / பிறந்த இடம்"
-                  onChange={handleChange}
-                  value={formData.birthPlace}
-                />
-                <input
-                  className={input}
-                  name="email"
-                  placeholder="Email / மின்னஞ்சல்"
-                  onChange={handleChange}
-                  value={formData.email}
-                />
-                <input
-                  className={input}
-                  name="phone"
-                  placeholder="Phone Number / தொலைபேசி எண்"
-                  onChange={handleChange}
-                  value={formData.phone}
-                  type="tel"
-                  maxLength={10}
-                />
-                <select
-                  className={input}
-                  name="maritalStatus"
-                  onChange={handleChange}
-                  value={formData.maritalStatus}
-                >
+                <input className={input} name="birthPlace" placeholder="Birth Place / பிறந்த இடம்" onChange={handleChange} value={formData.birthPlace} />
+                <input className={input} name="email" placeholder="Email / மின்னஞ்சல்" onChange={handleChange} value={formData.email} />
+                <input className={input} name="phone" placeholder="Phone Number / தொலைபேசி எண்" onChange={handleChange} value={formData.phone} type="tel" maxLength={10} />
+                <select className={input} name="maritalStatus" onChange={handleChange} value={formData.maritalStatus}>
                   <option value="">Marital Status / திருமண நிலை</option>
                   {getEnumOptions("maritalStatus", displayMode).map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
               </div>
@@ -385,90 +394,23 @@ const MatrimonyForm = () => {
             {/* ── STEP 1 – Career ── */}
             {currentStep === 1 && (
               <div className="grid md:grid-cols-2 gap-6">
-                <input
-                  className={input}
-                  name="education"
-                  placeholder="Education / கல்வி"
-                  onChange={handleChange}
-                  value={formData.education}
-                />
-                <input
-                  className={input}
-                  name="occupation"
-                  placeholder="Occupation / தொழில்"
-                  onChange={handleChange}
-                  value={formData.occupation}
-                />
-                <input
-                  className={input}
-                  name="income"
-                  placeholder="Monthly Income / மாத வருமானம்"
-                  onChange={handleChange}
-                  value={formData.income}
-                />
-                <input
-                  className={input}
-                  name="workLocation"
-                  placeholder="Work Location / வேலை இடம்"
-                  onChange={handleChange}
-                  value={formData.workLocation}
-                />
+                <input className={input} name="education" placeholder="Education / கல்வி" onChange={handleChange} value={formData.education} />
+                <input className={input} name="occupation" placeholder="Occupation / தொழில்" onChange={handleChange} value={formData.occupation} />
+                <input className={input} name="income" placeholder="Monthly Income / மாத வருமானம்" onChange={handleChange} value={formData.income} />
+                <input className={input} name="workLocation" placeholder="Work Location / வேலை இடம்" onChange={handleChange} value={formData.workLocation} />
               </div>
             )}
 
             {/* ── STEP 2 – Family ── */}
             {currentStep === 2 && (
               <div className="grid md:grid-cols-2 gap-6">
-                <input
-                  className={input}
-                  name="father"
-                  placeholder="Father Name / தந்தை பெயர்"
-                  onChange={handleChange}
-                  value={formData.father}
-                />
-                <input
-                  className={input}
-                  name="mother"
-                  placeholder="Mother Name / தாய் பெயர்"
-                  onChange={handleChange}
-                  value={formData.mother}
-                />
-                <input
-                  className={input}
-                  name="grandfather"
-                  placeholder="Grandfather Name / தாத்தா பெயர்"
-                  onChange={handleChange}
-                  value={formData.grandfather}
-                />
-                <input
-                  className={input}
-                  name="grandmother"
-                  placeholder="Grandmother Name / பாட்டி பெயர்"
-                  onChange={handleChange}
-                  value={formData.grandmother}
-                />
-                <input
-                  className={input}
-                  name="motherSideGrandfather"
-                  placeholder="Mother Side Grandfather / தாய்வழி தாத்தா பெயர்"
-                  onChange={handleChange}
-                  value={formData.motherSideGrandfather}
-                />
-                <input
-                  className={input}
-                  name="motherSideGrandmother"
-                  placeholder="Mother Side Grandmother / தாய்வழி பாட்டி பெயர்"
-                  onChange={handleChange}
-                  value={formData.motherSideGrandmother}
-                />
-                <input
-                  className={input}
-                  name="siblings"
-                  placeholder="Siblings / உடன்பிறப்புகள்"
-                  type="number"
-                  onChange={handleChange}
-                  value={formData.siblings}
-                />
+                <input className={input} name="father" placeholder="Father Name / தந்தை பெயர்" onChange={handleChange} value={formData.father} />
+                <input className={input} name="mother" placeholder="Mother Name / தாய் பெயர்" onChange={handleChange} value={formData.mother} />
+                <input className={input} name="grandfather" placeholder="Grandfather Name / தாத்தா பெயர்" onChange={handleChange} value={formData.grandfather} />
+                <input className={input} name="grandmother" placeholder="Grandmother Name / பாட்டி பெயர்" onChange={handleChange} value={formData.grandmother} />
+                <input className={input} name="motherSideGrandfather" placeholder="Mother Side Grandfather / தாய்வழி தாத்தா பெயர்" onChange={handleChange} value={formData.motherSideGrandfather} />
+                <input className={input} name="motherSideGrandmother" placeholder="Mother Side Grandmother / தாய்வழி பாட்டி பெயர்" onChange={handleChange} value={formData.motherSideGrandmother} />
+                <input className={input} name="siblings" placeholder="Siblings / உடன்பிறப்புகள்" type="number" onChange={handleChange} value={formData.siblings} />
               </div>
             )}
 
@@ -476,118 +418,106 @@ const MatrimonyForm = () => {
             {currentStep === 3 && (
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
-                  <select
-                    className={input}
-                    name="raasi"
-                    onChange={handleChange}
-                    value={formData.raasi}
-                  >
+                  <select className={input} name="raasi" onChange={handleChange} value={formData.raasi}>
                     <option value="">Raasi / இராசி</option>
                     {getEnumOptions("raasi", displayMode).map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
 
-                  <select
-                    className={input}
-                    name="star"
-                    onChange={handleChange}
-                    value={formData.star}
-                  >
+                  <select className={input} name="star" onChange={handleChange} value={formData.star}>
                     <option value="">Natchathiram / நட்சத்திரம்</option>
                     {getEnumOptions("star", displayMode).map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
 
-                  <select
-                    className={input}
-                    name="dosham"
-                    onChange={handleChange}
-                    value={formData.dosham}
-                  >
+                  <select className={input} name="dosham" onChange={handleChange} value={formData.dosham}>
                     <option value="">Dosham / தோஷாம்</option>
                     {getEnumOptions("dosham", displayMode).map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
                 </div>
 
                 {/* ── Horoscope file upload ── */}
-                <label
-                  htmlFor="horoscope-file-input"
-                  className={`${uploadBox} cursor-pointer`}
-                >
-                  {isUploading && formData.horoscope ? (
-                    <p className="text-xs text-center text-[#1A5AF0] animate-pulse">
-                      Uploading…
+                <div className="flex flex-col items-center">
+                  <p className="text-sm font-semibold text-black mb-1 self-start">
+                    Horoscope / ஜாதகம்
+                    <span className="text-red-500 ml-1">* கட்டாயம் / Required</span>
+                  </p>
+
+                  <label
+                    htmlFor="horoscope-file-input"
+                    className={`${uploadBox} cursor-pointer ${
+                      horoscopeS3Url
+                        ? "border-green-400"
+                        : formData.horoscope
+                        ? "border-amber-400"
+                        : "border-red-400"
+                    }`}
+                  >
+                    {isUploading && formData.horoscope && !horoscopeS3Url ? (
+                      <p className="text-xs text-center text-[#1A5AF0] animate-pulse px-2">
+                        Uploading…
+                      </p>
+                    ) : horoscopeS3Url ? (
+                      <>
+                        <DocumentCheckIcon className="w-10 h-10 text-green-600" />
+                        <p className="text-xs mt-2 text-center text-black px-2 break-all">
+                          {formData.horoscope?.name}
+                        </p>
+                        <p className="text-[10px] mt-1 text-green-600 text-center px-1">
+                          ✓ Saved to cloud
+                        </p>
+                      </>
+                    ) : formData.horoscope ? (
+                      <>
+                        <DocumentCheckIcon className="w-10 h-10 text-amber-500" />
+                        <p className="text-xs mt-2 text-center text-black px-2">
+                          {formData.horoscope.name}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <CloudArrowUpIcon className="w-10 h-10 text-red-400" />
+                        <p className="text-xs text-center mt-2 text-black px-2">
+                          Upload Horoscope / ஜாதகம்
+                        </p>
+                      </>
+                    )}
+                    <input
+                      id="horoscope-file-input"
+                      type="file"
+                      name="horoscope"
+                      onChange={handleHoroscopeChange}
+                      className="hidden"
+                    />
+                  </label>
+
+                  {/* Required message */}
+                  {!horoscopeS3Url && (
+                    <p className="text-red-500 text-xs mt-2 font-semibold text-center">
+                      {!formData.horoscope
+                        ? "* ஜாதகம் கட்டாயம் / Horoscope upload is required"
+                        : "⏳ Uploading… please wait"}
                     </p>
-                  ) : horoscopeS3Url ? (
-                    <>
-                      <DocumentCheckIcon className="w-10 h-10 text-green-600" />
-                      <p className="text-xs mt-2 text-center text-black">
-                        {formData.horoscope?.name}
-                      </p>
-                      <p className="text-[10px] mt-1 text-green-600 text-center px-1">
-                        ✓ Saved to cloud
-                      </p>
-                    </>
-                  ) : formData.horoscope ? (
-                    <>
-                      <DocumentCheckIcon className="w-10 h-10 text-amber-500" />
-                      <p className="text-xs mt-2 text-center text-black">
-                        {formData.horoscope.name}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <CloudArrowUpIcon className="w-10 h-10 text-[#1A5AF0]" />
-                      <p className="text-xs text-center mt-2 text-black">
-                        Upload Horoscope / ஜாதகம்
-                      </p>
-                    </>
                   )}
-                  <input
-                    id="horoscope-file-input"
-                    type="file"
-                    name="horoscope"
-                    onChange={handleHoroscopeChange}
-                    className="hidden"
-                  />
-                </label>
+                  {horoscopeS3Url && (
+                    <p className="text-green-600 text-xs mt-2 font-semibold text-center">
+                      ✓ Horoscope uploaded successfully
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 
             {/* ── STEP 4 – Address ── */}
             {currentStep === 4 && (
               <div className="grid md:grid-cols-2 gap-6">
-                <input
-                  className={input}
-                  name="address"
-                  placeholder="Home Address / வீட்டு முகவரி"
-                  onChange={handleChange}
-                  value={formData.address}
-                />
-                <input
-                  className={input}
-                  name="city"
-                  placeholder="City / நகரம்"
-                  onChange={handleChange}
-                  value={formData.city}
-                />
-                <input
-                  className={input}
-                  name="country"
-                  placeholder="Country / நாடு"
-                  onChange={handleChange}
-                  value={formData.country}
-                />
+                <input className={input} name="address" placeholder="Home Address / வீட்டு முகவரி" onChange={handleChange} value={formData.address} />
+                <input className={input} name="city" placeholder="City / நகரம்" onChange={handleChange} value={formData.city} />
+                <input className={input} name="country" placeholder="Country / நாடு" onChange={handleChange} value={formData.country} />
               </div>
             )}
 
@@ -598,12 +528,7 @@ const MatrimonyForm = () => {
                   <label className="block text-sm font-semibold text-black">
                     Account Settings / கணக்கு அமைப்புகள்
                   </label>
-                  <select
-                    name="privacy"
-                    onChange={handleChange}
-                    value={formData.privacy}
-                    className={input}
-                  >
+                  <select name="privacy" onChange={handleChange} value={formData.privacy} className={input}>
                     <option value="">Select / தேர்வு செய்யவும்</option>
                     <option value="Public">🌍 Public / பொது</option>
                     <option value="Private">🔒 Private / தனிப்பட்ட</option>
@@ -614,29 +539,27 @@ const MatrimonyForm = () => {
                 <div className="space-y-2">
                   <p className="text-sm font-semibold text-black">
                     Upload Photo / பதிவேற்ற புகைப்படம்
+                    <span className="text-red-500 ml-1">* கட்டாயம் / Required</span>
                   </p>
+
                   <label
                     className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all ${
                       photoS3Url
                         ? "bg-green-50 border-green-500"
                         : formData.photo
                         ? "bg-amber-50 border-amber-400"
-                        : "bg-gray-50 border-[#1A5AF0]/30"
+                        : "bg-red-50 border-red-400"
                     }`}
                   >
                     {isUploading && formData.photo && !photoS3Url ? (
-                      <p className="text-sm text-[#1A5AF0] animate-pulse">
-                        Uploading photo…
-                      </p>
+                      <p className="text-sm text-[#1A5AF0] animate-pulse">Uploading photo…</p>
                     ) : photoS3Url ? (
                       <>
                         <DocumentCheckIcon className="w-10 h-10 text-green-600" />
                         <p className="text-xs mt-2 text-center text-green-700 font-medium px-2 truncate w-full">
                           {formData.photo?.name}
                         </p>
-                        <p className="text-[10px] mt-1 text-green-600">
-                          ✓ Saved to cloud
-                        </p>
+                        <p className="text-[10px] mt-1 text-green-600">✓ Saved to cloud</p>
                       </>
                     ) : formData.photo ? (
                       <>
@@ -647,10 +570,9 @@ const MatrimonyForm = () => {
                       </>
                     ) : (
                       <>
-                        <CloudArrowUpIcon className="w-8 h-8 mb-2 text-[#1A5AF0]" />
+                        <CloudArrowUpIcon className="w-8 h-8 mb-2 text-red-400" />
                         <p className="text-sm text-black text-center">
-                          Click to upload photo / புகைப்படத்தை பதிவேற்ற கிளிக்
-                          செய்க
+                          Click to upload photo / புகைப்படத்தை பதிவேற்ற கிளிக் செய்க
                         </p>
                       </>
                     )}
@@ -662,6 +584,20 @@ const MatrimonyForm = () => {
                       onChange={handlePhotoChange}
                     />
                   </label>
+
+                  {/* Required message */}
+                  {!photoS3Url && (
+                    <p className="text-red-500 text-xs font-semibold">
+                      {!formData.photo
+                        ? "* புகைப்படம் கட்டாயம் / Profile photo is required"
+                        : "⏳ Uploading… please wait"}
+                    </p>
+                  )}
+                  {photoS3Url && (
+                    <p className="text-green-600 text-xs font-semibold">
+                      ✓ Photo uploaded successfully
+                    </p>
+                  )}
                 </div>
 
                 <textarea
@@ -684,87 +620,27 @@ const MatrimonyForm = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
                   {[
-                    {
-                      label: "முழு பெயர் / Full Name",
-                      value: formData.fullName,
-                    },
-                    {
-                      label: "பாலினம் / Gender",
-                      value: getEnumLabel("gender", formData.gender, displayMode),
-                    },
-                    {
-                      label: "பிறந்த தேதி / Date of Birth",
-                      value: formData.dob,
-                    },
-                    {
-                      label: "பிறந்த நேரம் / Birth Time",
-                      // birthTime already contains "HH:MM AM/PM" from TimePicker12Hr
-                      value: formData.birthTime || "—",
-                    },
-                    {
-                      label: "பிறந்த இடம் / Birth Place",
-                      value: formData.birthPlace,
-                    },
-                    {
-                      label: "தொலைபேசி எண் / Phone Number",
-                      value: formData.phone,
-                    },
-                    {
-                      label: "திருமண நிலை / Marital Status",
-                      value: getEnumLabel(
-                        "maritalStatus",
-                        formData.maritalStatus,
-                        displayMode,
-                      ),
-                    },
+                    { label: "முழு பெயர் / Full Name", value: formData.fullName },
+                    { label: "பாலினம் / Gender", value: getEnumLabel("gender", formData.gender, displayMode) },
+                    { label: "பிறந்த தேதி / Date of Birth", value: formData.dob },
+                    { label: "பிறந்த நேரம் / Birth Time", value: formData.birthTime || "—" },
+                    { label: "பிறந்த இடம் / Birth Place", value: formData.birthPlace },
+                    { label: "தொலைபேசி எண் / Phone Number", value: formData.phone },
+                    { label: "திருமண நிலை / Marital Status", value: getEnumLabel("maritalStatus", formData.maritalStatus, displayMode) },
                     { label: "கல்வி / Education", value: formData.education },
-                    {
-                      label: "தொழில் / Occupation",
-                      value: formData.occupation,
-                    },
-                    {
-                      label: "வேலை இடம் / Work Location",
-                      value: formData.workLocation,
-                    },
-                    {
-                      label: "தந்தை பெயர் / Father Name",
-                      value: formData.father,
-                    },
-                    {
-                      label: "தாய் பெயர் / Mother Name",
-                      value: formData.mother,
-                    },
-                    {
-                      label: "உடன்பிறப்புகள் / Siblings",
-                      value: formData.siblings,
-                    },
-                    {
-                      label: "இராசி / Raasi",
-                      value: getEnumLabel("raasi", formData.raasi, displayMode),
-                    },
-                    {
-                      label: "நட்சத்திரம் / Star",
-                      value: getEnumLabel("star", formData.star, displayMode),
-                    },
-                    {
-                      label: "தோஷம் / Dosham",
-                      value: getEnumLabel(
-                        "dosham",
-                        formData.dosham,
-                        displayMode,
-                      ),
-                    },
+                    { label: "தொழில் / Occupation", value: formData.occupation },
+                    { label: "வேலை இடம் / Work Location", value: formData.workLocation },
+                    { label: "தந்தை பெயர் / Father Name", value: formData.father },
+                    { label: "தாய் பெயர் / Mother Name", value: formData.mother },
+                    { label: "உடன்பிறப்புகள் / Siblings", value: formData.siblings },
+                    { label: "இராசி / Raasi", value: getEnumLabel("raasi", formData.raasi, displayMode) },
+                    { label: "நட்சத்திரம் / Star", value: getEnumLabel("star", formData.star, displayMode) },
+                    { label: "தோஷம் / Dosham", value: getEnumLabel("dosham", formData.dosham, displayMode) },
                     { label: "நகரம் / City", value: formData.city },
                     { label: "நாடு / Country", value: formData.country },
-                    {
-                      label: "கணக்கு தனியுரிமை / Privacy",
-                      value: formData.privacy,
-                    },
+                    { label: "கணக்கு தனியுரிமை / Privacy", value: formData.privacy },
                   ].map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col border-b border-gray-200 pb-1"
-                    >
+                    <div key={index} className="flex flex-col border-b border-gray-200 pb-1">
                       <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
                         {item.label}
                       </span>
@@ -776,120 +652,80 @@ const MatrimonyForm = () => {
 
                   {/* Full-width address */}
                   <div className="sm:col-span-2 lg:col-span-3 border-b border-gray-200 pb-1">
-                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
-                      Home Address
-                    </span>
-                    <p className="text-sm md:text-base font-medium leading-tight">
-                      {formData.address || "—"}
-                    </p>
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">Home Address</span>
+                    <p className="text-sm md:text-base font-medium leading-tight">{formData.address || "—"}</p>
                   </div>
 
                   {/* Media section */}
                   <div className="sm:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
 
                     {/* Profile Photo Card */}
-                    <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div className={`flex flex-col gap-2 p-3 bg-white rounded-xl border shadow-sm ${!photoS3Url ? "border-red-300" : "border-gray-200"}`}>
                       <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
                         Profile Photo / புகைப்படம்
+                        {!photoS3Url && <span className="text-red-500 ml-1">* Required</span>}
                       </span>
                       {photoS3Url ? (
                         <div className="flex items-center gap-3">
-                          <img
-                            src={photoS3Url}
-                            alt="Profile"
-                            className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100"
-                          />
+                          <img src={photoS3Url} alt="Profile" className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100" />
                           <div className="flex flex-col gap-1">
-                            <span className="text-xs break-all opacity-70">
-                              {formData.photo?.name}
-                            </span>
-                            <span className="text-[10px] text-green-600 font-semibold">
-                              ✓ Uploaded to S3
-                            </span>
-                            <a
-                              href={photoS3Url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-[10px] text-[#1A5AF0] underline break-all cursor-pointer"
-                            >
-                              View file
-                            </a>
+                            <span className="text-xs break-all opacity-70">{formData.photo?.name}</span>
+                            <span className="text-[10px] text-green-600 font-semibold">✓ Uploaded to S3</span>
+                            <a href={photoS3Url} target="_blank" rel="noreferrer" className="text-[10px] text-[#1A5AF0] underline break-all cursor-pointer">View file</a>
                           </div>
                         </div>
                       ) : photoPreview ? (
                         <div className="flex items-center gap-3">
-                          <img
-                            src={photoPreview}
-                            alt="Profile"
-                            className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100"
-                          />
-                          <span className="text-xs text-amber-500">
-                            Uploading…
-                          </span>
+                          <img src={photoPreview} alt="Profile" className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100" />
+                          <span className="text-xs text-amber-500">Uploading…</span>
                         </div>
                       ) : (
-                        <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-sm italic opacity-50">
-                          No photo
+                        <div className="h-24 flex flex-col items-center justify-center border-2 border-dashed border-red-300 rounded-lg gap-1">
+                          <span className="text-sm italic opacity-50">No photo</span>
+                          <span className="text-red-500 text-xs font-semibold">Please go back to Step 6 to upload</span>
                         </div>
                       )}
                     </div>
 
                     {/* Horoscope Card */}
-                    <div className="flex flex-col gap-2 p-3 bg-white rounded-xl border border-gray-200 shadow-sm">
+                    <div className={`flex flex-col gap-2 p-3 bg-white rounded-xl border shadow-sm ${!horoscopeS3Url ? "border-red-300" : "border-gray-200"}`}>
                       <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
                         Horoscope / ஜாதகம்
+                        {!horoscopeS3Url && <span className="text-red-500 ml-1">* Required</span>}
                       </span>
                       {horoscopeS3Url ? (
                         <div className="flex items-center gap-3">
                           {horoscopePreview ? (
-                            <img
-                              src={horoscopePreview}
-                              alt="Horoscope"
-                              className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100"
-                            />
+                            <img src={horoscopePreview} alt="Horoscope" className="w-24 h-24 object-cover rounded-lg border-2 border-gray-100" />
                           ) : (
                             <div className="w-24 h-24 bg-gray-50 flex flex-col items-center justify-center rounded-lg border-2 border-gray-100 text-[#1A5AF0]">
                               <DocumentCheckIcon className="w-8 h-8" />
-                              <span className="text-[8px] font-bold mt-1">
-                                DOC/PDF
-                              </span>
+                              <span className="text-[8px] font-bold mt-1">DOC/PDF</span>
                             </div>
                           )}
                           <div className="flex flex-col gap-1">
-                            <span className="text-xs break-all opacity-70">
-                              {formData.horoscope?.name}
-                            </span>
-                            <span className="text-[10px] text-green-600 font-semibold">
-                              ✓ Uploaded to S3
-                            </span>
-                            <a
-                              href={horoscopeS3Url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-[10px] text-[#1A5AF0] underline break-all cursor-pointer"
-                            >
-                              View file
-                            </a>
+                            <span className="text-xs break-all opacity-70">{formData.horoscope?.name}</span>
+                            <span className="text-[10px] text-green-600 font-semibold">✓ Uploaded to S3</span>
+                            <a href={horoscopeS3Url} target="_blank" rel="noreferrer" className="text-[10px] text-[#1A5AF0] underline break-all cursor-pointer">View file</a>
                           </div>
                         </div>
                       ) : formData.horoscope ? (
                         <div className="flex items-center gap-3">
                           <div className="w-24 h-24 bg-gray-50 flex flex-col items-center justify-center rounded-lg border-2 border-gray-100 text-amber-500">
                             <DocumentCheckIcon className="w-8 h-8" />
-                            <span className="text-[8px] font-bold mt-1">
-                              Uploading…
-                            </span>
+                            <span className="text-[8px] font-bold mt-1">Uploading…</span>
                           </div>
                         </div>
                       ) : (
-                        <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg text-sm italic opacity-50">
-                          No horoscope
+                        <div className="h-24 flex flex-col items-center justify-center border-2 border-dashed border-red-300 rounded-lg gap-1">
+                          <span className="text-sm italic opacity-50">No horoscope</span>
+                          <span className="text-red-500 text-xs font-semibold">Please go back to Step 4 to upload</span>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* ── Privacy notice: only shown for Private profiles ── */}
+                  {/* Privacy notice */}
                   {formData.privacy === "Private" && (
                     <div className="col-span-1 sm:col-span-2 lg:col-span-3 mt-4">
                       <p className="w-full flex items-start gap-4 bg-blue-50 border border-blue-100 p-4 md:p-5 rounded-2xl shadow-sm">
@@ -898,12 +734,10 @@ const MatrimonyForm = () => {
                         </span>
                         <span className="flex flex-col gap-1">
                           <span className="text-[12px] md:text-[13px] font-black text-black leading-relaxed">
-                            நீங்கள் பதிவிடும் விபரங்கள், நீங்கள் அனுமதித்த
-                            பின்னரே, மற்ற வரன்கள் பார்க்க முடியும்
+                            நீங்கள் பதிவிடும் விபரங்கள், நீங்கள் அனுமதித்த பின்னரே, மற்ற வரன்கள் பார்க்க முடியும்
                           </span>
                           <span className="text-[10px] uppercase tracking-wider font-bold text-[#1A5AF0]">
-                            Your details will be visible to others only after
-                            your approval.
+                            Your details will be visible to others only after your approval.
                           </span>
                         </span>
                       </p>
@@ -912,12 +746,8 @@ const MatrimonyForm = () => {
 
                   {/* Remarks */}
                   <div className="sm:col-span-2 lg:col-span-3 pt-2">
-                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">
-                      Remarks
-                    </span>
-                    <p className="text-sm font-medium italic text-black/80">
-                      {formData.remarks || "No remarks"}
-                    </p>
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#1A5AF0]">Remarks</span>
+                    <p className="text-sm font-medium italic text-black/80">{formData.remarks || "No remarks"}</p>
                   </div>
                 </div>
               </div>
@@ -937,68 +767,7 @@ const MatrimonyForm = () => {
 
             <button
               disabled={isUploading}
-              onClick={() => {
-                if (currentStep !== 6) {
-                  nextStep();
-                  return;
-                }
-
-                if (isUploading) {
-                  toast.error("Please wait — files are still uploading.");
-                  return;
-                }
-
-                if (formData.photo && !photoS3Url) {
-                  toast.error(
-                    "Photo upload failed. Please re-upload the photo.",
-                  );
-                  return;
-                }
-                if (formData.horoscope && !horoscopeS3Url) {
-                  toast.error(
-                    "Horoscope upload failed. Please re-upload the horoscope.",
-                  );
-                  return;
-                }
-
-                toast(
-                  (t) => (
-                    <div
-                      className={`transform-gpu origin-center ${
-                        t.visible
-                          ? "scale-100 opacity-100"
-                          : "scale-75 opacity-0"
-                      } text-center space-y-3`}
-                    >
-                      <p className="font-bold text-black flex justify-center gap-4 mt-3">
-                        Are you sure to submit?
-                      </p>
-                      <div className="flex justify-center gap-4 mt-3">
-                        <button
-                          onClick={() => {
-                            toast.dismiss(t.id);
-                            handleSubmit();
-                            setTimeout(() => navigate("/"), 800);
-                          }}
-                          className="px-4 py-2 bg-[#1A5AF0] text-white rounded-lg font-bold cursor-pointer"
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          onClick={() => toast.dismiss(t.id)}
-                          className="px-4 py-2 bg-gray-100 text-black rounded-lg font-bold cursor-pointer"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ),
-                  {
-                    position: "top-center",
-                    style: { marginTop: "30vh", zIndex: 9999 },
-                  },
-                );
-              }}
+              onClick={handleNextOrSubmit}
               className={`px-8 py-3 rounded-xl font-bold transition-all ${
                 isUploading
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -1013,6 +782,5 @@ const MatrimonyForm = () => {
     </div>
   );
 };
-
 
 export default MatrimonyForm;

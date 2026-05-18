@@ -6,6 +6,7 @@ import {
   FileText,
   Download,
   User,
+  X,
 } from "lucide-react";
 import { calculateAge } from "../../utils/dateHelper";
 import {
@@ -24,8 +25,11 @@ const AllUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [activeTab, setActiveTab] = useState("personal");
   const [togglingUserId, setTogglingUserId] = useState(null);
+  const [fullImageUrl, setFullImageUrl] = useState(null); // ✅ NEW
 
   const displayMode = "both";
+
+  const closeFullImage = () => setFullImageUrl(null); // ✅ NEW
 
   /* ================= FETCH — ACTIVE ONLY ================= */
   useEffect(() => {
@@ -69,7 +73,7 @@ const AllUsers = () => {
   };
 
   /* ================= DELETE ================= */
-  const queryClient = useQueryClient();
+  const _queryClient = useQueryClient();
 
   const { mutate: handleDeleteUser } = useMutation({
     mutationFn: deleteUser,
@@ -154,7 +158,14 @@ const AllUsers = () => {
               <ArrowLeft size={18} />
             </button>
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-gray-100 overflow-hidden border border-gray-200 flex items-center justify-center flex-shrink-0">
+              <div
+                onClick={() => selectedUser?.photo && setFullImageUrl(selectedUser.photo)}
+                className={`w-14 h-14 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0 ${
+                  selectedUser?.photo
+                    ? "cursor-pointer hover:ring-2 hover:ring-blue-400 hover:scale-105 transition-all"
+                    : ""
+                }`}
+              >
                 {selectedUser?.photo ? (
                   <img
                     // ✅ photo is already a full S3 URL — use directly
@@ -173,6 +184,11 @@ const AllUsers = () => {
                 <p className="text-xs text-gray-400 mt-0.5">
                   {selectedUser.email}
                 </p>
+                {selectedUser?.photo && (
+                  <p className="text-[10px] text-gray-400 mt-1 italic">
+                    Click photo to view full size
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -282,6 +298,50 @@ const AllUsers = () => {
             </>
           )}
         </div>
+
+        {/* ✅ Full-size Image Lightbox */}
+        {fullImageUrl && (
+          <div
+            className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[60] p-4"
+            onClick={closeFullImage} // click anywhere outside image to close
+          >
+            {/* Close button */}
+            <button
+              onClick={closeFullImage}
+              className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all border border-white/20"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Image — clicking image itself does NOT close */}
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-[90vw] max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+            >
+              <img
+                src={fullImageUrl}
+                alt="Full size profile"
+                className="max-w-[90vw] max-h-[85vh] object-contain rounded-2xl"
+              />
+
+              {/* Bottom download link */}
+              <a
+                href={fullImageUrl}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/50 hover:bg-black/70 text-white text-xs font-semibold rounded-lg transition-all backdrop-blur-sm border border-white/10"
+              >
+                <Download size={12} /> Open original
+              </a>
+            </div>
+
+            {/* Click outside hint */}
+            <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/40 text-xs">
+              Click outside to close
+            </p>
+          </div>
+        )}
       </div>
     );
   }
@@ -371,7 +431,12 @@ const AllUsers = () => {
                     {/* Username + avatar */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        <div
+                          onClick={() => u?.photo && setFullImageUrl(u.photo)}
+                          className={`w-9 h-9 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden ${
+                            u?.photo ? "cursor-pointer hover:ring-2 hover:ring-blue-400 transition-all" : ""
+                          }`}
+                        >
                           {u?.photo ? (
                             <img
                               // ✅ photo is already a full S3 URL — use directly
@@ -458,6 +523,50 @@ const AllUsers = () => {
           </table>
         </div>
       </div>
+
+      {/* ✅ Full-size Image Lightbox */}
+      {fullImageUrl && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[60] p-4"
+          onClick={closeFullImage} // click anywhere outside image to close
+        >
+          {/* Close button */}
+          <button
+            onClick={closeFullImage}
+            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all border border-white/20"
+          >
+            <X size={18} />
+          </button>
+
+          {/* Image — clicking image itself does NOT close */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-[90vw] max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+          >
+            <img
+              src={fullImageUrl}
+              alt="Full size profile"
+              className="max-w-[90vw] max-h-[85vh] object-contain rounded-2xl"
+            />
+
+            {/* Bottom download link */}
+            <a
+              href={fullImageUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/50 hover:bg-black/70 text-white text-xs font-semibold rounded-lg transition-all backdrop-blur-sm border border-white/10"
+            >
+              <Download size={12} /> Open original
+            </a>
+          </div>
+
+          {/* Click outside hint */}
+          <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/40 text-xs">
+            Click outside to close
+          </p>
+        </div>
+      )}
     </div>
   );
 };
