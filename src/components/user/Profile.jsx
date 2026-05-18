@@ -402,7 +402,7 @@ const Profile = () => {
           />
           <Input
             edit={edit}
-            label="Income / வருமானம்"
+            label="Monthly Income / மாத வருமானம்"
             name="income"
             value={user?.income}
             onChange={handleChange}

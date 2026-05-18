@@ -309,7 +309,7 @@ const MyConnection = () => {
               <Section title="Education & Career / கல்வி & தொழில்">
                 <Row label="Education / கல்வி" value={selectedUser.education} />
                 <Row label="Occupation / தொழில்" value={selectedUser.occupation} />
-                <Row label="Income / வருமானம்" value={selectedUser.income} />
+                <Row label="Monthly Income / மாத வருமானம்" value={selectedUser.income} />
                 <Row label="Work Location / வேலை இடம்" value={selectedUser.workLocation || selectedUser.work_location} />
               </Section>
 

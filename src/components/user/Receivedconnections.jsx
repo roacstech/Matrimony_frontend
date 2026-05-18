@@ -300,7 +300,7 @@ const Receivedconnections = () => {
                 <InfoRow label="Marital Status / திருமண நிலை" value={getEnumLabel("maritalStatus", selectedUser.marital_status, displayMode)} />
                 <InfoRow label="Email / மின்னஞ்சல்" value={selectedUser.email} />
                 <InfoRow label="Phone / தொலைபேசி" value={selectedUser.phone} />
-                <InfoRow label="Income / வருமானம்" value={selectedUser.income} />
+                <InfoRow label="Monthly Income / மாத வருமானம்" value={selectedUser.income} />
                 <InfoRow label="Work Location / வேலை இடம்" value={selectedUser.work_location} />
                 <InfoRow label="Education / கல்வி" value={selectedUser.education} />
               </div>

@@ -166,7 +166,7 @@ const ConnectionCard = () => {
                 />
                 <DetailItem
                   icon={<FaMoneyBillWave size={13} className="text-gray-700" />}
-                  label="Salary / மாத வருமானம்"
+                  label="Monthly Income / மாத வருமானம்"
                   value={u.income}
                 />
                 <DetailItem
@@ -372,7 +372,7 @@ src={
                     value={selectedUser.occupation}
                   />
                   <PopupDetail
-                    label="Income / வருமானம்"
+                    label="Income / மாத வருமானம்"
                     value={selectedUser.income}
                   />
                   <PopupDetail

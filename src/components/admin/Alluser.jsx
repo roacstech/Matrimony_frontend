@@ -226,7 +226,7 @@ const AllUsers = () => {
             <>
               <InfoBox label="Qualification / கல்வி" value={selectedUser.education} />
               <InfoBox label="Occupation / தொழில்" value={selectedUser.occupation} />
-              <InfoBox label="Annual Income / மாத வருமானம்" value={selectedUser.income} />
+              <InfoBox label="Monthly Income / மாத வருமானம்" value={selectedUser.income} />
               <InfoBox label="Work Location / வேலை இடம்" value={selectedUser.workLocation} />
             </>
           )}

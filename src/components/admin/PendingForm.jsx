@@ -304,7 +304,7 @@ const PendingForms = () => {
                 />
                 <InfoRow label="Email / மின்னஞ்சல்" value={selectedUser.email} />
                 <InfoRow label="Phone / தொலைபேசி எண்" value={selectedUser.phone} />
-                <InfoRow label="Income / வருமானம்" value={selectedUser.income} />
+                <InfoRow label="Monthly Income / மாத வருமானம்" value={selectedUser.income} />
                 <InfoRow
                   label="Work Location / வேலை இடம்"
                   value={selectedUser.work_location || selectedUser.workLocation}
