@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import Login from "./Login";
 import Register from "./Register";
 import ForgotPassword from "../pages/Forgetpassword";
+import PreviousBooks from "../components/PreviousBooks";
 import BrideGroom from "../assets/perumal.jpg";
 
 const Home = () => {
   const [view, setView] = useState("login");
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 font-sans overflow-hidden">
-      <div className="max-w-[1440px] mx-auto min-h-screen flex flex-col lg:flex-row">
+    <div className="min-h-screen lg:h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 font-sans overflow-hidden">
+      <div className="max-w-[1440px] mx-auto min-h-screen lg:h-screen flex flex-col lg:flex-row">
 
         {/* MOBILE IMAGE - Only visible on mobile */}
         <div className="lg:hidden w-full relative h-[260px] sm:h-[320px] overflow-hidden">
@@ -22,8 +23,8 @@ const Home = () => {
         </div>
 
         {/* LEFT SIDE */}
-        <div className="lg:w-1/2 flex flex-col justify-center px-4 sm:px-6 lg:px-12 py-8 lg:py-0">
-          <div className="w-full max-w-[460px] mx-auto lg:mx-0 lg:max-w-none">
+        <div className="lg:w-1/2 flex flex-col px-4 sm:px-6 lg:px-12 py-8 lg:py-12 lg:overflow-y-auto lg:h-full no-scrollbar">
+          <div className="w-full max-w-[460px] mx-auto lg:mx-0 lg:max-w-none my-auto">
 
             {/* Titles */}
             <div className="mb-8 text-center lg:text-left">
@@ -47,7 +48,7 @@ const Home = () => {
             </div>
 
             {/* Form Container - Wide on Large Screen, Full on Mobile */}
-            <div className="w-full lg:w-[600px] bg-white p-6 sm:p-8 border border-gray-100 overflow-hidden rounded-3xl ">
+            <div className="w-full lg:w-[600px] bg-white p-6 sm:p-8 border border-gray-100 overflow-hidden rounded-3xl mb-8">
               {view === "login" && (
                 <Login
                   onNavigate={(target) => {
@@ -64,6 +65,11 @@ const Home = () => {
               {view === "forgot" && (
                 <ForgotPassword onNavigate={() => setView("login")} />
               )}
+            </div>
+
+            {/* PreviousBooks */}
+            <div className="w-full lg:w-[600px]">
+              <PreviousBooks />
             </div>
           </div>
         </div>
