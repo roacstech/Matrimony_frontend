@@ -6,13 +6,13 @@ const books = [
     title: "யூத் பளஞ்சிகா - Aug 2026",
     date: "August 2026",
     link: "https://roacs-bucket.s3.ap-south-1.amazonaws.com/matrimony-profiles/August+2026+YB+PDF.pdf"
+  },
+  {
+    id: 2,
+    title: "யூத் பளஞ்சிகா - Sep 2026",
+    date: "September 2026",
+    link: "https://roacs-bucket.s3.ap-south-1.amazonaws.com/matrimony-profiles/YB+September+Book.pdf"
   }
-  // {
-  //   id: 2,
-  //   title: "July 2026 - யூத் பளஞ்சிகா",
-  //   date: "July 2026",
-  //   link: "https://roacs-bucket.s3.ap-south-1.amazonaws.com/matrimony-profiles/August+2026+YB+PDF.pdf"
-  // },
   // {
   //   id: 3,
   //   title: "June 2026 - யூத் பளஞ்சிகா",
