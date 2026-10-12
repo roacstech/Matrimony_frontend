@@ -1,10 +1,13 @@
 # ---------- Build stage ----------
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
+# Limit memory usage to prevent Hostinger container OOM (Out Of Memory) crash
+ENV NODE_OPTIONS="--max-old-space-size=1536"
+
 COPY package*.json ./
-RUN npm install
+RUN npm ci --no-audit --no-fund || npm install --no-audit --no-fund --legacy-peer-deps
 
 COPY . .
 RUN npm run build
